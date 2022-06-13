@@ -8,5 +8,9 @@
     <Folder Include="Controllers\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\card_index_BLL\card_index_BLL.csproj" />
+  </ItemGroup>
+
 
 </Project>
