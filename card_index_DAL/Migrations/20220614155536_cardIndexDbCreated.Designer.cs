@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using card_index_DAL.Data;
 
 namespace card_index_DAL.Migrations
 {
     [DbContext(typeof(CardIndexDbContext))]
-    partial class CardIndexDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220614155536_cardIndexDbCreated")]
+    partial class cardIndexDbCreated
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

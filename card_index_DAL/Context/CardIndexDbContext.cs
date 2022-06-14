@@ -9,29 +9,29 @@ using Microsoft.EntityFrameworkCore;
 
 namespace card_index_DAL.Data
 {
-    public class CardIndexDbContext:IdentityDbContext<AppUser,AppUserRole,int>
+    public class CardIndexDbContext:IdentityDbContext<User,UserRole,int>
     {
-        public CardIndexDbContext(DbContextOptions options) : base(options)
+        //public CardIndexDbContext(DbContextOptions options) : base(options)
+        //{
+        //}
+        public CardIndexDbContext()
         {
+
         }
-        //public CardIndexDbContext()
-        //{
-            
-        //}
-        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //{
-        //    optionsBuilder.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=cardIndexDb;Trusted_Connection=True;");
-        //}
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=cardIndexDb;Trusted_Connection=True;");
+        }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<AppUser>(entity =>
+            builder.Entity<User>(entity =>
             {
                 entity.ToTable("Users");
             });
-            builder.Entity<AppUserRole>(entity =>
+            builder.Entity<UserRole>(entity =>
             {
                 entity.ToTable("Roles");
             });
@@ -56,10 +56,10 @@ namespace card_index_DAL.Data
                 entity.ToTable("UserTokens");
             });
 
-            builder.Entity<AppUser>()
+            builder.Entity<User>()
                 .HasMany(u => u.RateDetails)
-                .WithOne(rd => rd.AppUser)
-                .HasForeignKey(rd=>rd.AppUserId);
+                .WithOne(rd => rd.User)
+                .HasForeignKey(rd => rd.UserId);
 
             builder.Entity<TextCard>()
                 .HasMany(c => c.RateDetails)

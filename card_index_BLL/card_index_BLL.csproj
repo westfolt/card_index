@@ -8,4 +8,11 @@
     <ProjectReference Include="..\card_index_DAL\card_index_DAL.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Interfaces\" />
+    <Folder Include="Exceptions\" />
+    <Folder Include="Dto\" />
+    <Folder Include="Services\" />
+  </ItemGroup>
+
 </Project>

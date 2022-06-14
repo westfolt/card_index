@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using card_index_DAL.Data;
 using card_index_DAL.Entities;
+using card_index_DAL.Exceptions;
 using card_index_DAL.Interfaces;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace card_index_DAL.Repositories
 {
-    public class AuthorRepository:IAuthorRepository
+    public class AuthorRepository : IAuthorRepository
     {
         private readonly CardIndexDbContext _db;
 
@@ -16,44 +20,86 @@ namespace card_index_DAL.Repositories
         {
             _db = context;
         }
-        public Task<IEnumerable<Author>> GetAllAsync()
+        public async Task<IEnumerable<Author>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await _db.Authors.ToListAsync();
         }
 
-        public Task<Author> GetByIdAsync(int id)
+        public async Task<Author> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _db.Authors.FirstOrDefaultAsync(a => a.Id == id);
         }
 
-        public Task<int> AddAsync(Author entity)
+        public async Task AddAsync(Author entity)
         {
-            throw new NotImplementedException();
+            if (entity == null)
+                throw new ArgumentNullException(nameof(entity), "Given entity is null");
+
+            var alreadyExists = await _db.Authors.FirstOrDefaultAsync(a => a.Id == entity.Id);
+            if (alreadyExists == null)
+            {
+                _db.Authors.Add(entity);
+            }
+            else
+            {
+                throw new EntityAlreadyExistsException($"Author with id: {entity.Id} already exists");
+            }
         }
 
         public void Delete(Author entity)
         {
-            throw new NotImplementedException();
+            if (entity == null)
+                throw new ArgumentNullException(nameof(entity), "Given entity is null");
+
+            var itemToDelete = _db.Authors.FirstOrDefault(a => a.Id == entity.Id);
+
+            if (itemToDelete == null)
+                throw new EntityNotFoundException($"Author with id: {entity.Id} not found in db");
+
+            _db.Authors.Remove(itemToDelete);
         }
 
-        public Task DeleteByIdAsync(int id)
+        public async Task DeleteByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            var itemToDelete = await _db.Authors.FirstOrDefaultAsync(a => a.Id == id);
+
+            if (itemToDelete == null)
+                throw new EntityNotFoundException($"Author with id: {id} not found in db)");
+
+            _db.Authors.Remove(itemToDelete);
         }
 
         public void Update(Author entity)
         {
-            throw new NotImplementedException();
+            if (entity == null)
+                throw new ArgumentNullException(nameof(entity), "Given entity is null");
+
+            var existsInDb = _db.Authors.Any(a => a.Id == entity.Id);
+
+            if (!existsInDb)
+                throw new EntityNotFoundException($"Author with id: {entity.Id} not found in db");
+
+            _db.Authors.Update(entity);
         }
 
-        public Task<IEnumerable<Author>> GetAllWithDetailsAsync()
+        public async Task<IEnumerable<Author>> GetAllWithDetailsAsync()
         {
-            throw new NotImplementedException();
+            return await _db.Authors.Include(a => a.TextCards)
+                .ThenInclude(tc => tc.Genre)
+                .Include(a => a.TextCards)
+                .ThenInclude(tc => tc.RateDetails)
+                .ThenInclude(rd => rd.User)
+                .ToListAsync();
         }
 
-        public Task<Author> GetByIdWithDetailsAsync(int id)
+        public async Task<Author> GetByIdWithDetailsAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _db.Authors.Include(a => a.TextCards)
+                .ThenInclude(tc => tc.Genre)
+                .Include(a => a.TextCards)
+                .ThenInclude(tc => tc.RateDetails)
+                .ThenInclude(rd => rd.User)
+                .FirstOrDefaultAsync(a=>a.Id == id);
         }
     }
 }

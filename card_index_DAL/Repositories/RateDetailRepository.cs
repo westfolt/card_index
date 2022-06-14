@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using card_index_DAL.Data;
 using card_index_DAL.Entities;
+using card_index_DAL.Exceptions;
 using card_index_DAL.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace card_index_DAL.Repositories
 {
@@ -16,34 +19,76 @@ namespace card_index_DAL.Repositories
         {
             _db = context;
         }
-        public Task<IEnumerable<RateDetail>> GetAllAsync()
+        public async Task<IEnumerable<RateDetail>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await _db.RateDetails.ToListAsync();
         }
 
-        public Task<RateDetail> GetByIdAsync(int id)
+        public async Task<RateDetail> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _db.RateDetails.FirstOrDefaultAsync(rd => rd.Id == id);
         }
 
-        public Task<int> AddAsync(RateDetail entity)
+        public async Task AddAsync(RateDetail entity)
         {
-            throw new NotImplementedException();
+            if (entity == null)
+                throw new ArgumentNullException(nameof(entity), "Given entity is null");
+
+            var alreadyExists = await _db.RateDetails.FirstOrDefaultAsync(rd => rd.Id == entity.Id);
+            if (alreadyExists == null)
+            {
+                _db.RateDetails.Add(entity);
+            }
+            else
+            {
+                throw new EntityAlreadyExistsException($"Rate detail with id: {entity.Id} already exists");
+            }
         }
 
         public void Delete(RateDetail entity)
         {
-            throw new NotImplementedException();
+            if (entity == null)
+                throw new ArgumentNullException(nameof(entity), "Given entity is null");
+
+            var itemToDelete = _db.RateDetails.FirstOrDefault(rd => rd.Id == entity.Id);
+
+            if (itemToDelete == null)
+                throw new EntityNotFoundException($"Rate detail with id: {entity.Id} not found in db");
+
+            _db.RateDetails.Remove(itemToDelete);
         }
 
-        public Task DeleteByIdAsync(int id)
+        public async Task DeleteByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            var itemToDelete = await _db.RateDetails.FirstOrDefaultAsync(rd => rd.Id == id);
+
+            if (itemToDelete == null)
+                throw new EntityNotFoundException($"Rate detail with id: {id} not found in db)");
+
+            _db.RateDetails.Remove(itemToDelete);
         }
 
         public void Update(RateDetail entity)
         {
-            throw new NotImplementedException();
+            if (entity == null)
+                throw new ArgumentNullException(nameof(entity), "Given entity is null");
+
+            var existsInDb = _db.RateDetails.Any(rd => rd.Id == entity.Id);
+
+            if (!existsInDb)
+                throw new EntityNotFoundException($"Rate detail with id: {entity.Id} not found in db");
+
+            _db.RateDetails.Update(entity);
+        }
+
+        public async Task<IEnumerable<RateDetail>> GetAllWithDetailsAsync()
+        {
+            return await _db.RateDetails.Include(rd => rd.User)
+                .Include(rd => rd.TextCard)
+                .ThenInclude(tc => tc.Authors)
+                .Include(rd => rd.TextCard)
+                .ThenInclude(tc => tc.Genre)
+                .ToListAsync();
         }
     }
 }

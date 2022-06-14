@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using card_index_DAL.Data;
 using card_index_DAL.Entities;
+using card_index_DAL.Exceptions;
 using card_index_DAL.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace card_index_DAL.Repositories
 {
@@ -16,34 +19,66 @@ namespace card_index_DAL.Repositories
         {
             _db = context;
         }
-        public Task<IEnumerable<Genre>> GetAllAsync()
+        public async Task<IEnumerable<Genre>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await _db.Genres.ToListAsync();
         }
 
-        public Task<Genre> GetByIdAsync(int id)
+        public async Task<Genre> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _db.Genres.FirstOrDefaultAsync(g => g.Id == id);
         }
 
-        public Task<int> AddAsync(Genre entity)
+        public async Task AddAsync(Genre entity)
         {
-            throw new NotImplementedException();
+            if (entity == null)
+                throw new ArgumentNullException(nameof(entity), "Given entity is null");
+
+            var alreadyExists = await _db.Genres.FirstOrDefaultAsync(g => g.Id == entity.Id);
+            if (alreadyExists == null)
+            {
+                _db.Genres.Add(entity);
+            }
+            else
+            {
+                throw new EntityAlreadyExistsException($"Genre with id: {entity.Id} already exists");
+            }
         }
 
         public void Delete(Genre entity)
         {
-            throw new NotImplementedException();
+            if (entity == null)
+                throw new ArgumentNullException(nameof(entity), "Given entity is null");
+
+            var itemToDelete = _db.Genres.FirstOrDefault(g => g.Id == entity.Id);
+
+            if (itemToDelete == null)
+                throw new EntityNotFoundException($"Genre with id: {entity.Id} not found in db");
+
+            _db.Genres.Remove(itemToDelete);
         }
 
-        public Task DeleteByIdAsync(int id)
+        public async Task DeleteByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            var itemToDelete = await _db.Genres.FirstOrDefaultAsync(g => g.Id == id);
+
+            if (itemToDelete == null)
+                throw new EntityNotFoundException($"Genre with id: {id} not found in db)");
+
+            _db.Genres.Remove(itemToDelete);
         }
 
         public void Update(Genre entity)
         {
-            throw new NotImplementedException();
+            if (entity == null)
+                throw new ArgumentNullException(nameof(entity), "Given entity is null");
+
+            var existsInDb = _db.Genres.Any(g => g.Id == entity.Id);
+
+            if (!existsInDb)
+                throw new EntityNotFoundException($"Genre with id: {entity.Id} not found in db");
+
+            _db.Genres.Update(entity);
         }
     }
 }

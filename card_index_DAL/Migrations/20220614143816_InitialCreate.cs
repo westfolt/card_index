@@ -8,7 +8,7 @@ namespace card_index_DAL.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Authors",
+                name: "Author",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -19,11 +19,11 @@ namespace card_index_DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Authors", x => x.Id);
+                    table.PrimaryKey("PK_Author", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Genres",
+                name: "Genre",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -32,7 +32,7 @@ namespace card_index_DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Genres", x => x.Id);
+                    table.PrimaryKey("PK_Genre", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -82,7 +82,7 @@ namespace card_index_DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TextCards",
+                name: "TextCard",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -93,11 +93,11 @@ namespace card_index_DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TextCards", x => x.Id);
+                    table.PrimaryKey("PK_TextCard", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TextCards_Genres_GenreId",
+                        name: "FK_TextCard_Genre_GenreId",
                         column: x => x.GenreId,
-                        principalTable: "Genres",
+                        principalTable: "Genre",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -219,41 +219,41 @@ namespace card_index_DAL.Migrations
                 {
                     table.PrimaryKey("PK_AuthorTextCard", x => new { x.AuthorsId, x.TextCardsId });
                     table.ForeignKey(
-                        name: "FK_AuthorTextCard_Authors_AuthorsId",
+                        name: "FK_AuthorTextCard_Author_AuthorsId",
                         column: x => x.AuthorsId,
-                        principalTable: "Authors",
+                        principalTable: "Author",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_AuthorTextCard_TextCards_TextCardsId",
+                        name: "FK_AuthorTextCard_TextCard_TextCardsId",
                         column: x => x.TextCardsId,
-                        principalTable: "TextCards",
+                        principalTable: "TextCard",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "RateDetails",
+                name: "RateDetail",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    AppUserId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false),
                     TextCardId = table.Column<int>(type: "int", nullable: false),
                     RateValue = table.Column<double>(type: "float", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RateDetails", x => x.Id);
+                    table.PrimaryKey("PK_RateDetail", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_RateDetails_TextCards_TextCardId",
+                        name: "FK_RateDetail_TextCard_TextCardId",
                         column: x => x.TextCardId,
-                        principalTable: "TextCards",
+                        principalTable: "TextCard",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_RateDetails_Users_AppUserId",
-                        column: x => x.AppUserId,
+                        name: "FK_RateDetail_Users_UserId",
+                        column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -265,14 +265,14 @@ namespace card_index_DAL.Migrations
                 column: "TextCardsId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RateDetails_AppUserId",
-                table: "RateDetails",
-                column: "AppUserId");
+                name: "IX_RateDetail_TextCardId",
+                table: "RateDetail",
+                column: "TextCardId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RateDetails_TextCardId",
-                table: "RateDetails",
-                column: "TextCardId");
+                name: "IX_RateDetail_UserId",
+                table: "RateDetail",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RoleClaims_RoleId",
@@ -287,8 +287,8 @@ namespace card_index_DAL.Migrations
                 filter: "[NormalizedName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TextCards_GenreId",
-                table: "TextCards",
+                name: "IX_TextCard_GenreId",
+                table: "TextCard",
                 column: "GenreId");
 
             migrationBuilder.CreateIndex(
@@ -325,7 +325,7 @@ namespace card_index_DAL.Migrations
                 name: "AuthorTextCard");
 
             migrationBuilder.DropTable(
-                name: "RateDetails");
+                name: "RateDetail");
 
             migrationBuilder.DropTable(
                 name: "RoleClaims");
@@ -343,10 +343,10 @@ namespace card_index_DAL.Migrations
                 name: "UserTokens");
 
             migrationBuilder.DropTable(
-                name: "Authors");
+                name: "Author");
 
             migrationBuilder.DropTable(
-                name: "TextCards");
+                name: "TextCard");
 
             migrationBuilder.DropTable(
                 name: "Roles");
@@ -355,7 +355,7 @@ namespace card_index_DAL.Migrations
                 name: "Users");
 
             migrationBuilder.DropTable(
-                name: "Genres");
+                name: "Genre");
         }
     }
 }

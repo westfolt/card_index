@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using card_index_DAL.Data;
 using card_index_DAL.Entities;
+using card_index_DAL.Exceptions;
 using card_index_DAL.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace card_index_DAL.Repositories
 {
@@ -16,44 +19,84 @@ namespace card_index_DAL.Repositories
         {
             _db = context;
         }
-        public Task<IEnumerable<TextCard>> GetAllAsync()
+        public async Task<IEnumerable<TextCard>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await _db.TextCards.ToListAsync();
         }
 
-        public Task<TextCard> GetByIdAsync(int id)
+        public async Task<TextCard> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _db.TextCards.FirstOrDefaultAsync(tc => tc.Id == id);
         }
 
-        public Task<int> AddAsync(TextCard entity)
+        public async Task AddAsync(TextCard entity)
         {
-            throw new NotImplementedException();
+            if (entity == null)
+                throw new ArgumentNullException(nameof(entity), "Given entity is null");
+
+            var alreadyExists = await _db.TextCards.FirstOrDefaultAsync(tc => tc.Id == entity.Id);
+            if (alreadyExists == null)
+            {
+                _db.TextCards.Add(entity);
+            }
+            else
+            {
+                throw new EntityAlreadyExistsException($"TextCard with id: {entity.Id} already exists");
+            }
         }
 
         public void Delete(TextCard entity)
         {
-            throw new NotImplementedException();
+            if (entity == null)
+                throw new ArgumentNullException(nameof(entity), "Given entity is null");
+
+            var itemToDelete = _db.TextCards.FirstOrDefault(tc => tc.Id == entity.Id);
+
+            if (itemToDelete == null)
+                throw new EntityNotFoundException($"TextCard with id: {entity.Id} not found in db");
+
+            _db.TextCards.Remove(itemToDelete);
         }
 
-        public Task DeleteByIdAsync(int id)
+        public async Task DeleteByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            var itemToDelete = await _db.TextCards.FirstOrDefaultAsync(tc => tc.Id == id);
+
+            if (itemToDelete == null)
+                throw new EntityNotFoundException($"TextCard with id: {id} not found in db)");
+
+            _db.TextCards.Remove(itemToDelete);
         }
 
         public void Update(TextCard entity)
         {
-            throw new NotImplementedException();
+            if (entity == null)
+                throw new ArgumentNullException(nameof(entity), "Given entity is null");
+
+            var existsInDb = _db.TextCards.Any(tc => tc.Id == entity.Id);
+
+            if (!existsInDb)
+                throw new EntityNotFoundException($"TextCard with id: {entity.Id} not found in db");
+
+            _db.TextCards.Update(entity);
         }
 
-        public Task<IEnumerable<TextCard>> GetAllWithDetailsAsync()
+        public async Task<IEnumerable<TextCard>> GetAllWithDetailsAsync()
         {
-            throw new NotImplementedException();
+            return await _db.TextCards.Include(tc => tc.RateDetails)
+                .ThenInclude(rd => rd.User)
+                .Include(tc => tc.Genre)
+                .Include(tc => tc.Authors)
+                .ToListAsync();
         }
 
-        public Task<TextCard> GetByIdWithDetailsAsync(int id)
+        public async Task<TextCard> GetByIdWithDetailsAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _db.TextCards.Include(tc => tc.RateDetails)
+                .ThenInclude(rd => rd.User)
+                .Include(tc => tc.Genre)
+                .Include(tc => tc.Authors)
+                .FirstOrDefaultAsync(tc => tc.Id == id);
         }
     }
 }

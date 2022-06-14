@@ -9,7 +9,7 @@ namespace card_index_DAL.Interfaces
     {
         Task<IEnumerable<TEntity>> GetAllAsync();
         Task<TEntity> GetByIdAsync(int id);
-        Task<int> AddAsync(TEntity entity);
+        Task AddAsync(TEntity entity);
         void Delete(TEntity entity);
         Task DeleteByIdAsync(int id);
         void Update(TEntity entity);
