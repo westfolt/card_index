@@ -48,6 +48,9 @@ namespace card_index_DAL.Infrastructure
             get { return _textCardRepository ??= new TextCardRepository(_dbContext); }
         }
 
+        public UserManager<User> UserManager => _userManager;
+        public RoleManager<UserRole> RoleManager => _roleManager;
+
         public async Task SaveAsync()
         {
             await _dbContext.SaveChangesAsync();

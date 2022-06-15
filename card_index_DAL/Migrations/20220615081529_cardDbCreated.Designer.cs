@@ -10,8 +10,8 @@ using card_index_DAL.Data;
 namespace card_index_DAL.Migrations
 {
     [DbContext(typeof(CardIndexDbContext))]
-    [Migration("20220614155536_cardIndexDbCreated")]
-    partial class cardIndexDbCreated
+    [Migration("20220615081529_cardDbCreated")]
+    partial class cardDbCreated
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -180,8 +180,8 @@ namespace card_index_DAL.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<double>("RateValue")
-                        .HasColumnType("float");
+                    b.Property<int>("RateValue")
+                        .HasColumnType("int");
 
                     b.Property<int>("TextCardId")
                         .HasColumnType("int");

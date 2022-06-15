@@ -178,8 +178,8 @@ namespace card_index_DAL.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<double>("RateValue")
-                        .HasColumnType("float");
+                    b.Property<int>("RateValue")
+                        .HasColumnType("int");
 
                     b.Property<int>("TextCardId")
                         .HasColumnType("int");

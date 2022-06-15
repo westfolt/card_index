@@ -2,7 +2,7 @@
 
 namespace card_index_DAL.Migrations
 {
-    public partial class cardIndexDbCreated : Migration
+    public partial class cardDbCreated : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -72,6 +72,14 @@ namespace card_index_DAL.Migrations
                 name: "IX_RateDetail_TextCardId",
                 table: "RateDetails",
                 newName: "IX_RateDetails_TextCardId");
+
+            migrationBuilder.AlterColumn<int>(
+                name: "RateValue",
+                table: "RateDetails",
+                type: "int",
+                nullable: false,
+                oldClrType: typeof(double),
+                oldType: "float");
 
             migrationBuilder.AddPrimaryKey(
                 name: "PK_TextCards",
@@ -202,6 +210,14 @@ namespace card_index_DAL.Migrations
                 name: "IX_RateDetails_TextCardId",
                 table: "RateDetail",
                 newName: "IX_RateDetail_TextCardId");
+
+            migrationBuilder.AlterColumn<double>(
+                name: "RateValue",
+                table: "RateDetail",
+                type: "float",
+                nullable: false,
+                oldClrType: typeof(int),
+                oldType: "int");
 
             migrationBuilder.AddPrimaryKey(
                 name: "PK_TextCard",
