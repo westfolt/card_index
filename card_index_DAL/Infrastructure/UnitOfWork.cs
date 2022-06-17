@@ -51,7 +51,7 @@ namespace card_index_DAL.Infrastructure
         public UserManager<User> UserManager => _userManager;
         public RoleManager<UserRole> RoleManager => _roleManager;
 
-        public async Task SaveAsync()
+        public async Task SaveChangesAsync()
         {
             await _dbContext.SaveChangesAsync();
         }

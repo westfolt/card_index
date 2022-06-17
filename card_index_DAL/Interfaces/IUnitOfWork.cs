@@ -15,6 +15,6 @@ namespace card_index_DAL.Interfaces
         ITextCardRepository TextCardRepository { get; }
         UserManager<User> UserManager { get; }
         RoleManager<UserRole> RoleManager { get; }
-        Task SaveAsync();
+        Task SaveChangesAsync();
     }
 }

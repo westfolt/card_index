@@ -9,6 +9,7 @@ namespace card_index_DAL.Entities
     {
         public string Title { get; set; }
         public DateTime ReleaseDate { get; set; }
+        public double CardRating { get; set; }
         public int GenreId { get; set; }
         public Genre Genre { get; set; }
         public ICollection<Author> Authors { get; set; }

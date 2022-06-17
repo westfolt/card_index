@@ -16,5 +16,7 @@ namespace card_index_BLL.Interfaces
         Task<int> AddGenreAsync(GenreDto model);
         Task UpdateGenreAsync(GenreDto model);
         Task DeleteGenreAsync(int modelId);
+        Task AddRatingToCard(int cardId, int userId, int rating);
+        Task DeleteRatingFromCard(int cardId, int userId);
     }
 }
