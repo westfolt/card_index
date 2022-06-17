@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 using card_index_BLL.Validation;
 
-namespace card_index_BLL.Models.Dto
+namespace card_index_BLL.Models.Identity.Models
 {
-    public class AccountDto
+    public class UserInfoModel
     {
         public int Id { get; set; }
         [Required(ErrorMessage = "Firstname is empty")]
@@ -27,5 +28,7 @@ namespace card_index_BLL.Models.Dto
         [RegularExpression(@"\+[\d]{1, 3}\([\d]{3}\)[\d] { 7}",
             ErrorMessage = "Phone should be +X(XXX)XXXXXXX")]
         public string Phone { get; set; }
+        [NotMapped]
+        public ICollection<string> UserRoles { get; set; }
     }
 }

@@ -196,16 +196,17 @@ namespace card_index_BLL.Services
             }
         }
 
-        public async Task AddRatingToCard(RateDetail model)
+        public async Task AddRatingToCard(RateDetailDto model)
         {
             var alreadyExists = (await _unitOfWork.RateDetailRepository.GetAllAsync())
-                .Where(rd => rd.TextCardId == model.TextCardId && rd.UserId == model.UserId);
+                .FirstOrDefault(rd => rd.TextCardId == model.TextCardId && rd.UserId == model.UserId);
             if (alreadyExists != null)
                 throw new CardIndexException($"User has already left his rating");
 
             try
             {
-                await _unitOfWork.RateDetailRepository.AddAsync(model);
+                var mapped = _mapper.Map<RateDetailDto, RateDetail>(model);
+                await _unitOfWork.RateDetailRepository.AddAsync(mapped);
                 await _unitOfWork.SaveChangesAsync();
                 double newRating = await CalculateCardRatingAsync(model.TextCardId);
                 var cardToUpdate = await _unitOfWork.TextCardRepository.GetByIdWithDetailsAsync(model.TextCardId);

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace card_index_BLL.Dto.Identity
+namespace card_index_BLL.Models.Identity.Models
 {
     public class UserRegistrationModel
     {

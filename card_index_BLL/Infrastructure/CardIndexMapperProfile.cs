@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using AutoMapper;
 using card_index_BLL.Models.Dto;
+using card_index_BLL.Models.Identity.Models;
 using card_index_DAL.Entities;
 
 namespace card_index_BLL.Infrastructure
@@ -36,7 +37,11 @@ namespace card_index_BLL.Infrastructure
                 .ForMember(dto => dto.GenreName, tc => tc.MapFrom(x => x.Genre.Title))
                 .ReverseMap();
 
-            CreateMap<User, AccountDto>()
+            CreateMap<User, UserInfoModel>()
+                .ReverseMap();
+
+            CreateMap<UserRole, UserRoleInfoModel>()
+                .ForMember(dto => dto.RoleName, ur => ur.MapFrom(x => x.Name))
                 .ReverseMap();
         }
     }
