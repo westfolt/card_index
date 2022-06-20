@@ -12,10 +12,6 @@ namespace card_index_BLL.Interfaces
         Task<double> CalculateCardRatingAsync(int cardId);
         Task<IEnumerable<TextCardDto>> GetCardsForPeriodAsync(DateTime startDate, DateTime endDate);
         Task<IEnumerable<TextCardDto>> GetCardsByFilterAsync(FilterModel filter);
-        Task<IEnumerable<GenreDto>> GetAllGenresAsync();
-        Task<int> AddGenreAsync(GenreDto model);
-        Task UpdateGenreAsync(GenreDto model);
-        Task DeleteGenreAsync(int modelId);
         Task AddRatingToCard(RateDetailDto model);
         Task DeleteRatingFromCard(int cardId, int userId);
     }

@@ -140,62 +140,6 @@ namespace card_index_BLL.Services
             return mapped;
         }
 
-        public async Task<IEnumerable<GenreDto>> GetAllGenresAsync()
-        {
-            try
-            {
-                var takenFromDb = await _unitOfWork.GenreRepository.GetAllAsync();
-                var mapped = _mapper.Map<IEnumerable<Genre>, IEnumerable<GenreDto>>(takenFromDb);
-                return mapped;
-            }
-            catch (Exception ex)
-            {
-                throw new CardIndexException("Cannot get genres", ex);
-            }
-        }
-
-        public async Task<int> AddGenreAsync(GenreDto model)
-        {
-            try
-            {
-                var mapped = _mapper.Map<GenreDto, Genre>(model);
-                await _unitOfWork.GenreRepository.AddAsync(mapped);
-                await _unitOfWork.SaveChangesAsync();
-                return mapped.Id;
-            }
-            catch (Exception ex)
-            {
-                throw new CardIndexException("Cannot add genre to db", ex);
-            }
-        }
-
-        public async Task UpdateGenreAsync(GenreDto model)
-        {
-            try
-            {
-                var mapped = _mapper.Map<GenreDto, Genre>(model);
-                _unitOfWork.GenreRepository.Update(mapped);
-                await _unitOfWork.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                throw new CardIndexException($"Cannot update genre with id: {model.Id}", ex);
-            }
-        }
-
-        public async Task DeleteGenreAsync(int modelId)
-        {
-            try
-            {
-                await _unitOfWork.GenreRepository.DeleteByIdAsync(modelId);
-                await _unitOfWork.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                throw new CardIndexException($"Cannot delete genre with id: {modelId}", ex);
-            }
-        }
-
         public async Task AddRatingToCard(RateDetailDto model)
         {
             var alreadyExists = (await _unitOfWork.RateDetailRepository.GetAllAsync())
