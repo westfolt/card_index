@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using card_index_BLL.Infrastructure;
 
 namespace card_index_Web_API
 {
@@ -25,6 +26,8 @@ namespace card_index_Web_API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var connectionString = Configuration.GetConnectionString("CardIndexConnectionString");
+            BllDependencyConfigurator.ConfigureServices(services, connectionString);
             services.AddControllers();
         }
 

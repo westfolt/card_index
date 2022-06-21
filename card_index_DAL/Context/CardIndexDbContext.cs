@@ -11,17 +11,16 @@ namespace card_index_DAL.Data
 {
     public class CardIndexDbContext:IdentityDbContext<User,UserRole,int>
     {
-        //public CardIndexDbContext(DbContextOptions options) : base(options)
+        public CardIndexDbContext(DbContextOptions options) : base(options)
+        { }
+        //public CardIndexDbContext()
         //{
-        //}
-        public CardIndexDbContext()
-        {
 
-        }
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=cardIndexDb;Trusted_Connection=True;");
-        }
+        //}
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    optionsBuilder.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=cardIndexDb;Trusted_Connection=True;");
+        //}
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
