@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using card_index_BLL.Exceptions;
 using card_index_BLL.Interfaces;
+using card_index_BLL.Models.Identity.Infrastructure;
 using card_index_BLL.Models.Identity.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,28 +17,69 @@ namespace card_index_Web_API.Controllers
     [ApiController]
     public class AuthenticateController : ControllerBase
     {
-        private readonly IUserService _userService;
+        private readonly IAuthenticationService _authenticationService;
 
-        public AuthenticateController(IUserService userService)
+        public AuthenticateController(IAuthenticationService authenticationService)
         {
-            _userService = userService;
+            _authenticationService = authenticationService;
         }
 
         [HttpPost]
         [Route("login")]
-        public async Task<IActionResult> Login([FromBody] UserLoginModel model)
+        public async Task<ActionResult<Response>> Login([FromBody] UserLoginModel model)
         {
-            throw new NotImplementedException();
-            //TODO
+            if (model == null)
+                return BadRequest(new Response(false, "No model passed"));
+            if (!ModelState.IsValid)
+                return BadRequest(new Response()
+                    { Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList() });
+
+            try
+            {
+                var result = await _authenticationService.LoginUser(model);
+                if (result.Succeeded)
+                {
+                    return Ok(result);
+                }
+
+                return StatusCode(StatusCodes.Status403Forbidden, result);
+            }
+            catch (CardIndexException ex)
+            {
+                return BadRequest(new Response(false, ex.Message));
+            }
         }
 
         [HttpPost]
         [Route("register")]
-        public async Task<IActionResult> Register([FromBody] UserRegistrationModel model)
+        public async Task<ActionResult<Response>> Register([FromBody] UserRegistrationModel model)
         {
-            var alreadyExists = _userService.GetByEmailAsync(model.Email);
-            if(alreadyExists != null)
-                return StatusCode(StatusCodes.Status409Conflict, )
+            if (model == null)
+                return BadRequest(new Response(false, "No model passed"));
+            if (!ModelState.IsValid)
+                return BadRequest(new Response()
+                    { Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList() });
+
+            try
+            {
+                var result = await _authenticationService.RegisterUser(model);
+                if (result.Succeeded)
+                {
+                    return Ok(result);
+                }
+
+                return Conflict(result);
+            }
+            catch (CardIndexException ex)
+            {
+                return BadRequest(new Response(false, ex.Message));
+            }
+        }
+
+        [HttpPost]
+        public async Task LogOut()
+        {
+            await _authenticationService.LogOut();
         }
     }
 }
