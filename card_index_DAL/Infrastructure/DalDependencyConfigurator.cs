@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using card_index_DAL.Data;
+﻿using card_index_DAL.Data;
 using card_index_DAL.Interfaces;
 using card_index_DAL.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -19,7 +16,6 @@ namespace card_index_DAL.Infrastructure
             serviceCollection.AddTransient<IRateDetailRepository, RateDetailRepository>();
             serviceCollection.AddTransient<ITextCardRepository, TextCardRepository>();
             serviceCollection.AddTransient<IUnitOfWork, UnitOfWork>();
-
         }
     }
 }

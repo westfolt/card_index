@@ -1,31 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using card_index_BLL.Exceptions;
 using card_index_BLL.Interfaces;
 using card_index_BLL.Models.Identity.Infrastructure;
 using card_index_BLL.Models.Identity.Models;
 using card_index_DAL.Entities;
-using card_index_DAL.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace card_index_BLL.Services
 {
-    public class UserService:IUserService
+    public class UserService : IUserService
     {
         private readonly IMapper _mapper;
-        private readonly IUnitOfWork _unitOfWork;
+        //private readonly IUnitOfWork _unitOfWork;
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<UserRole> _roleManager;
 
-        public UserService(IMapper mapper, IUnitOfWork unitOfWork, UserManager<User> userManager, RoleManager<UserRole> roleManager)
+        public UserService(IMapper mapper, /*IUnitOfWork unitOfWork,*/ UserManager<User> userManager, RoleManager<UserRole> roleManager)
         {
             _mapper = mapper;
-            _unitOfWork = unitOfWork;
+            //_unitOfWork = unitOfWork;
             _userManager = userManager;
             _roleManager = roleManager;
         }
@@ -186,7 +184,7 @@ namespace card_index_BLL.Services
         {
             try
             {
-                var mapped = _mapper.Map<UserRoleInfoModel,UserRole>(model);
+                var mapped = _mapper.Map<UserRoleInfoModel, UserRole>(model);
                 await _roleManager.CreateAsync(mapped);
                 return mapped.Id;
             }

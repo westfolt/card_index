@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace card_index_DAL.Entities
 {
-    public class Author:BaseEntity
+    public class Author : BaseEntity
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }

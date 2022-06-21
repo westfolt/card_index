@@ -203,6 +203,9 @@ namespace card_index_DAL.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<double>("CardRating")
+                        .HasColumnType("float");
+
                     b.Property<int>("GenreId")
                         .HasColumnType("int");
 

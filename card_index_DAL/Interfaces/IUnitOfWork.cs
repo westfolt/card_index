@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using card_index_DAL.Entities;
-using Microsoft.AspNetCore.Identity;
+﻿using System.Threading.Tasks;
 
 namespace card_index_DAL.Interfaces
 {
@@ -13,8 +8,8 @@ namespace card_index_DAL.Interfaces
         IGenreRepository GenreRepository { get; }
         IRateDetailRepository RateDetailRepository { get; }
         ITextCardRepository TextCardRepository { get; }
-        UserManager<User> UserManager { get; }
-        RoleManager<UserRole> RoleManager { get; }
+        //UserManager<User> UserManager { get; }
+        //RoleManager<UserRole> RoleManager { get; }
         Task SaveChangesAsync();
     }
 }

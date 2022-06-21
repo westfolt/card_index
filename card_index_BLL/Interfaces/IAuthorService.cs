@@ -1,9 +1,6 @@
-﻿using System;
+﻿using card_index_BLL.Models.Dto;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
-using card_index_BLL.Models.Dto;
-using card_index_DAL.Entities;
 
 namespace card_index_BLL.Interfaces
 {
