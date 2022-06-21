@@ -1,8 +1,7 @@
-﻿using System;
+﻿using card_index_BLL.Validation;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
-using card_index_BLL.Validation;
 
 namespace card_index_BLL.Models.Dto
 {
@@ -18,7 +17,7 @@ namespace card_index_BLL.Models.Dto
         public ICollection<int> AuthorIds { get; set; }
         public ICollection<int> RateDetailsIds { get; set; }
         [Required(ErrorMessage = "Genre is empty")]
-        [RegularExpression(@"[\w,.-']{6,}", ErrorMessage = "More than 6 characters, no numbers")]
+        [RegularExpression(@"[\w,.\-']{6,}", ErrorMessage = "More than 6 characters, no numbers")]
         public string GenreName { get; set; }
     }
 }

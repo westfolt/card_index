@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
 
 namespace card_index_BLL.Models.Dto
 {
@@ -9,7 +7,7 @@ namespace card_index_BLL.Models.Dto
     {
         public int Id { get; set; }
         [Required(ErrorMessage = "Title is empty")]
-        [RegularExpression(@"[\w,.-']{6,}", ErrorMessage = "More than 6 characters, no numbers")]
+        [RegularExpression(@"[\w,.\-']{6,}", ErrorMessage = "More than 6 characters, no numbers")]
         public string Title { get; set; }
         public ICollection<int> TextCardIds { get; set; }
     }

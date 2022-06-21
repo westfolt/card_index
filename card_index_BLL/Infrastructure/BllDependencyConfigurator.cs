@@ -4,6 +4,8 @@ using System.Text;
 using AutoMapper;
 using card_index_BLL.Interfaces;
 using card_index_BLL.Services;
+using card_index_DAL.Data;
+using card_index_DAL.Entities;
 using card_index_DAL.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -15,6 +17,8 @@ namespace card_index_BLL.Infrastructure
         {
             DalDependencyConfigurator.ConfigureServices(serviceCollection, connectionString);
 
+            serviceCollection.AddIdentity<User, UserRole>()
+                .AddEntityFrameworkStores<CardIndexDbContext>();
             serviceCollection.AddTransient<IAuthorService, AuthorService>();
             serviceCollection.AddTransient<ICardService, CardService>();
             serviceCollection.AddTransient<IGenreService, GenreService>();
