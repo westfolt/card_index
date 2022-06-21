@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using card_index_BLL.Exceptions;
+﻿using card_index_BLL.Exceptions;
 using card_index_BLL.Interfaces;
 using card_index_BLL.Models.Dto;
 using card_index_BLL.Models.Identity.Infrastructure;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace card_index_Web_API.Controllers
 {
@@ -36,7 +34,7 @@ namespace card_index_Web_API.Controllers
                 BadRequest(ex.Message);
             }
 
-            if(cards == null || !cards.Any())
+            if (cards == null || !cards.Any())
                 return NotFound();
 
             return Ok(cards);
@@ -69,7 +67,7 @@ namespace card_index_Web_API.Controllers
                 return BadRequest(new Response(false, "No model passed"));
             if (!ModelState.IsValid)
                 return BadRequest(new Response()
-                    { Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList() });
+                { Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList() });
 
             try
             {
@@ -87,9 +85,9 @@ namespace card_index_Web_API.Controllers
         public async Task<ActionResult<Response>> Update(int id, [FromBody] TextCardDto model)
         {
             model.Id = id;
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
                 return BadRequest(new Response()
-                    { Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList() });
+                { Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList() });
 
             try
             {

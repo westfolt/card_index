@@ -1,31 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using card_index_DAL.Data;
-using card_index_DAL.Entities;
+﻿using card_index_DAL.Data;
 using card_index_DAL.Interfaces;
 using card_index_DAL.Repositories;
-using Microsoft.AspNetCore.Identity;
+using System;
+using System.Threading.Tasks;
 
 namespace card_index_DAL.Infrastructure
 {
-    public class UnitOfWork:IUnitOfWork, IDisposable
+    public class UnitOfWork : IUnitOfWork, IDisposable
     {
         private readonly CardIndexDbContext _dbContext;
-        private readonly UserManager<User> _userManager;
-        private readonly RoleManager<UserRole> _roleManager;
+        //private readonly UserManager<User> _userManager;
+        //private readonly RoleManager<UserRole> _roleManager;
         private IAuthorRepository _authorRepository;
         private IGenreRepository _genreRepository;
         private IRateDetailRepository _rateDetailRepository;
         private ITextCardRepository _textCardRepository;
         private bool disposed = false;
 
-        public UnitOfWork(CardIndexDbContext context, UserManager<User> userManager, RoleManager<UserRole> roleManager)
+        public UnitOfWork(CardIndexDbContext context/*, UserManager<User> userManager, RoleManager<UserRole> roleManager*/)
         {
             _dbContext = context;
-            _userManager = userManager;
-            _roleManager = roleManager;
+            //_userManager = userManager;
+            //_roleManager = roleManager;
         }
 
         public IAuthorRepository AuthorRepository
@@ -48,8 +44,8 @@ namespace card_index_DAL.Infrastructure
             get { return _textCardRepository ??= new TextCardRepository(_dbContext); }
         }
 
-        public UserManager<User> UserManager => _userManager;
-        public RoleManager<UserRole> RoleManager => _roleManager;
+        //public UserManager<User> UserManager => _userManager;
+        //public RoleManager<UserRole> RoleManager => _roleManager;
 
         public async Task SaveChangesAsync()
         {
@@ -68,8 +64,8 @@ namespace card_index_DAL.Infrastructure
             {
                 if (disposing)
                 {
-                    _userManager.Dispose();
-                    _roleManager.Dispose();
+                    //_userManager.Dispose();
+                    //_roleManager.Dispose();
                     _dbContext.Dispose();
                 }
                 this.disposed = true;

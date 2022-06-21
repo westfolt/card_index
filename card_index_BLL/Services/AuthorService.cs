@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using card_index_BLL.Exceptions;
 using card_index_BLL.Interfaces;
 using card_index_BLL.Models.Dto;
 using card_index_DAL.Entities;
 using card_index_DAL.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace card_index_BLL.Services
 {
-    public class AuthorService:IAuthorService
+    public class AuthorService : IAuthorService
     {
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;

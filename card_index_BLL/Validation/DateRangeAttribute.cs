@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
 
 namespace card_index_BLL.Validation
 {
-    public class DateRangeAttribute:ValidationAttribute
+    public class DateRangeAttribute : ValidationAttribute
     {
         private readonly DateTime _startingDate;
         private readonly string _userErrorMessage;

@@ -73,6 +73,13 @@ namespace card_index_DAL.Migrations
                 table: "RateDetails",
                 newName: "IX_RateDetails_TextCardId");
 
+            migrationBuilder.AddColumn<double>(
+                name: "CardRating",
+                table: "TextCards",
+                type: "float",
+                nullable: false,
+                defaultValue: 0.0);
+
             migrationBuilder.AlterColumn<int>(
                 name: "RateValue",
                 table: "RateDetails",
@@ -179,6 +186,10 @@ namespace card_index_DAL.Migrations
             migrationBuilder.DropPrimaryKey(
                 name: "PK_Authors",
                 table: "Authors");
+
+            migrationBuilder.DropColumn(
+                name: "CardRating",
+                table: "TextCards");
 
             migrationBuilder.RenameTable(
                 name: "TextCards",

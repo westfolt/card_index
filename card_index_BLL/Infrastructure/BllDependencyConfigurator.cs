@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using AutoMapper;
-using card_index_BLL.Interfaces;
+﻿using card_index_BLL.Interfaces;
 using card_index_BLL.Services;
 using card_index_DAL.Data;
 using card_index_DAL.Entities;

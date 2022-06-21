@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace card_index_BLL.Models
+﻿namespace card_index_BLL.Models
 {
     public class FilterModel
     {

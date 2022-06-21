@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using card_index_BLL.Models.Identity.Infrastructure;
+﻿using card_index_BLL.Models.Identity.Infrastructure;
 using card_index_BLL.Models.Identity.Models;
-using card_index_DAL.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace card_index_BLL.Interfaces
 {

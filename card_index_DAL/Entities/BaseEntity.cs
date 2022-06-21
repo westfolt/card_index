@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace card_index_DAL.Entities
+﻿namespace card_index_DAL.Entities
 {
     public class BaseEntity
     {

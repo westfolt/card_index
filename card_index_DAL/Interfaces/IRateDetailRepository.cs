@@ -1,12 +1,10 @@
-﻿using System;
+﻿using card_index_DAL.Entities;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
-using card_index_DAL.Entities;
 
 namespace card_index_DAL.Interfaces
 {
-    public interface IRateDetailRepository:IRepository<RateDetail>
+    public interface IRateDetailRepository : IRepository<RateDetail>
     {
         Task<IEnumerable<RateDetail>> GetAllWithDetailsAsync();
     }

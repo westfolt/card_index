@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using AutoMapper;
+﻿using AutoMapper;
 using card_index_BLL.Models.Dto;
 using card_index_BLL.Models.Identity.Models;
 using card_index_DAL.Entities;
+using System.Linq;
 
 namespace card_index_BLL.Infrastructure
 {
-    public class CardIndexMapperProfile:Profile
+    public class CardIndexMapperProfile : Profile
     {
         public CardIndexMapperProfile()
         {

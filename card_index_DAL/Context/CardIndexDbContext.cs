@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
-using card_index_DAL.Entities;
+﻿using card_index_DAL.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace card_index_DAL.Data
 {
-    public class CardIndexDbContext:IdentityDbContext<User,UserRole,int>
+    public class CardIndexDbContext : IdentityDbContext<User, UserRole, int>
     {
-        public CardIndexDbContext(DbContextOptions options) : base(options)
+        public CardIndexDbContext(DbContextOptions<CardIndexDbContext> options) : base(options)
         { }
         //public CardIndexDbContext()
         //{
