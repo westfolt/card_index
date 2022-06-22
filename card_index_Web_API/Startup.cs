@@ -12,6 +12,7 @@ using System.Reflection;
 
 namespace card_index_Web_API
 {
+#pragma warning disable CS1591
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -27,7 +28,6 @@ namespace card_index_Web_API
             var connectionString = Configuration.GetConnectionString("CardIndexConnectionString");
             BllDependencyConfigurator.ConfigureServices(services, connectionString);
             services.AddControllers();
-            services.AddCors();
             services.AddSwaggerGen(options =>
             {
                 options.SwaggerDoc("v1", new OpenApiInfo
@@ -40,11 +40,17 @@ namespace card_index_Web_API
                 var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
             });
+            services.AddCors();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseCors(options =>
+                options.WithOrigins("http://localhost:4200")
+                    .AllowAnyMethod()
+                    .AllowAnyHeader());
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -68,14 +74,7 @@ namespace card_index_Web_API
             {
                 endpoints.MapControllers();
             });
-
-            app.UseCors(options =>
-                options.WithOrigins("http://localhost:4200")
-                    .AllowAnyMethod()
-                    .AllowAnyHeader());
-            //Initialize database
-            //var scope = app.ApplicationServices.CreateScope();
-            //var services = scope.ServiceProvider;
+            
             DataSeed.Seed(app.ApplicationServices);
         }
     }

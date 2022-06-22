@@ -11,17 +11,29 @@ using System.Threading.Tasks;
 
 namespace card_index_Web_API.Controllers
 {
+    /// <summary>
+    /// Handles authentication tasks
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class AuthenticateController : ControllerBase
     {
         private readonly IAuthenticationService _authenticationService;
 
+        /// <summary>
+        /// Constructor, inject authentication service here
+        /// </summary>
+        /// <param name="authenticationService"></param>
         public AuthenticateController(IAuthenticationService authenticationService)
         {
             _authenticationService = authenticationService;
         }
 
+        /// <summary>
+        /// Performs user login
+        /// </summary>
+        /// <param name="model">User login model</param>
+        /// <returns>Http status code of operation with response object</returns>
         [HttpPost]
         [Route("login")]
         public async Task<ActionResult<Response>> Login([FromBody] UserLoginModel model)
@@ -48,6 +60,11 @@ namespace card_index_Web_API.Controllers
             }
         }
 
+        /// <summary>
+        /// Performs user registration in application
+        /// </summary>
+        /// <param name="model">User registration model</param>
+        /// <returns>Http status code of operation with response object</returns>
         [HttpPost]
         [Route("register")]
         public async Task<ActionResult<Response>> Register([FromBody] UserRegistrationModel model)
@@ -74,6 +91,10 @@ namespace card_index_Web_API.Controllers
             }
         }
 
+        /// <summary>
+        /// Performs user sign out
+        /// </summary>
+        /// <returns>Task object</returns>
         [HttpPost]
         public async Task LogOut()
         {

@@ -10,18 +10,28 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace card_index_Web_API.Controllers
 {
+    /// <summary>
+    /// Processes requests to authors
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class AuthorController : ControllerBase
     {
         private readonly IAuthorService _authorService;
 
-        public AuthorController(IAuthorService authorservice)
+        /// <summary>
+        /// Constructor, inject author service here
+        /// </summary>
+        /// <param name="authorService">Genre service object</param>
+        public AuthorController(IAuthorService authorService)
         {
-            _authorService = authorservice;
+            _authorService = authorService;
         }
 
-        //[Authorize(Roles = "Admin")]
+        /// <summary>
+        /// Returns all authors from DB
+        /// </summary>
+        /// <returns>All authors collection</returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AuthorDto>>> Get()
         {
@@ -42,6 +52,11 @@ namespace card_index_Web_API.Controllers
             return Ok(authors);
         }
 
+        /// <summary>
+        /// Get author by specified id
+        /// </summary>
+        /// <param name="id">Author id to search</param>
+        /// <returns>Author item</returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<AuthorDto>> GetById(int id)
         {
@@ -61,6 +76,11 @@ namespace card_index_Web_API.Controllers
             return Ok(author);
         }
 
+        /// <summary>
+        /// Adds new author to DB
+        /// </summary>
+        /// <param name="model">New author object</param>
+        /// <returns>Http status code of operation with response object</returns>
         [HttpPost]
         public async Task<ActionResult<Response>> Add([FromBody] AuthorDto model)
         {
@@ -83,6 +103,12 @@ namespace card_index_Web_API.Controllers
             return Ok(new Response(true, $"Successfully added author with id: {insertId}"));
         }
 
+        /// <summary>
+        /// Changes existing author
+        /// </summary>
+        /// <param name="id">Author id to change</param>
+        /// <param name="model">New author object, must have the same id</param>
+        /// <returns>Http status code of operation with response object</returns>
         [HttpPut("id")]
         public async Task<ActionResult<Response>> Update(int id, [FromBody] AuthorDto model)
         {
@@ -103,6 +129,11 @@ namespace card_index_Web_API.Controllers
             return Ok(new Response(true, $"Successfully updated author with id: {id}"));
         }
 
+        /// <summary>
+        /// Deletes existing author
+        /// </summary>
+        /// <param name="id">Id of author to delete</param>
+        /// <returns>Http status code of operation with response object</returns>
         [HttpDelete("{id}")]
         public async Task<ActionResult<Response>> Delete(int id)
         {

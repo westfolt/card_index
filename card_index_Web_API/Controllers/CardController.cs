@@ -9,17 +9,28 @@ using System.Threading.Tasks;
 
 namespace card_index_Web_API.Controllers
 {
+    /// <summary>
+    /// Processes requests to text cards
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class CardController : ControllerBase
     {
         private readonly ICardService _cardService;
 
+        /// <summary>
+        /// Constructor, inject text card service here
+        /// </summary>
+        /// <param name="cardService">Text card service object</param>
         public CardController(ICardService cardService)
         {
             _cardService = cardService;
         }
 
+        /// <summary>
+        /// Returns all text cards from DB
+        /// </summary>
+        /// <returns>All text cards collection</returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TextCardDto>>> Get()
         {
@@ -40,6 +51,11 @@ namespace card_index_Web_API.Controllers
             return Ok(cards);
         }
 
+        /// <summary>
+        /// Get text card by specified id
+        /// </summary>
+        /// <param name="id">Text card id to search</param>
+        /// <returns>Text card item</returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<TextCardDto>> GetById(int id)
         {
@@ -59,6 +75,11 @@ namespace card_index_Web_API.Controllers
             return Ok(card);
         }
 
+        /// <summary>
+        /// Adds new text card to DB
+        /// </summary>
+        /// <param name="model">New text card object</param>
+        /// <returns>Http status code of operation with response object</returns>
         [HttpPost]
         public async Task<ActionResult<Response>> Add([FromBody] TextCardDto model)
         {
@@ -81,6 +102,12 @@ namespace card_index_Web_API.Controllers
             return Ok(new Response(true, $"Successfully added card with id: {insertId}"));
         }
 
+        /// <summary>
+        /// Changes existing text card
+        /// </summary>
+        /// <param name="id">Text card id to change</param>
+        /// <param name="model">New text card object, must have the same id</param>
+        /// <returns>Http status code of operation with response object</returns>
         [HttpPut("id")]
         public async Task<ActionResult<Response>> Update(int id, [FromBody] TextCardDto model)
         {
@@ -101,6 +128,11 @@ namespace card_index_Web_API.Controllers
             return Ok(new Response(true, $"Successfully updated card with id: {id}"));
         }
 
+        /// <summary>
+        /// Deletes existing text card
+        /// </summary>
+        /// <param name="id">Id of text card to delete</param>
+        /// <returns>Http status code of operation with response object</returns>
         [HttpDelete("{id}")]
         public async Task<ActionResult<Response>> Delete(int id)
         {
