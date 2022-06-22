@@ -56,6 +56,7 @@ namespace card_index_BLL.Services
             try
             {
                 var mapped = _mapper.Map<GenreDto, Genre>(model);
+                mapped.Id = 0;
                 await _unitOfWork.GenreRepository.AddAsync(mapped);
                 await _unitOfWork.SaveChangesAsync();
                 return mapped.Id;

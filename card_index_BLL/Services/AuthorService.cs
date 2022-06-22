@@ -54,6 +54,7 @@ namespace card_index_BLL.Services
             try
             {
                 var mapped = _mapper.Map<AuthorDto, Author>(model);
+                mapped.Id = 0;
                 await _unitOfWork.AuthorRepository.AddAsync(mapped);
                 await _unitOfWork.SaveChangesAsync();
                 return mapped.Id;

@@ -185,6 +185,7 @@ namespace card_index_BLL.Services
             try
             {
                 var mapped = _mapper.Map<UserRoleInfoModel, UserRole>(model);
+                mapped.Id = 0;
                 await _roleManager.CreateAsync(mapped);
                 return mapped.Id;
             }

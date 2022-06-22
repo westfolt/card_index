@@ -56,6 +56,16 @@ namespace card_index_BLL.Services
             try
             {
                 var mapped = _mapper.Map<TextCardDto, TextCard>(model);
+                var genreExists =
+                    (await _unitOfWork.GenreRepository.GetAllAsync()).FirstOrDefault(g => g.Title == model.GenreName);
+                mapped.Id = 0;
+                if (genreExists != null)
+                {
+                    mapped.Genre = genreExists;
+                    mapped.GenreId = genreExists.Id;
+                    genreExists.TextCards.Add(mapped);
+                    _unitOfWork.GenreRepository.Update(genreExists);
+                }
                 await _unitOfWork.TextCardRepository.AddAsync(mapped);
                 await _unitOfWork.SaveChangesAsync();
                 return mapped.Id;
@@ -71,8 +81,19 @@ namespace card_index_BLL.Services
             try
             {
                 var mapped = _mapper.Map<TextCardDto, TextCard>(model);
+                var genreExists =
+                    (await _unitOfWork.GenreRepository.GetAllAsync()).FirstOrDefault(g => g.Title == model.GenreName);
+                if (genreExists != null)
+                {
+                    mapped.Genre = genreExists;
+                    mapped.GenreId = genreExists.Id;
+                    genreExists.TextCards.Add(mapped);
+                    _unitOfWork.GenreRepository.Update(genreExists);
+                }
+
                 _unitOfWork.TextCardRepository.Update(mapped);
                 await _unitOfWork.SaveChangesAsync();
+                
             }
             catch (Exception ex)
             {
@@ -149,6 +170,7 @@ namespace card_index_BLL.Services
             try
             {
                 var mapped = _mapper.Map<RateDetailDto, RateDetail>(model);
+                mapped.Id = 0;
                 await _unitOfWork.RateDetailRepository.AddAsync(mapped);
                 await _unitOfWork.SaveChangesAsync();
                 double newRating = await CalculateCardRatingAsync(model.TextCardId);
