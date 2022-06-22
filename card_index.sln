@@ -9,8 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "card_index_BLL", "card_inde
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "card_index_Web_API", "card_index_Web_API\card_index_Web_API.csproj", "{2CB417C4-D1AE-48BB-A263-CB4F516C5591}"
 EndProject
-Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "ClientApp", "ClientApp\ClientApp.esproj", "{5027DF4A-B25F-4D4E-BC76-C8A3613B4A7B}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,12 +27,6 @@ Global
 		{2CB417C4-D1AE-48BB-A263-CB4F516C5591}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2CB417C4-D1AE-48BB-A263-CB4F516C5591}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2CB417C4-D1AE-48BB-A263-CB4F516C5591}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5027DF4A-B25F-4D4E-BC76-C8A3613B4A7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5027DF4A-B25F-4D4E-BC76-C8A3613B4A7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5027DF4A-B25F-4D4E-BC76-C8A3613B4A7B}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{5027DF4A-B25F-4D4E-BC76-C8A3613B4A7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5027DF4A-B25F-4D4E-BC76-C8A3613B4A7B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5027DF4A-B25F-4D4E-BC76-C8A3613B4A7B}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

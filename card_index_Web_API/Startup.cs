@@ -27,6 +27,7 @@ namespace card_index_Web_API
             var connectionString = Configuration.GetConnectionString("CardIndexConnectionString");
             BllDependencyConfigurator.ConfigureServices(services, connectionString);
             services.AddControllers();
+            services.AddCors();
             services.AddSwaggerGen(options =>
             {
                 options.SwaggerDoc("v1", new OpenApiInfo
@@ -68,6 +69,10 @@ namespace card_index_Web_API
                 endpoints.MapControllers();
             });
 
+            app.UseCors(options =>
+                options.WithOrigins("http://localhost:4200")
+                    .AllowAnyMethod()
+                    .AllowAnyHeader());
             //Initialize database
             //var scope = app.ApplicationServices.CreateScope();
             //var services = scope.ServiceProvider;

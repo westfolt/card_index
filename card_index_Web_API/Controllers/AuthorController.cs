@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace card_index_Web_API.Controllers
 {
@@ -20,6 +21,7 @@ namespace card_index_Web_API.Controllers
             _authorService = authorservice;
         }
 
+        //[Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AuthorDto>>> Get()
         {
