@@ -36,7 +36,6 @@ namespace card_index_BLL.Models.Identity.Models
         /// <summary>
         /// User city
         /// </summary>
-        [Required(ErrorMessage = "Firstname is empty")]
         [RegularExpression(@"[\w,.\-']{3,}", ErrorMessage = "More than 3 characters, no numbers")]
         public string City { get; set; }
         /// <summary>
