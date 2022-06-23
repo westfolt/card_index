@@ -1,3 +1,43 @@
-<div class="menu">
-  <p>menu works!</p>
-</div>
+<nav class="navbar navbar-expand-lg">
+  <div class="container-fluid">
+    <a class="navbar-brand" [routerLink]="['/home']" routerLinkActive="active"
+      [routerLinkActiveOptions]="{exact: true}">Home</a>
+    <button class="navbar-toggler" type="button" (click)="isCollapsed = !isCollapsed"
+      [attr.aria-expanded]="!isCollapsed" aria-controls="collapseNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="collapseNav" [collapse]="!isCollapsed" [isAnimated]="true">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" [routerLink]="['/Card']" routerLinkActive="active"
+            [routerLinkActiveOptions]="{exact: true}">Cards </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [routerLink]="['/authors']" routerLinkActive="active"
+            [routerLinkActiveOptions]="{exact: true}"> Authors </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [routerLink]="['/Genres']" routerLinkActive="active"
+            [routerLinkActiveOptions]="{exact: true}"> Genres </a>
+        </li>
+      </ul>
+      <form class="d-flex">
+        <ul *ngIf="!isUserAuthenticated" class="navbar-nav mr-auto mt-2 mt-lg-0">
+          <li class="nav-item">
+            <a class="nav-link"[routerLink]="['/authentication/login']" routerLinkActive="active"
+              [routerLinkActiveOptions]="{exact: true}">Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link"[routerLink]="['/authentication/register']" routerLinkActive="active"
+              [routerLinkActiveOptions]="{exact: true}">Register</a>
+          </li>
+        </ul>
+        <ul *ngIf='isUserAuthenticated' class="navbar-nav mr-auto mt-2 mt-lg-0">
+          <li class="nav-item">
+            <button class="btn btn-link" style="color: #ffffff80;" (click)="logout()">Logout</button>
+          </li>
+        </ul>
+      </form>
+    </div>
+  </div>
+</nav>

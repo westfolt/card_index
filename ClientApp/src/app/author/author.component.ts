@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthorService } from './../shared/services/author.service';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Author } from './../_interfaces/author.model';
+import { Author } from '../_interfaces/author';
 
 @Component({
   selector: 'app-author',

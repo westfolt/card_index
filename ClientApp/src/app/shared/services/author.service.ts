@@ -1,4 +1,4 @@
-import { Author } from './../../_interfaces/author.model';
+import { Author } from '../../_interfaces/author';
 import { EnvironmentUrlService } from './environment-url.service';
 import {HttpClient} from '@angular/common/http';
 import { Injectable } from '@angular/core';
