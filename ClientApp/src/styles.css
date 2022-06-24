@@ -13,8 +13,24 @@ body{
   height: 100%;
 }
 
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  background-color: #fff;
+  background-clip: border-box;
+  border: 0 solid transparent;
+  border-radius: 0;
+}
 
-.container{
+.user-table tbody tr .category-select {
+  max-width: 150px;
+  border-radius: 20px;
+}
+
+.my-container{
     position: absolute;
     display: flex;
     flex-direction: column;
@@ -65,7 +81,7 @@ margin: 20px;
 }
 
 .input-card{
-  width: 600px;
+  width: 800px;
 }
 
 
