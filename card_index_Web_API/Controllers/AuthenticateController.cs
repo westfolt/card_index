@@ -1,4 +1,5 @@
-﻿using card_index_BLL.Exceptions;
+﻿using System.Collections.Generic;
+using card_index_BLL.Exceptions;
 using card_index_BLL.Interfaces;
 using card_index_BLL.Models.Identity.Infrastructure;
 using card_index_BLL.Models.Identity.Models;
@@ -36,7 +37,7 @@ namespace card_index_Web_API.Controllers
         /// <returns>Http status code of operation with response object</returns>
         [HttpPost]
         [Route("login")]
-        public async Task<ActionResult<Response>> Login([FromBody] UserLoginModel model)
+        public async Task<ActionResult> Login([FromBody] UserLoginModel model)
         {
             if (model == null)
                 return BadRequest(new Response(false, "No model passed"));
@@ -67,10 +68,10 @@ namespace card_index_Web_API.Controllers
         /// <returns>Http status code of operation with response object</returns>
         [HttpPost]
         [Route("register")]
-        public async Task<ActionResult<Response>> Register([FromBody] UserRegistrationModel model)
+        public async Task<ActionResult> Register([FromBody] UserRegistrationModel model)
         {
             if (model == null)
-                return BadRequest(new Response(false, "No model passed"));
+                return Unauthorized(new LoginResponse{Errors = new List<string>{"No model passed"}});
             if (!ModelState.IsValid)
                 return BadRequest(new Response()
                 { Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList() });
@@ -96,6 +97,7 @@ namespace card_index_Web_API.Controllers
         /// </summary>
         /// <returns>Task object</returns>
         [HttpPost]
+        [Route("logout")]
         public async Task LogOut()
         {
             await _authenticationService.LogOut();

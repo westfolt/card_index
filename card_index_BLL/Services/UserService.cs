@@ -36,7 +36,7 @@ namespace card_index_BLL.Services
                 var mapped = new List<UserInfoModel>(takenFromDb.Count);
                 for (int i = 0; i < takenFromDb.Count; i++)
                 {
-                    mapped[i] = _mapper.Map<User, UserInfoModel>(takenFromDb[i]);
+                    mapped.Add(_mapper.Map<User, UserInfoModel>(takenFromDb[i]));
                     mapped[i].UserRoles = await _userManager.GetRolesAsync(takenFromDb[i]);
                 }
 

@@ -6,7 +6,7 @@ namespace card_index_BLL.Interfaces
 {
     public interface IAuthenticationService
     {
-        Task<Response> LoginUser(UserLoginModel model);
+        Task<LoginResponse> LoginUser(UserLoginModel model);
         Task<Response> RegisterUser(UserRegistrationModel model);
         Task LogOut();
     }

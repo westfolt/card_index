@@ -1,8 +1,10 @@
 ﻿using card_index_BLL.Interfaces;
+using card_index_BLL.Security;
 using card_index_BLL.Services;
 using card_index_DAL.Data;
 using card_index_DAL.Entities;
 using card_index_DAL.Infrastructure;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace card_index_BLL.Infrastructure
@@ -13,8 +15,14 @@ namespace card_index_BLL.Infrastructure
         {
             DalDependencyConfigurator.ConfigureServices(serviceCollection, connectionString);
 
-            serviceCollection.AddIdentity<User, UserRole>()
-                .AddEntityFrameworkStores<CardIndexDbContext>();
+            serviceCollection.AddIdentity<User, UserRole>(opt =>
+                {
+                    opt.Password.RequiredLength = 8;
+                    opt.Password.RequireDigit = false;
+                    opt.User.RequireUniqueEmail = true;
+                })
+                .AddEntityFrameworkStores<CardIndexDbContext>()
+                .AddDefaultTokenProviders();
             serviceCollection.AddTransient<IAuthorService, AuthorService>();
             serviceCollection.AddTransient<ICardService, CardService>();
             serviceCollection.AddTransient<IGenreService, GenreService>();
@@ -24,6 +32,7 @@ namespace card_index_BLL.Infrastructure
             {
                 configExpression.AddProfile(new CardIndexMapperProfile());
             });
+            serviceCollection.AddScoped<JwtHandler>();
         }
     }
 }
