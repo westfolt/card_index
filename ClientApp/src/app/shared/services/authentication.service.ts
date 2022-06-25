@@ -28,9 +28,9 @@ export class AuthenticationService {
   }
 
   public logout = (route: string) => {
-    console.log(this.http.post<void>(this.createCompleteRoute(route, this.envUrl.urlAddress), null));
     localStorage.removeItem("token");
     this.sendAuthStateChangeNotification(false);
+    return this.http.post(this.createCompleteRoute(route, this.envUrl.urlAddress), null);
   }
 
   public isUserAuthenticated = (): boolean => {
