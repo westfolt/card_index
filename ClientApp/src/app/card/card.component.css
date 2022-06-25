@@ -1,0 +1,11 @@
+:host{
+  width: 60%;
+  min-width: 600px;
+}
+.card{
+  margin-top: 10px;
+  background-color: #fff;
+  box-shadow: 1px 1px 1px #cabcbc;
+  border-radius: 10px;
+  padding-left: 10px;
+}

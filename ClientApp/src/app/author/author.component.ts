@@ -18,7 +18,7 @@ export class AuthorComponent implements OnInit {
   }
 
   getAuthors = () => {
-    const apiAddress: string = "api/Author";
+    const apiAddress: string = "api/author";
     this.service.getAuthors(apiAddress)
     .subscribe({
       next: (a: Author[]) => this.authors = a,

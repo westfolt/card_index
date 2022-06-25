@@ -1,0 +1,25 @@
+<div class="card">
+  <div class="table-responsive">
+     <table class="table no-wrap user-table mb-0">
+       <thead>
+         <tr>
+           <td>Id</td>
+           <td>Title</td>
+         </tr>
+       </thead>
+           <tbody>
+           <tr *ngFor="let genre of genres">
+             <td>
+               <h5 class="font-medium mb-0">{{genre.id}}</h5>
+             </td>
+             <td>
+               <h5 class="font-medium mb-0">{{genre.title}}</h5>
+             </td>
+             <td><button type="button" id="details" class="btn btn-info">Details</button></td>
+             <td><button type="button" id="update" class="btn btn-info">Update</button></td>
+             <td><button type="button" id="delete" class="btn btn-info">Delete</button></td>
+           </tr>
+           </tbody>
+         </table>
+       </div>
+  </div>
