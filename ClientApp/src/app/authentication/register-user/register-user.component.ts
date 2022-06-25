@@ -3,6 +3,9 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { userRegistrationModel } from 'src/app/_interfaces/identity/userRegistrationModel';
 import { AuthenticationService } from 'src/app/shared/services/authentication.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { PasswordConfirmValidatorService } from 'src/app/shared/validators/password-confirm-validator.service';
+import { response } from 'src/app/_interfaces/infrastructure/response';
 
 
 @Component({
@@ -11,21 +14,23 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
   styleUrls: ['./register-user.component.css']
 })
 export class RegisterUserComponent implements OnInit {
-  registerForm: FormGroup;
-  errorMessage: string = '';
-  showError: boolean;
+  public registerForm: FormGroup;
+  public errorMessage: string = '';
+  public showError: boolean;
 
-  constructor(private authService: AuthenticationService) { }
+  constructor(private authService: AuthenticationService, private router: Router,
+    private passConfirmBalidator: PasswordConfirmValidatorService) { }
 
   ngOnInit(): void {
     this.registerForm = new FormGroup({
       firstName: new FormControl('', [Validators.required]),
-      lasName: new FormControl('', [Validators.required]),
+      lastName: new FormControl('', [Validators.required]),
       email: new FormControl('', [Validators.required, Validators.email]),
       phone: new FormControl(''),
       password: new FormControl('', [Validators.required]),
-      confirm: new FormControl('')
+      confirm: new FormControl('', [Validators.required])
     })
+
   }
 
   public validateControl = (controlName: string)=>{
@@ -37,22 +42,28 @@ export class RegisterUserComponent implements OnInit {
   }
 
   public registerUser = (registerFormValue) =>{
+    this.showError = false;
     const formValues = { ... registerFormValue};
 
 
   const user: userRegistrationModel = {
     firstName: formValues.firstName,
-    lastName: formValues.lasName,
+    lastName: formValues.lastName,
     email: formValues.email,
     phone: formValues.phone,
     password: formValues.password,
     confirmPassword: formValues.confirm
   };
+  this.registerForm.get('confirm').setValidators([Validators.required,
+     this.passConfirmBalidator.validateConfirmPassword(this.registerForm.get('password'))]);
 
-  this.authService.registerUser("api/Authenticate/Register", user)
+  this.authService.registerUser("api/authenticate/register", user)
   .subscribe({
-    next: (_)=>console.log("Successfull registration"),
-    error: (err: HttpErrorResponse) => console.log(err.error.errors)
-  })
-}
+    next: (_)=>this.router.navigate(["/authentication/login"]),
+      error: (err: HttpErrorResponse) => {
+        this.errorMessage = err.message;
+        this.showError = true;
+      }
+    })
+  }
 }

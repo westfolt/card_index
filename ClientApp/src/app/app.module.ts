@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { CollapseModule} from 'ngx-bootstrap/collapse';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AuthenticationModule } from './authentication/authentication.module';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 import { AuthorComponent } from './author/author.component';
@@ -13,6 +13,15 @@ import { HomeComponent } from './home/home.component';
 import { NotFoundComponent } from './error-pages/not-found/not-found.component';
 import { InternalServerComponent } from './error-pages/internal-server/internal-server.component';
 import { ForbiddenComponent } from './error-pages/forbidden/forbidden.component';
+import { ErrorHandlerService } from './shared/services/error-handler.service';
+import { JwtModule } from "@auth0/angular-jwt";
+import { GenreComponent } from './genre/genre.component';
+import { UserComponent } from './user/user.component';
+import { CardComponent } from './card/card.component';
+
+export function tokenGetter(){
+  return localStorage.getItem("token");
+}
 
 @NgModule({
   declarations: [
@@ -22,7 +31,10 @@ import { ForbiddenComponent } from './error-pages/forbidden/forbidden.component'
     HomeComponent,
     NotFoundComponent,
     InternalServerComponent,
-    ForbiddenComponent
+    ForbiddenComponent,
+    GenreComponent,
+    UserComponent,
+    CardComponent
   ],
   imports: [
     BrowserModule,
@@ -30,9 +42,22 @@ import { ForbiddenComponent } from './error-pages/forbidden/forbidden.component'
     BrowserAnimationsModule,
     HttpClientModule,
     AuthenticationModule,
-    CollapseModule.forRoot()
+    CollapseModule.forRoot(),
+    JwtModule.forRoot({
+      config: {
+        tokenGetter: tokenGetter,
+        allowedDomains: ["localhost:5001"],
+        disallowedRoutes: []
+      }
+    })
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ErrorHandlerService,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

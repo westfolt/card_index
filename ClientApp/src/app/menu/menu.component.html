@@ -9,7 +9,7 @@
     <div class="collapse navbar-collapse" id="collapseNav" [collapse]="!isCollapsed" [isAnimated]="true">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link" [routerLink]="['/Card']" routerLinkActive="active"
+          <a class="nav-link" [routerLink]="['/cards']" routerLinkActive="active"
             [routerLinkActiveOptions]="{exact: true}">Cards </a>
         </li>
         <li class="nav-item">
@@ -17,7 +17,7 @@
             [routerLinkActiveOptions]="{exact: true}"> Authors </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" [routerLink]="['/Genres']" routerLinkActive="active"
+          <a class="nav-link" [routerLink]="['/genres']" routerLinkActive="active"
             [routerLinkActiveOptions]="{exact: true}"> Genres </a>
         </li>
       </ul>
@@ -34,7 +34,11 @@
         </ul>
         <ul *ngIf='isUserAuthenticated' class="navbar-nav mr-auto mt-2 mt-lg-0">
           <li class="nav-item">
-            <button class="btn btn-link" style="color: #ffffff80;" (click)="logout()">Logout</button>
+            <a class="nav-link"[routerLink]="['/user/cabinet']" routerLinkActive="active"
+              [routerLinkActiveOptions]="{exact: true}">User Cabinet</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link"[routerLink]="['/home']" (click)="logout()">Logout</a>
           </li>
         </ul>
       </form>
