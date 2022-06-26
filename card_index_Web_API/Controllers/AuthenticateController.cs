@@ -42,7 +42,7 @@ namespace card_index_Web_API.Controllers
             if (model == null)
                 return BadRequest(new Response(false, "No model passed"));
             if (!ModelState.IsValid)
-                return BadRequest(new Response()
+                return Unauthorized(new Response()
                 { Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList() });
 
             try
@@ -53,7 +53,7 @@ namespace card_index_Web_API.Controllers
                     return Ok(result);
                 }
 
-                return StatusCode(StatusCodes.Status403Forbidden, result);
+                return Unauthorized(result);
             }
             catch (CardIndexException ex)
             {

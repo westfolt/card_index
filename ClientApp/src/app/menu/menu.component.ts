@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthenticationService } from '../shared/services/authentication.service';
@@ -10,11 +11,13 @@ import { AuthenticationService } from '../shared/services/authentication.service
 export class MenuComponent implements OnInit {
   isCollapsed: boolean = false;
   isUserAuthenticated: boolean;
+  isUserAdmin: boolean;
 
   constructor(private authService: AuthenticationService, private router: Router) {
     this.authService.authChanged
     .subscribe(res => {
       this.isUserAuthenticated = res;
+      this.isUserAdmin = this.authService.isUserAdmin();
     })
    }
 
@@ -22,12 +25,19 @@ export class MenuComponent implements OnInit {
     this.authService.authChanged
     .subscribe(res => {
       this.isUserAuthenticated = res;
+      this.isUserAdmin = this.authService.isUserAdmin();
     })
   }
 
   public logout = () => {
-    this.authService.logout("/api/Authenticate/logout");
-    this.router.navigate(["/"]);
+    this.authService.logout("api/authenticate/logout")
+    .subscribe({
+      next: () => {
+        this.router.navigate(["/"]);
+      },
+      error: (err: HttpErrorResponse) => {
+        console.log(err.message);
+      }
+    })
   }
-
 }

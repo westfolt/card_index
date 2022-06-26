@@ -70,7 +70,10 @@ namespace card_index_BLL.Services
                 };
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
+                {
+                    await _userManager.AddToRoleAsync(user, "Registered");
                     return new Response(true, $"User {model.FirstName} {model.LastName} successfully added");
+                }
 
                 return new Response { Errors = result.Errors.Select(e => e.Description).ToList() };
             }

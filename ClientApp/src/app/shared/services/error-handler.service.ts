@@ -44,7 +44,6 @@ export class ErrorHandlerService {
   //Forbidden
   private handle403Error = (error: HttpErrorResponse) => {
     this.router.navigate(["/forbidden"], { queryParams: { returnUrl: this.router.url }});
-
     return "Forbidden";
   }
   //ServerError

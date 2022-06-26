@@ -1,1 +1,8 @@
-<p>{{errorText}}</p>
+<h2>{{errorText}}</h2>
+<p>
+  Page is forbidden for you. <button class="btn btn-link" (click)="navigateToLogin()">
+    {{showError ? errorFromRoute : 'Please, authenticate '}}
+  </button>
+  to access this page.
+</p>
+

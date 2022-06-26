@@ -9,6 +9,8 @@ import { ForbiddenComponent } from './error-pages/forbidden/forbidden.component'
 import { CardComponent } from './card/card.component';
 import { GenreComponent } from './genre/genre.component';
 import { UserComponent } from './user/user.component';
+import { AuthGuard } from './shared/guards/auth.guard';
+import { AdminGuard } from './shared/guards/admin.guard';
 
 const routes: Routes = [
   { path: 'home', component: HomeComponent },
@@ -18,7 +20,7 @@ const routes: Routes = [
   {path: 'authors', component: AuthorComponent},
   {path: 'cards', component: CardComponent},
   {path: 'genres', component: GenreComponent},
-  {path: 'users', component: UserComponent},
+  {path: 'users', component: UserComponent, canActivate: [AuthGuard, AdminGuard]},
   {path: 'forbidden', component: ForbiddenComponent},
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: '**', redirectTo: '/404', pathMatch: 'full' }
