@@ -23,9 +23,9 @@
              <td>
               <h5 class="font-medium mb-0">{{card.cardRating}}</h5>
             </td>
-             <td><button type="button" id="details" class="btn btn-info">Details</button></td>
-             <td><button type="button" id="update" class="btn btn-info">Update</button></td>
-             <td><button type="button" id="delete" class="btn btn-info">Delete</button></td>
+             <td><button type="button" id="details" class="btn btn-info" (click)="redirectToDetailsPage(card.id)">Details</button></td>
+             <td><button type="button" id="update" class="btn btn-info" (click)="redirectToUpdatePage(card.id)">Update</button></td>
+             <td><button type="button" id="delete" class="btn btn-info" (click)="redirectToDeletePage(card.id)">Delete</button></td>
            </tr>
            </tbody>
          </table>

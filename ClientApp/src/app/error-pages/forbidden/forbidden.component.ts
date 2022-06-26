@@ -9,7 +9,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 export class ForbiddenComponent implements OnInit {
   errorText: string = 'Access denied';
   errorFromRoute: string = '';
-  showError: boolean = false;
+  showError: boolean;
   private returnUrl: string;
 
   constructor(private router: Router, private route: ActivatedRoute) { }
