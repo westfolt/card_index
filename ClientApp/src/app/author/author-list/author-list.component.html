@@ -1,0 +1,32 @@
+<div class="row">
+  <div class="offset-10 col-md-2 mt-2"> <a [routerLink]="['/author/add']">Create author</a> </div>
+</div>
+<div class="card">
+  <div class="table-responsive">
+     <table class="table no-wrap user-table mb-0">
+       <thead>
+         <tr>
+           <td>Id</td>
+           <td>Firstname</td>
+           <td>LastName</td>
+         </tr>
+       </thead>
+           <tbody>
+           <tr *ngFor="let author of authors">
+             <td>
+               <h5 class="font-medium mb-0">{{author.id}}</h5>
+             </td>
+             <td>
+               <h5 class="font-medium mb-0">{{author.firstName}}</h5>
+             </td>
+             <td>
+               <h5 class="font-medium mb-0">{{author.lastName}}</h5>
+             </td>
+             <td><button type="button" id="details" class="btn btn-info" (click)="redirectToDetailsPage(author.id)">Details</button></td>
+             <td><button type="button" id="update" class="btn btn-info" (click)="redirectToUpdatePage(author.id)">Update</button></td>
+             <td><button type="button" id="delete" class="btn btn-info" (click)="redirectToDeletePage(author.id)">Delete</button></td>
+           </tr>
+           </tbody>
+         </table>
+       </div>
+  </div>

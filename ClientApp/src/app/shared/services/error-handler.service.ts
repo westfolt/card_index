@@ -6,13 +6,17 @@ import { NavigationExtras, Router } from '@angular/router';
 import { query } from '@angular/animations';
 import { response } from 'src/app/_interfaces/infrastructure/response';
 import { authResponse } from 'src/app/_interfaces/infrastructure/authResponse';
+import { ErrorModalComponent } from '../modals/error-modal/error-modal.component';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ErrorHandlerService {
 
-  constructor(private router: Router) { }
+  public errorMessage: string = '';
+
+  constructor(private router: Router, private modal: BsModalService) { }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return next.handle(req)
@@ -39,6 +43,9 @@ export class ErrorHandlerService {
     }
     else if(error.status === 500) {
       return this.handle500Error(error);
+    }
+    else{
+      this.handleOtherError(error);
     }
   }
   //Forbidden
@@ -68,7 +75,6 @@ export class ErrorHandlerService {
       })
 
       return message.slice(0, -4);
-      return message;
     }
     else {
       this.router.navigate(['/authentication/login'], { queryParams: { returnUrl: this.router.url, state: 'You need to be authenticated for this'}});
@@ -78,12 +84,25 @@ export class ErrorHandlerService {
   //BadRequest
   private handle400Error = (error: HttpErrorResponse): string => {
     let res = error.error as response;
-    if(this.router.url === '/authentication/register' || this.router.url === '/authentication/login') {
-      return this.compileErrors(res);
-    }
-    else{
-      return res ? error.error : error.message;
-    }
+    return this.compileErrors(res);
+  }
+  //all other errors
+  private handleOtherError = (error: HttpErrorResponse) => {
+    this.createErrorMessage(error);
+
+  }
+
+  private createErrorMessage = (error: HttpErrorResponse) => {
+    this.errorMessage = error.error ? error.error : error.message;
+
+    const config: ModalOptions = {
+      initialState: {
+        modalHeaderText: 'Error Message',
+        modalBodyText: this.errorMessage,
+        okButtonText: 'OK'
+      }
+    };
+    this.modal.show(ErrorModalComponent, config);
   }
 
   private compileErrors = (res: response): string => {

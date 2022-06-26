@@ -9,19 +9,19 @@
     <div class="collapse navbar-collapse" id="collapseNav" [collapse]="!isCollapsed" [isAnimated]="true">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li *ngIf="isUserAdmin" class="nav-item">
-          <a class="nav-link" [routerLink]="['/users']" routerLinkActive="active"
+          <a class="nav-link" [routerLink]="['/user/list']" routerLinkActive="active"
             [routerLinkActiveOptions]="{exact: true}">Users </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" [routerLink]="['/cards']" routerLinkActive="active"
+          <a class="nav-link" [routerLink]="['/card/list']" routerLinkActive="active"
             [routerLinkActiveOptions]="{exact: true}">Cards </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" [routerLink]="['/authors']" routerLinkActive="active"
+          <a class="nav-link" [routerLink]="['/author/list']" routerLinkActive="active"
             [routerLinkActiveOptions]="{exact: true}"> Authors </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" [routerLink]="['/genres']" routerLinkActive="active"
+          <a class="nav-link" [routerLink]="['/genre/list']" routerLinkActive="active"
             [routerLinkActiveOptions]="{exact: true}"> Genres </a>
         </li>
       </ul>

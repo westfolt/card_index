@@ -1,0 +1,48 @@
+<div class="card">
+  <div class="card-body">
+    <div>
+    <h2 class="card-title">Create new author</h2>
+  </div>
+    <div *ngIf="showError" class="alert alert-danger" role="alert">
+      <span [innerHTML]="errorMessage"></span>
+    </div>
+    <form [formGroup]="authorUpdateForm" autocomplete="off" novalidate (ngSubmit)="updateAuthor(authorUpdateForm.value)">
+      <div class="mb-3 row">
+        <label for="firstName" class="col-form-label col-lg-2">First Name:</label>
+        <div class="col-md-5">
+          <input type="text" id="firstName" formControlName="firstName" class="form-control" />
+        </div>
+        <div class="col-md-5">
+          <em *ngIf="validateControl('firstName') && hasError('firstName', 'required')">First name required</em>
+        </div>
+      </div>
+      <div class="mb-3 row">
+        <label for="lastName" class="col-form-label col-sm-2">Last Name:</label>
+        <div class="col-md-5">
+          <input type="text" id="lastName" formControlName="lastName" class="form-control" />
+        </div>
+        <div class="col-md-5">
+          <em *ngIf="validateControl('lastName') && hasError('lastName', 'required')">Last name required</em>
+        </div>
+      </div>
+      <div class="mb-3 row">
+        <label for="lastName" class="col-form-label col-sm-2">Year of birth:</label>
+        <div class="col-md-5">
+          <input type="number" id="yearOfBirth" formControlName="yearOfBirth" class="form-control" />
+        </div>
+        <div class="col-md-5">
+          <em *ngIf="validateControl('yearOfBirth') && hasError('yearOfBirth', 'pattern')">Year must be 4 digit</em>
+        </div>
+      </div>
+      <br>
+      <div class="mb-3 row">
+        <div class="offset-2 col-md-2">
+            <button type="submit" class="btn btn-info" [disabled]="!authorUpdateForm.valid">Save</button>
+        </div>
+        <div class="col-md-3">
+            <button type="button" class="btn btn-danger" (click)="redirectToList()">Cancel</button>
+        </div>
+    </div>
+    </form>
+  </div>
+</div>

@@ -33,6 +33,7 @@ namespace card_index_Web_API.Controllers
         /// </summary>
         /// <returns>All authors collection</returns>
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<AuthorDto>>> Get()
         {
             IEnumerable<AuthorDto> authors = null;
@@ -109,7 +110,7 @@ namespace card_index_Web_API.Controllers
         /// <param name="id">Author id to change</param>
         /// <param name="model">New author object, must have the same id</param>
         /// <returns>Http status code of operation with response object</returns>
-        [HttpPut("id")]
+        [HttpPut("{id}")]
         public async Task<ActionResult<Response>> Update(int id, [FromBody] AuthorDto model)
         {
             model.Id = id;

@@ -4,23 +4,17 @@ import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { NotFoundComponent } from './error-pages/not-found/not-found.component';
 import { InternalServerComponent } from './error-pages/internal-server/internal-server.component';
-import { AuthorComponent } from './author/author.component';
 import { ForbiddenComponent } from './error-pages/forbidden/forbidden.component';
-import { CardComponent } from './card/card.component';
-import { GenreComponent } from './genre/genre.component';
-import { UserComponent } from './user/user.component';
-import { AuthGuard } from './shared/guards/auth.guard';
-import { AdminGuard } from './shared/guards/admin.guard';
 
 const routes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'authentication', loadChildren: () => import('./authentication/authentication.module').then(m=>m.AuthenticationModule)},
   { path: '404', component: NotFoundComponent },
   { path: '500', component: InternalServerComponent},
-  {path: 'authors', component: AuthorComponent},
-  {path: 'cards', component: CardComponent},
-  {path: 'genres', component: GenreComponent},
-  {path: 'users', component: UserComponent, canActivate: [AuthGuard, AdminGuard]},
+  {path: 'author', loadChildren: () => import ('./author/author.module').then(m=>m.AuthorModule)},
+  {path: 'card', loadChildren: () => import ('./card/card.module').then(m=>m.CardModule)},
+  {path: 'genre', loadChildren: () => import ('./genre/genre.module').then(m=>m.GenreModule)},
+  {path: 'user', loadChildren: () => import ('./user/user.module').then(m=>m.UserModule)},
   {path: 'forbidden', component: ForbiddenComponent},
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: '**', redirectTo: '/404', pathMatch: 'full' }

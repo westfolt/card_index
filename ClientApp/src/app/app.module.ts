@@ -7,7 +7,6 @@ import { AuthenticationModule } from './authentication/authentication.module';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
-import { AuthorComponent } from './author/author.component';
 import { MenuComponent } from './menu/menu.component';
 import { HomeComponent } from './home/home.component';
 import { NotFoundComponent } from './error-pages/not-found/not-found.component';
@@ -15,9 +14,13 @@ import { InternalServerComponent } from './error-pages/internal-server/internal-
 import { ForbiddenComponent } from './error-pages/forbidden/forbidden.component';
 import { ErrorHandlerService } from './shared/services/error-handler.service';
 import { JwtModule } from "@auth0/angular-jwt";
-import { GenreComponent } from './genre/genre.component';
-import { UserComponent } from './user/user.component';
-import { CardComponent } from './card/card.component';
+import { AuthorModule } from './author/author.module';
+import { CardModule } from './card/card.module';
+import { GenreModule } from './genre/genre.module';
+import { UserModule } from './user/user.module';
+import { ErrorModalComponent } from './shared/modals/error-modal/error-modal.component';
+import { SuccessModalComponent } from './shared/modals/success-modal/success-modal.component';
+import { ModalModule } from 'ngx-bootstrap/modal';
 
 export function tokenGetter(){
   return localStorage.getItem("token");
@@ -26,15 +29,13 @@ export function tokenGetter(){
 @NgModule({
   declarations: [
     AppComponent,
-    AuthorComponent,
     MenuComponent,
     HomeComponent,
     NotFoundComponent,
     InternalServerComponent,
     ForbiddenComponent,
-    GenreComponent,
-    UserComponent,
-    CardComponent
+    ErrorModalComponent,
+    SuccessModalComponent
   ],
   imports: [
     BrowserModule,
@@ -42,6 +43,10 @@ export function tokenGetter(){
     BrowserAnimationsModule,
     HttpClientModule,
     AuthenticationModule,
+    AuthorModule,
+    GenreModule,
+    CardModule,
+    UserModule,
     CollapseModule.forRoot(),
     JwtModule.forRoot({
       config: {
@@ -49,7 +54,12 @@ export function tokenGetter(){
         allowedDomains: ["localhost:5001"],
         disallowedRoutes: []
       }
-    })
+    }),
+    ModalModule.forRoot()
+  ],
+  exports:[
+    ErrorModalComponent,
+    SuccessModalComponent
   ],
   providers: [
     {

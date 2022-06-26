@@ -1,0 +1,39 @@
+<div class="card card-body bg-light mb-2 mt-2">
+  <div class="row">
+    <div class="col-md-3">
+      <strong>First name:</strong>
+    </div>
+    <div class="col-md-3">
+      {{authorEntity?.firstName}}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3">
+      <strong>Last name:</strong>
+    </div>
+    <div class="col-md-3">
+      {{authorEntity?.lastName}}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3">
+      <strong>Year of birth:</strong>
+    </div>
+    <div class="col-md-3">
+      {{authorEntity?.yearOfBirth}}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3">
+      <strong>Total text materials posted:</strong>
+    </div>
+    <div class="col-md-3">
+      {{authorEntity?.textCardIds.length}}
+    </div>
+    <br>
+    <div class="row">
+      <div class="offset-md-4 col-md-1">
+        <button type="submit" class="btn btn-info" (click)="redirectToList()">OK</button>
+      </div>
+    </div>
+  </div>
