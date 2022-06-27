@@ -27,6 +27,11 @@ export class AuthorListComponent implements OnInit {
       error: (err: HttpErrorResponse) => console.log(err)
     })}
 
+  public redirectToCreatePage = () => {
+    const redirectUrl: string = `/author/add`;
+    this.router.navigate([redirectUrl]);
+  }
+
   public redirectToDetailsPage = (id) => {
     const redirectUrl: string = `/author/detail/${id}`;
     this.router.navigate([redirectUrl]);

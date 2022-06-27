@@ -20,7 +20,7 @@ export class GenreListComponent implements OnInit {
   }
 
   getGenres = () => {
-    const apiAddress: string = "api/Genre";
+    const apiAddress: string = "api/genre";
     this.service.getGenres(apiAddress)
     .subscribe({
       next: (g: genre[]) => this.genres = g,
@@ -28,18 +28,23 @@ export class GenreListComponent implements OnInit {
     })
   }
 
+  public redirectToCreatePage = () => {
+    const redirectUrl: string = `/genre/add`;
+    this.router.navigate([redirectUrl]);
+  }
+
   public redirectToDetailsPage = (name) => {
     const redirectUrl: string = `/genre/detail/${name}`;
     this.router.navigate([redirectUrl]);
   }
 
-  public redirectToUpdatePage = (id) => {
-    const redirectUrl: string = `/genre/update/${id}`;
+  public redirectToUpdatePage = (name) => {
+    const redirectUrl: string = `/genre/update/${name}`;
     this.router.navigate([redirectUrl]);
   }
 
-  public redirectToDeletePage = (id) => {
-    const redirectUrl: string = `/genre/delete/${id}`;
+  public redirectToDeletePage = (name) => {
+    const redirectUrl: string = `/genre/delete/${name}`;
     this.router.navigate([redirectUrl]);
   }
 }

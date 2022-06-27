@@ -9,3 +9,6 @@
   border-radius: 10px;
   padding-left: 10px;
 }
+btn-success{
+  min-width: 150px;
+}

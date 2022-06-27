@@ -1,0 +1,37 @@
+:host{
+  width: 60%;
+  min-width: 600px;
+}
+
+em{
+  color: #e71515;
+  font-weight: bold;
+}
+
+.ng-invalid.ng-touched{
+  border-color: red;
+}
+
+.card{
+  margin-top: 10px;
+  background-color: #fff;
+  box-shadow: 1px 1px 1px #cabcbc;
+  border-radius: 10px;
+}
+.card-body{
+  margin-left: 40px;
+}
+.btn{
+  min-width: 75px;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}

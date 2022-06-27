@@ -1,1 +1,60 @@
-<p>card-add works!</p>
+<div class="card">
+  <div class="card-body">
+    <div>
+    <h2 class="card-title">Create new card</h2>
+  </div>
+    <div *ngIf="showError" class="alert alert-danger" role="alert">
+      <span [innerHTML]="errorMessage"></span>
+    </div>
+    <form [formGroup]="cardAddForm" autocomplete="off" novalidate (ngSubmit)="createCard(cardAddForm.value)">
+      <div class="mb-3 row">
+        <label for="firstName" class="col-form-label col-lg-2">Card title:</label>
+        <div class="col-md-5">
+          <input type="text" id="title" formControlName="title" class="form-control" />
+        </div>
+        <div class="col-md-5">
+          <em *ngIf="validateControl('title') && hasError('title', 'required')">Card title required</em>
+          <em *ngIf="validateControl('title') && hasError('title', 'pattern')">More than 6 characters, no digits</em>
+        </div>
+      </div>
+      <div class="mb-3 row">
+        <label for="releaseDate" class="col-form-label col-sm-2">Release Date:</label>
+        <div class="col-md-5">
+          <input type="text" id="releaseDate" formControlName="releaseDate" class="form-control" readonly bsDatepicker/>
+        </div>
+        <div class="col-md-5">
+          <em *ngIf="validateControl('releaseDate') && hasError('releaseDate', 'required')">Release date required</em>
+        </div>
+      </div>
+      <div class="mb-3 row">
+        <label for="genreName" class="col-form-label col-sm-2">Genre name:</label>
+        <div class="col-md-5">
+          <mat-form-field>
+            <mat-select placeholder="Select" formControlName="genreName">
+              <mat-option *ngFor="let genre of allGenres" [value]="genre.title">{{genre.title}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="mb-3 row">
+        <label for="authors" class="col-form-label col-sm-2">Authors:</label>
+        <div class="col-md-5">
+          <mat-form-field>
+            <mat-select placeholder="Select" formControlName="authors" multiple>
+              <mat-option *ngFor="let author of allAuthors" [value]="author.id">{{author.firstName + " " + author.lastName}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+      <br>
+      <div class="mb-3 row">
+        <div class="offset-2 col-md-2">
+            <button type="submit" class="btn btn-info" [disabled]="!cardAddForm.valid">Save</button>
+        </div>
+        <div class="col-md-3">
+            <button type="button" class="btn btn-danger" (click)="redirectToList()">Cancel</button>
+        </div>
+    </div>
+    </form>
+  </div>
+</div>

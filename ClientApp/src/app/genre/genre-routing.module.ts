@@ -10,8 +10,8 @@ const routes: Routes = [
   {path: 'list', component: GenreListComponent},
   { path: 'detail/:name', component: GenreDetailComponent},
   { path: 'add', component: GenreAddComponent},
-  {path: 'update/:id', component: GenreUpdateComponent},
-  {path: 'delete/:id', component: GenreDeleteComponent}
+  {path: 'update/:name', component: GenreUpdateComponent},
+  {path: 'delete/:name', component: GenreDeleteComponent}
 ];
 
 @NgModule({

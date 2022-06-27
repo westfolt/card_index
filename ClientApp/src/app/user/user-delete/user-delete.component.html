@@ -1,1 +1,69 @@
-<p>user-delete works!</p>
+<div class="card card-body bg-light mb-2 mt-2">
+  <div class="row">
+    <div class="col-md-3">
+      <strong>First name:</strong>
+    </div>
+    <div class="col-md-3">
+      {{userEntity?.firstName}}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3">
+      <strong>Last name:</strong>
+    </div>
+    <div class="col-md-3">
+      {{userEntity?.lastName}}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3">
+      <strong>Date of birth:</strong>
+    </div>
+    <div class="col-md-3">
+      {{this.formatDate(userEntity?.dateOfBirth)}}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3">
+      <strong>City:</strong>
+    </div>
+    <div class="col-md-3">
+      {{userEntity?.city}}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3">
+      <strong>Email:</strong>
+    </div>
+    <div class="col-md-3">
+      {{userEntity?.email}}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3">
+      <strong>Phone:</strong>
+    </div>
+    <div class="col-md-3">
+      {{userEntity?.phone}}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3">
+      <strong>Role:</strong>
+    </div>
+    <div class="col-md-3">
+      {{userEntity?.userRoles[0]}}
+    </div>
+  </div>
+
+<br>
+<div class="row">
+  <div class="offset-md-3 col-md-1">
+    <button type="submit" class="btn btn-info" (click)="deleteUser()">Delete</button>
+  </div>
+  <div class="offset-md-1 col-md-1">
+    <button type="button" class="btn btn-danger" (click)="redirectToList()">Cancel</button>
+  </div>
+</div>
+
+</div>

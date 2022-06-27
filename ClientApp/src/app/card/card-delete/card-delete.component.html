@@ -1,1 +1,44 @@
-<p>card-delete works!</p>
+<div class="card card-body bg-light mb-2 mt-2">
+  <div class="row">
+    <div class="col-md-3">
+      <strong>Title:</strong>
+    </div>
+    <div class="col-md-3">
+      {{cardEntity?.title}}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3">
+      <strong>Release date:</strong>
+    </div>
+    <div class="col-md-3">
+      {{this.formatDate(cardEntity?.releaseDate)}}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3">
+      <strong>Card rating:</strong>
+    </div>
+    <div class="col-md-3">
+      {{cardEntity?.cardRating}}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3">
+      <strong>Genre:</strong>
+    </div>
+    <div class="col-md-3">
+      {{cardEntity?.genreName}}
+    </div>
+
+<br>
+<div class="row">
+  <div class="offset-md-3 col-md-1">
+    <button type="submit" class="btn btn-info" (click)="deleteCard()">Delete</button>
+  </div>
+  <div class="offset-md-1 col-md-1">
+    <button type="button" class="btn btn-danger" (click)="redirectToList()">Cancel</button>
+  </div>
+</div>
+
+</div>

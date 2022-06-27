@@ -59,7 +59,7 @@ export function tokenGetter(){
   ],
   exports:[
     ErrorModalComponent,
-    SuccessModalComponent
+    SuccessModalComponent,
   ],
   providers: [
     {

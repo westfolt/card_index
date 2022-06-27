@@ -1,1 +1,23 @@
-<p>genre-detail works!</p>
+<div class="card card-body bg-light mb-2 mt-2">
+  <div class="row">
+    <div class="col-md-3">
+      <strong>Genre name:</strong>
+    </div>
+    <div class="col-md-3">
+      {{genreEntity?.title}}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3">
+      <strong>Total text materials of genre:</strong>
+    </div>
+    <div class="col-md-3">
+      {{genreEntity?.textCardIds.length}}
+    </div>
+    <br>
+    <div class="row">
+      <div class="offset-md-4 col-md-1">
+        <button type="submit" class="btn btn-info" (click)="redirectToList()">OK</button>
+      </div>
+    </div>
+  </div>

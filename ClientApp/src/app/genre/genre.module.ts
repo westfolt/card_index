@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule } from '@angular/forms';
 
 import { GenreRoutingModule } from './genre-routing.module';
 import { GenreListComponent } from './genre-list/genre-list.component';
@@ -19,6 +20,7 @@ import { GenreDeleteComponent } from './genre-delete/genre-delete.component';
   ],
   imports: [
     CommonModule,
+    ReactiveFormsModule,
     GenreRoutingModule
   ]
 })

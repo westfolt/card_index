@@ -1,1 +1,31 @@
-<p>genre-update works!</p>
+<div class="card">
+  <div class="card-body">
+    <div>
+    <h2 class="card-title">Create new author</h2>
+  </div>
+    <div *ngIf="showError" class="alert alert-danger" role="alert">
+      <span [innerHTML]="errorMessage"></span>
+    </div>
+    <form [formGroup]="genreUpdateForm" autocomplete="off" novalidate (ngSubmit)="updateGenre(genreUpdateForm.value)">
+      <div class="mb-3 row">
+        <label for="title" class="col-form-label col-lg-2">Genre Name:</label>
+        <div class="col-md-5">
+          <input type="text" id="title" formControlName="title" class="form-control" />
+        </div>
+        <div class="col-md-5">
+          <em *ngIf="validateControl('title') && hasError('title', 'required')">Genre name required</em>
+          <em *ngIf="validateControl('title') && hasError('title', 'pattern')">More than 3 characters, no digits</em>
+        </div>
+      </div>
+      <br>
+      <div class="mb-3 row">
+        <div class="offset-2 col-md-2">
+            <button type="submit" class="btn btn-info" [disabled]="!genreUpdateForm.valid">Save</button>
+        </div>
+        <div class="col-md-3">
+            <button type="button" class="btn btn-danger" (click)="redirectToList()">Cancel</button>
+        </div>
+    </div>
+    </form>
+  </div>
+</div>

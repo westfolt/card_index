@@ -1,3 +1,6 @@
+<div class="row">
+  <div class="offset-10 col-md-2 mt-2"> <button type="button" id="create" class="btn btn-success" (click)="redirectToCreatePage()">Create new</button> </div>
+</div>
 <div class="card">
   <div class="table-responsive">
      <table class="table no-wrap user-table mb-0">
@@ -16,8 +19,8 @@
                <h5 class="font-medium mb-0">{{genre.title}}</h5>
              </td>
              <td><button type="button" id="details" class="btn btn-info" (click)="redirectToDetailsPage(genre.title)">Details</button></td>
-             <td><button type="button" id="update" class="btn btn-info" (click)="redirectToUpdatePage(genre.id)">Update</button></td>
-             <td><button type="button" id="delete" class="btn btn-info" (click)="redirectToDeletePage(genre.id)">Delete</button></td>
+             <td><button type="button" id="update" class="btn btn-info" (click)="redirectToUpdatePage(genre.title)">Update</button></td>
+             <td><button type="button" id="delete" class="btn btn-info" (click)="redirectToDeletePage(genre.title)">Delete</button></td>
            </tr>
            </tbody>
          </table>

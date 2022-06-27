@@ -27,6 +27,11 @@ export class CardListComponent implements OnInit {
     })
   }
 
+  public redirectToCreatePage = () => {
+    const redirectUrl: string = `/card/add`;
+    this.router.navigate([redirectUrl]);
+  }
+
   public redirectToDetailsPage = (id) => {
     const redirectUrl: string = `/card/detail/${id}`;
     this.router.navigate([redirectUrl]);
@@ -40,9 +45,5 @@ export class CardListComponent implements OnInit {
   public redirectToDeletePage = (id) => {
     const redirectUrl: string = `/card/delete/${id}`;
     this.router.navigate([redirectUrl]);
-  }
-
-  formatDate = (release: Date): string => {
-    return (release instanceof Date) ? release.toLocaleDateString(): new Date(release).toLocaleDateString();
   }
 }

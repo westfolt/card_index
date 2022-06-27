@@ -1,3 +1,6 @@
+<div class="row">
+  <div class="offset-10 col-md-2 mt-2"> <button type="button" id="create" class="btn btn-success" (click)="redirectToCreatePage()">Create new</button> </div>
+</div>
 <div class="card">
   <div class="table-responsive">
      <table class="table no-wrap user-table mb-0">
@@ -5,7 +8,7 @@
          <tr>
            <td>Id</td>
            <td>Title</td>
-           <td>Release Date</td>
+           <td>Genre</td>
            <td>Rating</td>
          </tr>
        </thead>
@@ -18,7 +21,7 @@
                <h5 class="font-medium mb-0">{{card.title}}</h5>
              </td>
              <td>
-               <h5 class="font-medium mb-0">{{this.formatDate(card.releaseDate)}}</h5>
+               <h5 class="font-medium mb-0">{{card.genreName}}</h5>
              </td>
              <td>
               <h5 class="font-medium mb-0">{{card.cardRating}}</h5>
