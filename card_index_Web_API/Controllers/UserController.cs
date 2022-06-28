@@ -5,7 +5,11 @@ using card_index_BLL.Models.Identity.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace card_index_Web_API.Controllers
 {
@@ -14,6 +18,7 @@ namespace card_index_Web_API.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Admin")]
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -82,7 +87,7 @@ namespace card_index_Web_API.Controllers
         /// <param name="id">User id to change</param>
         /// <param name="model">New user object, must have the same id</param>
         /// <returns>Http status code of operation with response object</returns>
-        [HttpPut("id")]
+        [HttpPut("{id}")]
         public async Task<ActionResult<Response>> Update(int id, [FromBody] UserInfoModel model)
         {
             model.Id = id;
@@ -120,48 +125,6 @@ namespace card_index_Web_API.Controllers
             }
 
             return Ok(new Response(true, $"Successfully deleted user with id: {id}"));
-        }
-
-        /// <summary>
-        /// Adds new role to user
-        /// </summary>
-        /// <param name="id">User id to modify</param>
-        /// <param name="newRole">Name of role to add</param>
-        /// <returns>Http status code of operation with response object</returns>
-        [HttpPut("addrole/{id}/{newRole}")]
-        public async Task<ActionResult<Response>> AddRole(int id, string newRole)
-        {
-            try
-            {
-                await _userService.AddRoleToUserAsync(id, newRole);
-            }
-            catch (CardIndexException ex)
-            {
-                return BadRequest(new Response(false, ex.Message));
-            }
-
-            return Ok(new Response(true, $"Successfully added role {newRole} to user with id: {id}"));
-        }
-
-        /// <summary>
-        /// Deletes role from user
-        /// </summary>
-        /// <param name="id">User id to modify</param>
-        /// <param name="roleToRemove">Role name to remove</param>
-        /// <returns>Http status code of operation with response object</returns>
-        [HttpPut("removerole/{id}/{roleToRemove}")]
-        public async Task<ActionResult<Response>> RemoveRole(int id, string roleToRemove)
-        {
-            try
-            {
-                await _userService.RemoveRoleFromUserAsync(id, roleToRemove);
-            }
-            catch (CardIndexException ex)
-            {
-                return BadRequest(new Response(false, ex.Message));
-            }
-
-            return Ok(new Response(true, $"Successfully removed role {roleToRemove} from user with id: {id}"));
         }
 
         /// <summary>
@@ -258,6 +221,60 @@ namespace card_index_Web_API.Controllers
             }
 
             return Ok(new Response(true, $"Successfully deleted role {roleName}"));
+        }
+
+        /// <summary>
+        /// Gets currently logged in user for displaying in user cabinet
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("cabinet")]
+        [Authorize(Roles = "Admin,Moderator,Registered")]
+        public async Task<ActionResult<UserInfoModel>> GetUserCabinet()
+        {
+            UserInfoModel user = null;
+            var loggedInUser = this.User.FindFirstValue(ClaimTypes.Name);
+            try
+            {
+                user = await _userService.GetByEmailAsync(loggedInUser);
+            }
+            catch (CardIndexException ex)
+            {
+                return BadRequest(new Response(false, ex.Message));
+            }
+
+            if (user == null)
+                return NotFound();
+
+            return Ok(user);
+        }
+
+        /// <summary>
+        /// Modifies currently logged in user
+        /// </summary>
+        /// <param name="model">User model for update</param>
+        /// <returns></returns>
+        [HttpPut("cabinet/modify")]
+        [Authorize(Roles = "Admin,Moderator,Registered")]
+        public async Task<ActionResult<Response>> ModifyUserCabinet([FromBody] UserInfoModel model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(new Response()
+                    { Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList() });
+
+            try
+            {
+                var loggedInUser = this.User.FindFirstValue(ClaimTypes.Name);
+                var user = await _userService.GetByEmailAsync(loggedInUser);
+                model.UserRoles = user.UserRoles;
+                model.Id = user.Id;
+                await _userService.ModifyUserAsync(model);
+            }
+            catch (CardIndexException ex)
+            {
+                return BadRequest(new Response(false, ex.Message));
+            }
+
+            return Ok(new Response(true, $"Successfully updated user: {model.FirstName} {model.LastName}"));
         }
     }
 }

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -16,6 +17,7 @@ namespace card_index_Web_API.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Admin")]
     public class GenreController : ControllerBase
     {
         private readonly IGenreService _genreService;
@@ -34,6 +36,7 @@ namespace card_index_Web_API.Controllers
         /// </summary>
         /// <returns>All genres collection</returns>
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<GenreDto>>> Get()
         {
             IEnumerable<GenreDto> genres = null;
@@ -59,23 +62,24 @@ namespace card_index_Web_API.Controllers
         /// <param name="name">Genre name to search</param>
         /// <returns>Genre item</returns>
         [HttpGet("{name}")]
+        [AllowAnonymous]
         public async Task<ActionResult<GenreDto>> GetByName(string name)
         {
-            GenreDto card = null;
+            GenreDto genre = null;
 
             try
             {
-                card = await _genreService.GetByNameAsync(name);
+                genre = await _genreService.GetByNameAsync(name);
             }
             catch (CardIndexException ex)
             {
                 BadRequest(ex.Message);
             }
 
-            if (card == null)
+            if (genre == null)
                 return NotFound();
 
-            return Ok(card);
+            return Ok(genre);
         }
 
         /// <summary>
@@ -111,7 +115,7 @@ namespace card_index_Web_API.Controllers
         /// <param name="id">Genre id to change</param>
         /// <param name="model">New genre object, must have the same id</param>
         /// <returns>Http status code of operation with response object</returns>
-        [HttpPut("id")]
+        [HttpPut("{id}")]
         public async Task<ActionResult<Response>> Update(int id, [FromBody] GenreDto model)
         {
             model.Id = id;

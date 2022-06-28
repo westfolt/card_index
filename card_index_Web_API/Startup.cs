@@ -1,5 +1,4 @@
 using card_index_BLL.Infrastructure;
-using card_index_DAL.Context;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -10,8 +9,11 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using card_index_BLL.Models.Data;
+using card_index_DAL.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 namespace card_index_Web_API
@@ -104,8 +106,15 @@ namespace card_index_Web_API
             {
                 endpoints.MapControllers();
             });
-            
-            DataSeed.Seed(app.ApplicationServices);
+
+            using (var scope = app.ApplicationServices.CreateScope())
+            {
+                var ctxt = scope.ServiceProvider.GetService<CardIndexDbContext>();
+                if ( ctxt != null && !ctxt.Database.IsInMemory())
+                {
+                    DataSeed.Seed(scope);
+                }
+            }
         }
     }
 }

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace card_index_Web_API.Controllers
 {
@@ -14,6 +15,7 @@ namespace card_index_Web_API.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Admin,Moderator")]
     public class CardController : ControllerBase
     {
         private readonly ICardService _cardService;
@@ -32,6 +34,7 @@ namespace card_index_Web_API.Controllers
         /// </summary>
         /// <returns>All text cards collection</returns>
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<TextCardDto>>> Get()
         {
             IEnumerable<TextCardDto> cards = null;
@@ -57,6 +60,7 @@ namespace card_index_Web_API.Controllers
         /// <param name="id">Text card id to search</param>
         /// <returns>Text card item</returns>
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<ActionResult<TextCardDto>> GetById(int id)
         {
             TextCardDto card = null;
@@ -108,7 +112,7 @@ namespace card_index_Web_API.Controllers
         /// <param name="id">Text card id to change</param>
         /// <param name="model">New text card object, must have the same id</param>
         /// <returns>Http status code of operation with response object</returns>
-        [HttpPut("id")]
+        [HttpPut("{id}")]
         public async Task<ActionResult<Response>> Update(int id, [FromBody] TextCardDto model)
         {
             model.Id = id;

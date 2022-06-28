@@ -15,6 +15,7 @@ namespace card_index_Web_API.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Admin")]
     public class AuthorController : ControllerBase
     {
         private readonly IAuthorService _authorService;
@@ -33,7 +34,7 @@ namespace card_index_Web_API.Controllers
         /// </summary>
         /// <returns>All authors collection</returns>
         [HttpGet]
-        [Authorize]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<AuthorDto>>> Get()
         {
             IEnumerable<AuthorDto> authors = null;
@@ -59,6 +60,7 @@ namespace card_index_Web_API.Controllers
         /// <param name="id">Author id to search</param>
         /// <returns>Author item</returns>
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<ActionResult<AuthorDto>> GetById(int id)
         {
             AuthorDto author = null;
