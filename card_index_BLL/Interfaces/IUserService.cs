@@ -12,8 +12,6 @@ namespace card_index_BLL.Interfaces
         Task<UserInfoModel> GetByEmailAsync(string email);
         Task<Response> ModifyUserAsync(UserInfoModel model);
         Task<Response> DeleteUserAsync(int id);
-        Task AddRoleToUserAsync(int userId, string newRole);
-        Task RemoveRoleFromUserAsync(int userId, string roleToRemove);
         Task<IEnumerable<UserRoleInfoModel>> GetAllRolesAsync();
         Task<UserRoleInfoModel> GetRoleByNameAsync(string roleName);
         Task<int> AddRoleAsync(UserRoleInfoModel model);

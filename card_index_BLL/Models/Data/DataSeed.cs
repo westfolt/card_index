@@ -1,69 +1,64 @@
-﻿using card_index_DAL.Data;
-using card_index_DAL.Entities;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using card_index_DAL.Data;
+using card_index_DAL.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace card_index_DAL.Context
+namespace card_index_BLL.Models.Data
 {
     public static class DataSeed
     {
-        public static async Task Seed(IServiceProvider serviceProvider)
+        public static async Task Seed(IServiceScope serviceScope)
         {
-            //var context = serviceProvider.GetService<CardIndexDbContext>();
             var roles = new[] { "Admin", "Registered", "Moderator" };
-            using (var scope = serviceProvider.CreateScope())
+
+            var roleManager = serviceScope.ServiceProvider.GetService<RoleManager<UserRole>>();
+            if (!roleManager.Roles.Any())
             {
-                var roleManager = scope.ServiceProvider.GetService<RoleManager<UserRole>>();
-                if (!roleManager.Roles.Any())
+                foreach (var role in roles)
                 {
-                    foreach (var role in roles)
-                    {
-                        await roleManager.CreateAsync(new UserRole { Name = role });
-                    }
+                    await roleManager.CreateAsync(new UserRole { Name = role });
                 }
             }
 
-            using (var scope = serviceProvider.CreateScope())
+            var userManager = serviceScope.ServiceProvider.GetService<UserManager<User>>();
+            var user1 = new User()
             {
-                var userManager = scope.ServiceProvider.GetService<UserManager<User>>();
-                var user1 = new User()
-                {
-                    FirstName = "Oleksandr",
-                    LastName = "Shyman",
-                    Email = "mymail@gmail.com",
-                    UserName = "mymail@gmail.com",
-                    DateOfBirth = new DateTime(1988, 12, 12)
-                };
-                var user2 = new User()
-                {
-                    FirstName = "Aleksey",
-                    LastName = "Grishkov",
-                    Email = "newmail@gmail.com",
-                    UserName = "newmail@gmail.com",
-                    DateOfBirth = new DateTime(2001, 01, 12)
-                };
-                var user3 = new User()
-                {
-                    FirstName = "Taras",
-                    LastName = "Bobkin",
-                    Email = "taras@gmail.com",
-                    UserName = "taras@gmail.com",
-                    DateOfBirth = new DateTime(1976, 01, 12)
-                };
+                FirstName = "Oleksandr",
+                LastName = "Shyman",
+                Email = "mymail@gmail.com",
+                UserName = "mymail@gmail.com",
+                DateOfBirth = new DateTime(1988, 12, 12)
+            };
+            var user2 = new User()
+            {
+                FirstName = "Aleksey",
+                LastName = "Grishkov",
+                Email = "newmail@gmail.com",
+                UserName = "newmail@gmail.com",
+                DateOfBirth = new DateTime(2001, 01, 12)
+            };
+            var user3 = new User()
+            {
+                FirstName = "Taras",
+                LastName = "Bobkin",
+                Email = "taras@gmail.com",
+                UserName = "taras@gmail.com",
+                DateOfBirth = new DateTime(1976, 01, 12)
+            };
 
-                if (!userManager.Users.Any())
-                {
-                    await userManager.CreateAsync(user1, "_Aq12345678");
-                    await userManager.CreateAsync(user2, "_Aq12345678");
-                    await userManager.CreateAsync(user3, "_Aq12345678");
-                    await userManager.AddToRoleAsync(user1, "Admin");
-                    await userManager.AddToRoleAsync(user2, "Registered");
-                    await userManager.AddToRoleAsync(user3, "Moderator");
-                }
+            if (!userManager.Users.Any())
+            {
+                await userManager.CreateAsync(user1, "_Aq12345678");
+                await userManager.CreateAsync(user2, "_Aq12345678");
+                await userManager.CreateAsync(user3, "_Aq12345678");
+                await userManager.AddToRoleAsync(user1, "Admin");
+                await userManager.AddToRoleAsync(user2, "Registered");
+                await userManager.AddToRoleAsync(user3, "Moderator");
             }
 
             var author1 = new Author { FirstName = "James", LastName = "Benton", YearOfBirth = 1956 };
@@ -114,20 +109,17 @@ namespace card_index_DAL.Context
                 Title = "Mynews1"
             };
 
-            using (var scope = serviceProvider.CreateScope())
-            {
-                var context = scope.ServiceProvider.GetService<CardIndexDbContext>();
+            var context = serviceScope.ServiceProvider.GetService<CardIndexDbContext>();
 
-                if (!context.Authors.Any())
-                {
-                    context.Authors.AddRange(author1, author2, author3, author4, author5);
-                    await context.SaveChangesAsync();
-                }
-                if (!context.TextCards.Any())
-                {
-                    context.TextCards.AddRange(card1, card2, card3, card4, card5);
-                    await context.SaveChangesAsync();
-                }
+            if (!context.Authors.Any())
+            {
+                context.Authors.AddRange(author1, author2, author3, author4, author5);
+                await context.SaveChangesAsync();
+            }
+            if (!context.TextCards.Any())
+            {
+                context.TextCards.AddRange(card1, card2, card3, card4, card5);
+                await context.SaveChangesAsync();
             }
         }
     }
