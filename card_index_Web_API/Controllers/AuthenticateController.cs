@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using card_index_BLL.Exceptions;
+﻿using card_index_BLL.Exceptions;
 using card_index_BLL.Interfaces;
 using card_index_BLL.Models.Identity.Infrastructure;
 using card_index_BLL.Models.Identity.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -71,7 +70,7 @@ namespace card_index_Web_API.Controllers
         public async Task<ActionResult> Register([FromBody] UserRegistrationModel model)
         {
             if (model == null)
-                return Unauthorized(new LoginResponse{Errors = new List<string>{"No model passed"}});
+                return Unauthorized(new LoginResponse { Errors = new List<string> { "No model passed" } });
             if (!ModelState.IsValid)
                 return BadRequest(new Response()
                 { Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList() });

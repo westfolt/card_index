@@ -2,16 +2,13 @@
 using card_index_BLL.Interfaces;
 using card_index_BLL.Models.Identity.Infrastructure;
 using card_index_BLL.Models.Identity.Models;
+using card_index_BLL.Security;
 using card_index_DAL.Entities;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
-using card_index_BLL.Security;
-using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace card_index_BLL.Services
 {

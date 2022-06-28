@@ -1,15 +1,13 @@
-﻿using System;
+﻿using card_index_BLL.Models.Dto;
+using card_index_BLL.Models.Identity.Models;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
-using card_index_BLL.Models.Dto;
-using card_index_BLL.Models.Identity.Models;
-using card_index_DAL.Entities;
 
 namespace CardIndexTests.Helpers
 {
-    internal class AuthorComparer: IEqualityComparer<AuthorDto>
+    internal class AuthorComparer : IEqualityComparer<AuthorDto>
     {
         public bool Equals([AllowNull] AuthorDto x, [AllowNull] AuthorDto y)
         {

@@ -1,19 +1,17 @@
-﻿using System;
+﻿using card_index_BLL.Models.Dto;
+using CardIndexTests.Helpers;
+using CardIndexTests.WebApiTests.Helpers;
+using Microsoft.AspNetCore.Authorization.Policy;
+using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
+using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using card_index_BLL.Models.Dto;
-using CardIndexTests.Helpers;
-using CardIndexTests.WebApiTests.Helpers;
-using Microsoft.AspNetCore.Authorization.Policy;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.JSInterop;
-using Newtonsoft.Json;
-using NUnit.Framework;
 
 namespace CardIndexTests.WebApiTests
 {
@@ -75,7 +73,7 @@ namespace CardIndexTests.WebApiTests
             var stringResponse = await httpResponse.Content.ReadAsStringAsync();
             var actual = JsonConvert.DeserializeObject<AuthorDto>(stringResponse);
 
-            Assert.That(actual, Is.EqualTo(expected[id-1]).Using(new AuthorComparer()));
+            Assert.That(actual, Is.EqualTo(expected[id - 1]).Using(new AuthorComparer()));
         }
     }
 
@@ -108,7 +106,11 @@ namespace CardIndexTests.WebApiTests
         {
             var author6 = new AuthorDto
             {
-                Id = 6, FirstName = "Author6", LastName = "Author6", YearOfBirth = 2001, TextCardIds = new List<int>()
+                Id = 6,
+                FirstName = "Author6",
+                LastName = "Author6",
+                YearOfBirth = 2001,
+                TextCardIds = new List<int>()
             };
             var expectedLength = AuthorDtos.Count() + 1;
 
@@ -160,7 +162,7 @@ namespace CardIndexTests.WebApiTests
             getAllResponse.EnsureSuccessStatusCode();
             var stringResponse = await getAllResponse.Content.ReadAsStringAsync();
             var actual = JsonConvert.DeserializeObject<IEnumerable<AuthorDto>>(stringResponse);
-            
+
             Assert.That(actual.Count(), Is.EqualTo(newLength));
         }
     }

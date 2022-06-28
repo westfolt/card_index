@@ -16,14 +16,12 @@ namespace card_index_BLL.Services
     public class UserService : IUserService
     {
         private readonly IMapper _mapper;
-        //private readonly IUnitOfWork _unitOfWork;
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<UserRole> _roleManager;
 
-        public UserService(IMapper mapper, /*IUnitOfWork unitOfWork,*/ UserManager<User> userManager, RoleManager<UserRole> roleManager)
+        public UserService(IMapper mapper, UserManager<User> userManager, RoleManager<UserRole> roleManager)
         {
             _mapper = mapper;
-            //_unitOfWork = unitOfWork;
             _userManager = userManager;
             _roleManager = roleManager;
         }
@@ -83,8 +81,29 @@ namespace card_index_BLL.Services
         {
             try
             {
-                var mapped = _mapper.Map<UserInfoModel, User>(model);
-                var result = await _userManager.UpdateAsync(mapped);
+                var takenFromDb = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == model.Id);
+                var userExistingRoles = await _userManager.GetRolesAsync(takenFromDb);
+                var givenRole = model.UserRoles.ToList()[0];
+
+                //deleting old roles and changing to new
+                if (!userExistingRoles.Contains(givenRole))
+                {
+                    await _userManager.RemoveFromRolesAsync(takenFromDb, userExistingRoles);
+                    await _userManager.AddToRoleAsync(takenFromDb, givenRole);
+                }
+
+                takenFromDb.FirstName = model.FirstName;
+                takenFromDb.LastName = model.LastName;
+                takenFromDb.DateOfBirth = model.DateOfBirth;
+                takenFromDb.City = model.City;
+                takenFromDb.Email = model.Email;
+                takenFromDb.UserName = model.Email;
+                takenFromDb.NormalizedEmail = model.Email.ToUpperInvariant();
+                takenFromDb.NormalizedUserName = model.Email.ToUpperInvariant();
+                takenFromDb.PhoneNumber = model.Phone;
+
+                var result = await _userManager.UpdateAsync(takenFromDb);
+
                 if (result.Succeeded)
                     return new Response(true, $"User {model.FirstName} {model.LastName} successfully modified");
 
@@ -115,41 +134,6 @@ namespace card_index_BLL.Services
             catch (Exception ex)
             {
                 throw new CardIndexException($"Cannot delete user with id: {id}", ex);
-            }
-        }
-
-        public async Task AddRoleToUserAsync(int userId, string newRole)
-        {
-            try
-            {
-                var takenFromDb = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == userId);
-                var roleExists = await _roleManager.Roles.AnyAsync(r => r.Name == newRole);
-                if (takenFromDb != null && roleExists)
-                {
-                    await _userManager.AddToRoleAsync(takenFromDb, newRole);
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new CardIndexException("Cannot get user or role data from db", ex);
-            }
-        }
-
-        public async Task RemoveRoleFromUserAsync(int userId, string roleToRemove)
-        {
-            try
-            {
-                var takenFromDb = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == userId);
-                if (takenFromDb != null)
-                {
-                    var roleExists = (await _userManager.GetRolesAsync(takenFromDb)).Contains(roleToRemove);
-                    if (roleExists)
-                        await _userManager.RemoveFromRoleAsync(takenFromDb, roleToRemove);
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new CardIndexException("Cannot get user or role data from db", ex);
             }
         }
 

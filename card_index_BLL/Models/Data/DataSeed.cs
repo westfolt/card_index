@@ -1,12 +1,11 @@
-﻿using System;
+﻿using card_index_DAL.Data;
+using card_index_DAL.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using card_index_DAL.Data;
-using card_index_DAL.Entities;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace card_index_BLL.Models.Data
 {

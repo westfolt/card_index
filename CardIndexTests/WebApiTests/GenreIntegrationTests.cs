@@ -1,30 +1,17 @@
-﻿using System;
+﻿using card_index_BLL.Models.Dto;
+using CardIndexTests.Helpers;
+using CardIndexTests.WebApiTests.Helpers;
+using Microsoft.AspNetCore.Authorization.Policy;
+using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
+using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using card_index_BLL.Interfaces;
-using card_index_BLL.Models.Dto;
-using card_index_DAL.Data;
-using card_index_DAL.Entities;
-using card_index_Web_API.Controllers;
-using CardIndexTests.Helpers;
-using CardIndexTests.WebApiTests.Helpers;
-using FluentAssertions;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authorization.Policy;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.DependencyInjection;
-using Moq;
-using Newtonsoft.Json;
-using NUnit.Framework;
 
 namespace CardIndexTests.WebApiTests
 {
@@ -112,15 +99,15 @@ namespace CardIndexTests.WebApiTests
         {
             _factory.Dispose();
             _client.Dispose();
-            
+
         }
 
         [Test]
         public async Task GenreController_AddNew_Success()
         {
-            var genre6 = new GenreDto { Id=6, Title = "Genre6", TextCardIds = new List<int>() };
+            var genre6 = new GenreDto { Id = 6, Title = "Genre6", TextCardIds = new List<int>() };
             var expectedLength = GenreDtos.Count() + 1;
-           
+
             var content = new StringContent(JsonConvert.SerializeObject(genre6), Encoding.UTF8, "application/json");
             var httpResponse = await _client.PostAsync($"{RequestUri}", content);
             httpResponse.EnsureSuccessStatusCode();

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using card_index_DAL.Data;
+﻿using card_index_DAL.Data;
 using card_index_DAL.Entities;
 using card_index_Web_API;
 using CardIndexTests.Helpers;
@@ -11,10 +7,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Linq;
 
 namespace CardIndexTests.WebApiTests.Helpers
 {
-    public class CardIndexWebAppFactory:WebApplicationFactory<Startup>
+    public class CardIndexWebAppFactory : WebApplicationFactory<Startup>
     {
         private readonly bool _seedThis;
 

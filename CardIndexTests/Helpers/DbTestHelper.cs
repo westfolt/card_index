@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using AutoMapper;
+﻿using AutoMapper;
 using card_index_BLL.Infrastructure;
 using card_index_DAL.Data;
 using card_index_DAL.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace CardIndexTests.Helpers
 {

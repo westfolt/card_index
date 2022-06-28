@@ -93,7 +93,7 @@ namespace card_index_BLL.Services
 
                 _unitOfWork.TextCardRepository.Update(mapped);
                 await _unitOfWork.SaveChangesAsync();
-                
+
             }
             catch (Exception ex)
             {

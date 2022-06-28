@@ -2,14 +2,12 @@
 using card_index_BLL.Interfaces;
 using card_index_BLL.Models.Identity.Infrastructure;
 using card_index_BLL.Models.Identity.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace card_index_Web_API.Controllers
 {
@@ -259,7 +257,7 @@ namespace card_index_Web_API.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest(new Response()
-                    { Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList() });
+                { Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList() });
 
             try
             {

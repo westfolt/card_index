@@ -1,13 +1,13 @@
-﻿using System;
+﻿using card_index_DAL.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using card_index_DAL.Entities;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 
 namespace card_index_BLL.Security
 {

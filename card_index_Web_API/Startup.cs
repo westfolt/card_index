@@ -1,20 +1,20 @@
 using card_index_BLL.Infrastructure;
+using card_index_BLL.Models.Data;
+using card_index_DAL.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
 using System.IO;
 using System.Reflection;
 using System.Text;
-using card_index_BLL.Models.Data;
-using card_index_DAL.Data;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 
 namespace card_index_Web_API
 {
@@ -48,7 +48,7 @@ namespace card_index_Web_API
             });
             services.AddCors(options =>
             {
-                options.AddPolicy("CardCorsPolicy", builder=>
+                options.AddPolicy("CardCorsPolicy", builder =>
                     builder.AllowAnyOrigin()
                         .AllowAnyMethod()
                         .AllowAnyHeader());
@@ -110,7 +110,7 @@ namespace card_index_Web_API
             using (var scope = app.ApplicationServices.CreateScope())
             {
                 var ctxt = scope.ServiceProvider.GetService<CardIndexDbContext>();
-                if ( ctxt != null && !ctxt.Database.IsInMemory())
+                if (ctxt != null && !ctxt.Database.IsInMemory())
                 {
                     DataSeed.Seed(scope);
                 }

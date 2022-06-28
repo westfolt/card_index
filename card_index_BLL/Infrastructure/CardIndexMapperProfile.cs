@@ -35,8 +35,8 @@ namespace card_index_BLL.Infrastructure
                 .ReverseMap();
 
             CreateMap<User, UserInfoModel>()
-                .ForMember(dto=>dto.Phone,
-                    u=>u.MapFrom(x=>x.PhoneNumber))
+                .ForMember(dto => dto.Phone,
+                    u => u.MapFrom(x => x.PhoneNumber))
                 .ReverseMap();
 
             CreateMap<UserRole, UserRoleInfoModel>()

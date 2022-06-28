@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using card_index_BLL.Validation;
 
 namespace card_index_BLL.Models.Dto
 {
