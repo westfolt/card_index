@@ -16,7 +16,7 @@ namespace card_index_BLL.Models.Dto
         /// Genre name, required, should have 3+ characters, cannot contain numbers
         /// </summary>
         [Required(ErrorMessage = "Title is empty")]
-        [RegularExpression(@"[\w,.\-']{3,}", ErrorMessage = "More than 3 characters, no numbers")]
+        [RegularExpression(@"[\w,.\-']{3,}", ErrorMessage = "More than 3 characters, alphanumeric")]
         public string Title { get; set; }
         /// <summary>
         /// Collection of text card ids

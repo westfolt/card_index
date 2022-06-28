@@ -47,7 +47,7 @@ namespace card_index_BLL.Models.Identity.Models
         /// <summary>
         /// User phone number in format +X(XXX)XXXXXXX
         /// </summary>
-        [RegularExpression(@"\+[\d]{1, 3}\([\d]{3}\)[\d] { 7}",
+        [RegularExpression(@"\+[\d]{1,3}\([\d]{3}\)[\d]{7}",
             ErrorMessage = "Phone should be +X(XXX)XXXXXXX")]
         public string Phone { get; set; }
         /// <summary>

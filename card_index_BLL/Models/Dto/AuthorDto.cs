@@ -17,13 +17,13 @@ namespace card_index_BLL.Models.Dto
         /// Author first name, required, should have 3+ characters, cannot contain numbers
         /// </summary>
         [Required(ErrorMessage = "Firstname is empty")]
-        [RegularExpression(@"[\w,.\-']{3,}", ErrorMessage = "More than 3 characters, no numbers")]
+        [RegularExpression(@"[\w,.\-']{3,}", ErrorMessage = "More than 3 characters, alphanumeric")]
         public string FirstName { get; set; }
         /// <summary>
         /// Author last name, required, should have 4+ characters, cannot contain numbers
         /// </summary>
         [Required(ErrorMessage = "Lastname is empty")]
-        [RegularExpression(@"[\w,.\-']{4,}", ErrorMessage = "More than 4 characters, no numbers")]
+        [RegularExpression(@"[\w,.\-']{4,}", ErrorMessage = "More than 4 characters, alphanumeric")]
         public string LastName { get; set; }
         /// <summary>
         /// Author birth year, values from 1900 to 2004 allowed
