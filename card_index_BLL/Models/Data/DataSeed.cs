@@ -9,8 +9,16 @@ using System.Threading.Tasks;
 
 namespace card_index_BLL.Models.Data
 {
+    /// <summary>
+    /// Performs initial Db Initialization
+    /// </summary>
     public static class DataSeed
     {
+        /// <summary>
+        /// Initializes DB
+        /// </summary>
+        /// <param name="serviceScope">ServiceScope for service extraction</param>
+        /// <returns>Async operation</returns>
         public static async Task Seed(IServiceScope serviceScope)
         {
             var roles = new[] { "Admin", "Registered", "Moderator" };

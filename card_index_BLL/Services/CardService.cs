@@ -12,17 +12,30 @@ using System.Threading.Tasks;
 
 namespace card_index_BLL.Services
 {
+    /// <summary>
+    /// Implements interface between webapi and repository
+    /// </summary>
     public class CardService : ICardService
     {
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
 
+        /// <summary>
+        /// Takes mapper for mapping entities and object to work wid DAL
+        /// </summary>
+        /// <param name="mapper">Maps cards from DB to Dto</param>
+        /// <param name="unitOfWork">Object for work with DAL</param>
         public CardService(IMapper mapper, IUnitOfWork unitOfWork)
         {
             _mapper = mapper;
             _unitOfWork = unitOfWork;
         }
 
+        /// <summary>
+        /// Gets all cards from db
+        /// </summary>
+        /// <returns>Cards list</returns>
+        /// <exception cref="CardIndexException">Thrown if problems during DB operations</exception>
         public async Task<IEnumerable<TextCardDto>> GetAllAsync()
         {
             try
@@ -37,6 +50,12 @@ namespace card_index_BLL.Services
             }
         }
 
+        /// <summary>
+        /// Gets card with given id from db
+        /// </summary>
+        /// <param name="id">Id of card to search</param>
+        /// <returns>Card with given id, if exists</returns>
+        /// <exception cref="CardIndexException">Thrown if problems during DB operations</exception>
         public async Task<TextCardDto> GetByIdAsync(int id)
         {
             try
@@ -51,6 +70,12 @@ namespace card_index_BLL.Services
             }
         }
 
+        /// <summary>
+        /// Adds new card to db
+        /// </summary>
+        /// <param name="model">Card model to add</param>
+        /// <returns>Id of added card</returns>
+        /// <exception cref="CardIndexException">Thrown if problems during DB operations</exception>
         public async Task<int> AddAsync(TextCardDto model)
         {
             try
@@ -76,6 +101,12 @@ namespace card_index_BLL.Services
             }
         }
 
+        /// <summary>
+        /// Updates existing card
+        /// </summary>
+        /// <param name="model">Card model with values for update</param>
+        /// <returns>Async operation</returns>
+        /// <exception cref="CardIndexException">Thrown if problems during DB operations</exception>
         public async Task UpdateAsync(TextCardDto model)
         {
             try
@@ -101,6 +132,12 @@ namespace card_index_BLL.Services
             }
         }
 
+        /// <summary>
+        /// Deletes existing card from DB
+        /// </summary>
+        /// <param name="modelId">Card id to delete</param>
+        /// <returns>Async operation</returns>
+        /// <exception cref="CardIndexException">Thrown if problems during DB operations</exception>
         public async Task DeleteAsync(int modelId)
         {
             try
@@ -114,6 +151,12 @@ namespace card_index_BLL.Services
             }
         }
 
+        /// <summary>
+        /// Calculates card rating, based on rateDetails array
+        /// </summary>
+        /// <param name="cardId">Id of card to calculate</param>
+        /// <returns>New rate value</returns>
+        /// <exception cref="CardIndexException">Thrown if problems during DB operations</exception>
         public async Task<double> CalculateCardRatingAsync(int cardId)
         {
             try
@@ -127,6 +170,13 @@ namespace card_index_BLL.Services
             }
         }
 
+        /// <summary>
+        /// Gets cards for given date range
+        /// </summary>
+        /// <param name="startDate">start date of range</param>
+        /// <param name="endDate">end date of range</param>
+        /// <returns>cards list, corresponding to given period</returns>
+        /// <exception cref="CardIndexException">Thrown if problems during DB operations</exception>
         public async Task<IEnumerable<TextCardDto>> GetCardsForPeriodAsync(DateTime startDate, DateTime endDate)
         {
             try
@@ -141,6 +191,12 @@ namespace card_index_BLL.Services
             }
         }
 
+        /// <summary>
+        /// Gets cards, matching given filter
+        /// </summary>
+        /// <param name="filter">Filter model for card search</param>
+        /// <returns>Cards list, matching desired parameters</returns>
+        /// <exception cref="CardIndexException">Thrown if problems during DB operations</exception>
         public async Task<IEnumerable<TextCardDto>> GetCardsByFilterAsync(FilterModel filter)
         {
             if (filter == null)
@@ -160,6 +216,12 @@ namespace card_index_BLL.Services
             return mapped;
         }
 
+        /// <summary>
+        /// Adds new rating to rate details and recalculates rate value for card
+        /// </summary>
+        /// <param name="model">new rate detail, connecting card and user</param>
+        /// <returns>Async operation</returns>
+        /// <exception cref="CardIndexException">Thrown if problems during DB operations</exception>
         public async Task AddRatingToCard(RateDetailDto model)
         {
             var alreadyExists = (await _unitOfWork.RateDetailRepository.GetAllAsync())
@@ -184,6 +246,13 @@ namespace card_index_BLL.Services
             }
         }
 
+        /// <summary>
+        /// Deletes rating given by user and recalculates card rate
+        /// </summary>
+        /// <param name="cardId">card id to delete user rating</param>
+        /// <param name="userId">user id, who gave rating</param>
+        /// <returns>Async operation</returns>
+        /// <exception cref="CardIndexException">Thrown if problems during DB operations</exception>
         public async Task DeleteRatingFromCard(int cardId, int userId)
         {
             var alreadyExists = (await _unitOfWork.RateDetailRepository.GetAllAsync())

@@ -6,8 +6,14 @@ using System.Linq;
 
 namespace card_index_BLL.Infrastructure
 {
+    /// <summary>
+    /// Automapper profile
+    /// </summary>
     public class CardIndexMapperProfile : Profile
     {
+        /// <summary>
+        /// Mappes DB instances to Dto of BLL
+        /// </summary>
         public CardIndexMapperProfile()
         {
             CreateMap<Author, AuthorDto>()

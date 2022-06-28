@@ -11,16 +11,29 @@ using System.Threading.Tasks;
 
 namespace card_index_BLL.Services
 {
+    /// <summary>
+    /// Implements interface between webapi and repository
+    /// </summary>
     public class AuthorService : IAuthorService
     {
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
 
+        /// <summary>
+        /// Creates service
+        /// </summary>
+        /// <param name="mapper">Object for entities mapping</param>
+        /// <param name="unitOfWork">Object to work with DAL</param>
         public AuthorService(IMapper mapper, IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
+        /// <summary>
+        /// Gets all authors from DB and maps to Dto
+        /// </summary>
+        /// <returns>Author Dto list</returns>
+        /// <exception cref="CardIndexException">Thrown if problems during DB operations</exception>
         public async Task<IEnumerable<AuthorDto>> GetAllAsync()
         {
             try
@@ -35,6 +48,12 @@ namespace card_index_BLL.Services
             }
         }
 
+        /// <summary>
+        /// Gets Author with given id if exists
+        /// </summary>
+        /// <param name="id">Id of user to search</param>
+        /// <returns>Author mapped to Dto</returns>
+        /// <exception cref="CardIndexException">Thrown if problems during DB operations</exception>
         public async Task<AuthorDto> GetByIdAsync(int id)
         {
             try
@@ -49,6 +68,12 @@ namespace card_index_BLL.Services
             }
         }
 
+        /// <summary>
+        /// Adds new author to db
+        /// </summary>
+        /// <param name="model">Author model to add</param>
+        /// <returns>id of added author</returns>
+        /// <exception cref="CardIndexException">Thrown if problems during DB operations</exception>
         public async Task<int> AddAsync(AuthorDto model)
         {
             try
@@ -65,6 +90,12 @@ namespace card_index_BLL.Services
             }
         }
 
+        /// <summary>
+        /// Updates existing author
+        /// </summary>
+        /// <param name="model">Author Dto with new info</param>
+        /// <returns>Async operation</returns>
+        /// <exception cref="CardIndexException">Thrown if problems during DB operations</exception>
         public async Task UpdateAsync(AuthorDto model)
         {
             try
@@ -79,6 +110,12 @@ namespace card_index_BLL.Services
             }
         }
 
+        /// <summary>
+        /// Deletes author with given id from db
+        /// </summary>
+        /// <param name="modelId">Id of author to delete</param>
+        /// <returns>Async operation</returns>
+        /// <exception cref="CardIndexException">Thrown if problems during DB operations</exception>
         public async Task DeleteAsync(int modelId)
         {
             try
@@ -92,6 +129,13 @@ namespace card_index_BLL.Services
             }
         }
 
+        /// <summary>
+        /// Gets authors for given time period
+        /// </summary>
+        /// <param name="startYear">Start year to search</param>
+        /// <param name="endYear">End year to search</param>
+        /// <returns>Authors list matching given years range</returns>
+        /// <exception cref="CardIndexException">Thrown if problems during DB operations</exception>
         public async Task<IEnumerable<AuthorDto>> GetAuthorsForPeriodAsync(int startYear, int endYear)
         {
             try

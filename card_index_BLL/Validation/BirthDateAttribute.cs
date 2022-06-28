@@ -3,6 +3,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace card_index_BLL.Validation
 {
+    /// <summary>
+    /// Custom age validation attribute
+    /// </summary>
     public class BirthDateAttribute : ValidationAttribute
     {
         private readonly DateTime _startingDate;
@@ -10,6 +13,11 @@ namespace card_index_BLL.Validation
         private readonly int _minYears;
         private readonly int _maxYears;
 
+        /// <summary>
+        /// Takes age range as parameters
+        /// </summary>
+        /// <param name="minYearsAllowed">Min allowed age</param>
+        /// <param name="maxYearsAllowed">Max allowed age</param>
         public BirthDateAttribute(int minYearsAllowed, int maxYearsAllowed)
         {
             _startingDate = DateTime.Today.AddYears(-1 * maxYearsAllowed);
@@ -18,6 +26,11 @@ namespace card_index_BLL.Validation
             _maxYears = maxYearsAllowed;
         }
 
+        /// <summary>
+        /// Validation method
+        /// </summary>
+        /// <param name="value">age value to validate</param>
+        /// <returns>Validation result</returns>
         public override bool IsValid(object value)
         {
             if (value is DateTime userInput)

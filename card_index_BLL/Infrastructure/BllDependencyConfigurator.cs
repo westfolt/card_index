@@ -9,8 +9,16 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace card_index_BLL.Infrastructure
 {
+    /// <summary>
+    /// Configures dependency injection in BLL
+    /// </summary>
     public static class BllDependencyConfigurator
     {
+        /// <summary>
+        /// Invokes DAL DI configurator and configures DI in BLL
+        /// </summary>
+        /// <param name="serviceCollection">service collection</param>
+        /// <param name="connectionString">DB connection string, passed to DAL</param>
         public static void ConfigureServices(IServiceCollection serviceCollection, string connectionString)
         {
             DalDependencyConfigurator.ConfigureServices(serviceCollection, connectionString);

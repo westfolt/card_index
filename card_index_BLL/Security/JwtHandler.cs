@@ -11,17 +11,30 @@ using System.Threading.Tasks;
 
 namespace card_index_BLL.Security
 {
+    /// <summary>
+    /// Handles JWT logic
+    /// </summary>
     public class JwtHandler
     {
         private readonly IConfigurationSection _jwtConfiguration;
         private readonly UserManager<User> _userManager;
 
+        /// <summary>
+        /// Constructor, takes app config and identity usermanager
+        /// </summary>
+        /// <param name="configuration">application configuration</param>
+        /// <param name="userManager">identity user manager</param>
         public JwtHandler(IConfiguration configuration, UserManager<User> userManager)
         {
             _jwtConfiguration = configuration.GetSection("JwtSettings");
             _userManager = userManager;
         }
 
+        /// <summary>
+        /// Generates JWT for user
+        /// </summary>
+        /// <param name="user">User, who logged in</param>
+        /// <returns>String containing token</returns>
         public async Task<string> GenerateJwt(User user)
         {
             var signingCredentials = GetSigningCredentials();
@@ -32,6 +45,10 @@ namespace card_index_BLL.Security
             return token;
         }
 
+        /// <summary>
+        /// Gets credentials for digital signing
+        /// </summary>
+        /// <returns>Signing credentials made from user key</returns>
         private SigningCredentials GetSigningCredentials()
         {
             var key = Encoding.UTF8.GetBytes(_jwtConfiguration.GetSection("securityKey").Value);
@@ -40,6 +57,11 @@ namespace card_index_BLL.Security
             return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
         }
 
+        /// <summary>
+        /// Gets list of claims for user
+        /// </summary>
+        /// <param name="user">User to get claims for</param>
+        /// <returns>List containing claims</returns>
         private async Task<List<Claim>> GetClaims(User user)
         {
             var claims = new List<Claim>()
@@ -56,6 +78,12 @@ namespace card_index_BLL.Security
             return claims;
         }
 
+        /// <summary>
+        /// Gets token options based on digital signature and claims list
+        /// </summary>
+        /// <param name="signingCredentials">Digital signature</param>
+        /// <param name="claims">Claims list</param>
+        /// <returns>Token options</returns>
         private JwtSecurityToken GetTokenOptions(SigningCredentials signingCredentials, List<Claim> claims)
         {
             var options = new JwtSecurityToken(

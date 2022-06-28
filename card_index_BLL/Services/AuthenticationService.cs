@@ -12,12 +12,22 @@ using System.Threading.Tasks;
 
 namespace card_index_BLL.Services
 {
+    /// <summary>
+    /// Implements interface between webapi and repository
+    /// Performs authentication tasks
+    /// </summary>
     public class AuthenticationService : IAuthenticationService
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly JwtHandler _jwtHandler;
 
+        /// <summary>
+        /// Creates service
+        /// </summary>
+        /// <param name="userManager">Identity user manager</param>
+        /// <param name="signInManager">Identity signin manager</param>
+        /// <param name="jwtHandler">Handler of jwt creation</param>
         public AuthenticationService(UserManager<User> userManager, SignInManager<User> signInManager, JwtHandler jwtHandler)
         {
             _userManager = userManager;
@@ -25,6 +35,13 @@ namespace card_index_BLL.Services
             _jwtHandler = jwtHandler;
         }
 
+        /// <summary>
+        /// Performs user login, responds with object, containing
+        /// JWT, if login successful
+        /// </summary>
+        /// <param name="model">user login model with email and pass</param>
+        /// <returns>Login response, containing info, errors, token, operation result</returns>
+        /// <exception cref="CardIndexException">Thrown if problems during login process</exception>
         public async Task<LoginResponse> LoginUser(UserLoginModel model)
         {
             try
@@ -49,6 +66,13 @@ namespace card_index_BLL.Services
             }
         }
 
+        /// <summary>
+        /// Handles user registration process, returns response
+        /// object with operation result
+        /// </summary>
+        /// <param name="model">registration model with info to create user</param>
+        /// <returns>Operation result</returns>
+        /// <exception cref="CardIndexException">Thrown if problems during registration process</exception>
         public async Task<Response> RegisterUser(UserRegistrationModel model)
         {
             var alreadyExists = await _userManager.FindByEmailAsync(model.Email);
@@ -80,6 +104,10 @@ namespace card_index_BLL.Services
             }
         }
 
+        /// <summary>
+        /// Logout user
+        /// </summary>
+        /// <returns>Async operation</returns>
         public async Task LogOut()
         {
             await _signInManager.SignOutAsync();

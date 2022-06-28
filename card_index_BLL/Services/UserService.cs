@@ -13,12 +13,21 @@ using System.Threading.Tasks;
 
 namespace card_index_BLL.Services
 {
+    /// <summary>
+    /// Implements interface between webapi and repository
+    /// </summary>
     public class UserService : IUserService
     {
         private readonly IMapper _mapper;
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<UserRole> _roleManager;
 
+        /// <summary>
+        /// Creates service
+        /// </summary>
+        /// <param name="mapper">Object for entities mapping</param>
+        /// <param name="userManager">Identity user manager</param>
+        /// <param name="roleManager">Identity role manager</param>
         public UserService(IMapper mapper, UserManager<User> userManager, RoleManager<UserRole> roleManager)
         {
             _mapper = mapper;
@@ -26,6 +35,11 @@ namespace card_index_BLL.Services
             _roleManager = roleManager;
         }
 
+        /// <summary>
+        /// Gets all users info from db and maps to info model
+        /// </summary>
+        /// <returns>user info list</returns>
+        /// <exception cref="CardIndexException">Thrown, if problems operating with DAL</exception>
         public async Task<IEnumerable<UserInfoModel>> GetAllAsync()
         {
             try
@@ -46,6 +60,12 @@ namespace card_index_BLL.Services
             }
         }
 
+        /// <summary>
+        /// Gets user info for user with given id
+        /// </summary>
+        /// <param name="id">Id of user to search</param>
+        /// <returns>Model, mapped from user</returns>
+        /// <exception cref="CardIndexException">Thrown, if problems operating with DAL</exception>
         public async Task<UserInfoModel> GetByIdAsync(int id)
         {
             try
@@ -59,9 +79,14 @@ namespace card_index_BLL.Services
             {
                 throw new CardIndexException($"Cannot get user with id {id} from db", ex);
             }
-
         }
 
+        /// <summary>
+        /// Gets user with given email
+        /// </summary>
+        /// <param name="email">Email address to search</param>
+        /// <returns>User matching criteria</returns>
+        /// <exception cref="CardIndexException">Thrown, if problems operating with DAL</exception>
         public async Task<UserInfoModel> GetByEmailAsync(string email)
         {
             try
@@ -77,6 +102,13 @@ namespace card_index_BLL.Services
             }
         }
 
+        /// <summary>
+        /// Modifies user with given data,
+        /// modifies only user data, not identity security values
+        /// </summary>
+        /// <param name="model">Model containing new user data</param>
+        /// <returns>Response object, containing data about operation</returns>
+        /// <exception cref="CardIndexException">Thrown, if problems operating with DAL</exception>
         public async Task<Response> ModifyUserAsync(UserInfoModel model)
         {
             try
@@ -116,6 +148,12 @@ namespace card_index_BLL.Services
             }
         }
 
+        /// <summary>
+        /// Deletes user with given id
+        /// </summary>
+        /// <param name="id">Id of user to delete</param>
+        /// <returns>Response info about operation</returns>
+        /// <exception cref="CardIndexException">Thrown, if problems operating with DAL</exception>
         public async Task<Response> DeleteUserAsync(int id)
         {
             try
@@ -137,6 +175,11 @@ namespace card_index_BLL.Services
             }
         }
 
+        /// <summary>
+        /// Gets all user roles from DB
+        /// </summary>
+        /// <returns>List of existing user roles</returns>
+        /// <exception cref="CardIndexException">Thrown, if problems operating with DAL</exception>
         public async Task<IEnumerable<UserRoleInfoModel>> GetAllRolesAsync()
         {
             try
@@ -150,6 +193,12 @@ namespace card_index_BLL.Services
             }
         }
 
+        /// <summary>
+        /// Gets role with given name from DB
+        /// </summary>
+        /// <param name="roleName">Role name to search</param>
+        /// <returns>Role matching criteria</returns>
+        /// <exception cref="CardIndexException">Thrown, if problems operating with DAL</exception>
         public async Task<UserRoleInfoModel> GetRoleByNameAsync(string roleName)
         {
             try
@@ -164,6 +213,12 @@ namespace card_index_BLL.Services
             }
         }
 
+        /// <summary>
+        /// Adds new role to DB
+        /// </summary>
+        /// <param name="model">model, containing data to add</param>
+        /// <returns>Id of added role</returns>
+        /// <exception cref="CardIndexException">Thrown, if problems operating with DAL</exception>
         public async Task<int> AddRoleAsync(UserRoleInfoModel model)
         {
             try
@@ -179,6 +234,12 @@ namespace card_index_BLL.Services
             }
         }
 
+        /// <summary>
+        /// Deletes role from DB
+        /// </summary>
+        /// <param name="roleName">Role name to delete</param>
+        /// <returns>Async operation</returns>
+        /// <exception cref="CardIndexException">Thrown, if problems operating with DAL</exception>
         public async Task DeleteRoleAsync(string roleName)
         {
             try

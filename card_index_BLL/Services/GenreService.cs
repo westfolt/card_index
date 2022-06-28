@@ -11,17 +11,30 @@ using System.Threading.Tasks;
 
 namespace card_index_BLL.Services
 {
+    /// <summary>
+    /// Implements interface between webapi and repository
+    /// </summary>
     internal class GenreService : IGenreService
     {
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
 
+        /// <summary>
+        /// Creates service
+        /// </summary>
+        /// <param name="mapper">Object for entities mapping</param>
+        /// <param name="unitOfWork">Object to work with DAL</param>
         public GenreService(IMapper mapper, IUnitOfWork unitOfWork)
         {
             _mapper = mapper;
             _unitOfWork = unitOfWork;
         }
 
+        /// <summary>
+        /// Gets all genres from DB
+        /// </summary>
+        /// <returns>Genre list mapped to Dto</returns>
+        /// <exception cref="CardIndexException">Thrown, if problems operating with DAL</exception>
         public async Task<IEnumerable<GenreDto>> GetAllAsync()
         {
             try
@@ -36,6 +49,12 @@ namespace card_index_BLL.Services
             }
         }
 
+        /// <summary>
+        /// Gets genre with given name
+        /// </summary>
+        /// <param name="name">Genre name to search</param>
+        /// <returns>Genre matching criteria</returns>
+        /// <exception cref="CardIndexException">Thrown, if problems operating with DAL</exception>
         public async Task<GenreDto> GetByNameAsync(string name)
         {
             try
@@ -51,6 +70,12 @@ namespace card_index_BLL.Services
             }
         }
 
+        /// <summary>
+        /// Adds new genre to DB
+        /// </summary>
+        /// <param name="model">New genre to add</param>
+        /// <returns>Id of added genre</returns>
+        /// <exception cref="CardIndexException">Thrown, if problems operating with DAL</exception>
         public async Task<int> AddAsync(GenreDto model)
         {
             try
@@ -67,6 +92,12 @@ namespace card_index_BLL.Services
             }
         }
 
+        /// <summary>
+        /// Updates genre in DB
+        /// </summary>
+        /// <param name="model">Model, containing data for update</param>
+        /// <returns>Async operation</returns>
+        /// <exception cref="CardIndexException">Thrown, if problems operating with DAL</exception>
         public async Task UpdateAsync(GenreDto model)
         {
             try
@@ -81,6 +112,12 @@ namespace card_index_BLL.Services
             }
         }
 
+        /// <summary>
+        /// Deletes genre from DB
+        /// </summary>
+        /// <param name="modelId">Id of genre to delete</param>
+        /// <returns>Async operation</returns>
+        /// <exception cref="CardIndexException">Thrown, if problems operating with DAL</exception>
         public async Task DeleteAsync(int modelId)
         {
             try
