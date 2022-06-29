@@ -25,50 +25,46 @@ namespace CardIndexTests.BllTests
     {
         private readonly DataForEntityTests _data = DataForEntityTests.GetTestData();
 
-        //[Test]
-        //public async Task UserService_GetAll_ReturnsAllUsers()
-        //{
-        //    var expected = _data.AuthorDtos;
-        //    var mockUserManager = new Mock<UserManager<User>>(Mock.Of<IUserStore<User>>(), null, null, null, null, null, null, null, null);
-        //    var mockRoleManager =
-        //        new Mock<RoleManager<UserRole>>(Mock.Of<IRoleStore<UserRole>>(), null, null, null, null);
-        //    mockUserManager.Setup(x=>x.FindByNameAsync(It.IsAny<string>()))
-        //        .ReturnsAsync()
+        [Test]
+        public async Task UserService_GetAll_ReturnsAllUsers()
+        {
+            var expected = _data.AuthorDtos;
+            var mockUserManager = new Mock<UserManager<User>>(Mock.Of<IUserStore<User>>(), null);
+            var mockRoleManager =
+                new Mock<RoleManager<UserRole>>(Mock.Of<IRoleStore<UserRole>>(), null, null, null, null);
+            IQueryable<User> queryableUsers = _data.Users.AsQueryable();
+            mockUserManager
+                .Setup(x => x.Users)
+                .Returns(queryableUsers);
 
-        //    mockUserManager
-        //        .Setup(x => x.Users.ToList())
-        //        .Returns(_data.Users.ToList());
+            mockUserManager
+                .Setup(x => x.GetRolesAsync(It.IsAny<User>()))
+                .ReturnsAsync((User u) => _data.Roles.Where(r => r.Id == u.Id).Select(r => r.Name).ToList());
+            
+            var UserService = new UserService(DbTestHelper.CreateMapperProfile(), mockUserManager.Object,
+                mockRoleManager.Object);
 
-        //    mockUserManager
-        //        .Setup(x => x.GetRolesAsync(It.IsAny<User>()))
-        //        .ReturnsAsync((User u) => _data.Roles.Where(r => r.Id == u.Id).Select(r => r.Name).ToList());
-        //    //var mockUnitOfWork = new Mock<IUnitOfWork>();
+            var actual = await UserService.GetAllAsync();
 
-        //    //mockUnitOfWork
-        //    //    .Setup(x => x.UserRepository.GetAllWithDetailsAsync())
-        //    //    .ReturnsAsync(_data.UserInfoModels.AsEnumerable());
+            actual.Should().BeEquivalentTo(expected, options =>
+                options.Excluding(x => x.TextCardIds));
+        }
+        [Test]
+        public async Task UserService_GetAll_ReturnsCardIndexException()
+        {
+            var mockUserManager = new Mock<UserManager<User>>(Mock.Of<IUserStore<User>>(), null, null, null, null, null, null, null, null);
+            var mockRoleManager =
+                new Mock<RoleManager<UserRole>>(Mock.Of<IRoleStore<UserRole>>(), null, null, null, null);
 
-        //    var UserService = new UserService(DbTestHelper.CreateMapperProfile(), mockUserManager.Object,
-        //        mockRoleManager.Object);
+            mockUserManager
+                .Setup(x => x.Users)
+                .Throws(new Exception());
 
-        //    var actual = await UserService.GetAllAsync();
+            var UserService = new UserService(DbTestHelper.CreateMapperProfile(), mockUserManager.Object,
+                mockRoleManager.Object);
 
-        //    actual.Should().BeEquivalentTo(expected, options =>
-        //        options.Excluding(x => x.TextCardIds));
-        //}
-        //[Test]
-        //public async Task UserService_GetAll_ReturnsCardIndexException()
-        //{
-        //    var mockUnitOfWork = new Mock<IUnitOfWork>();
-
-        //    mockUnitOfWork
-        //        .Setup(x => x.UserRepository.GetAllWithDetailsAsync())
-        //        .Throws(new Exception());
-
-        //    var UserService = new UserService(DbTestHelper.CreateMapperProfile(), mockUnitOfWork.Object);
-
-        //    Assert.ThrowsAsync<CardIndexException>(async () => await UserService.GetAllAsync());
-        //}
+            Assert.ThrowsAsync<CardIndexException>(async () => await UserService.GetAllAsync());
+        }
         //[TestCase(1)]
         //[TestCase(2)]
         //public async Task UserService_GetById_ReturnsAuthor(int id)
