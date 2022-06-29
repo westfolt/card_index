@@ -11,6 +11,7 @@ import { UserListComponent } from './user-list/user-list.component';
 import { UserDeleteComponent } from './user-delete/user-delete.component';
 import { UserUpdateComponent } from './user-update/user-update.component';
 import { UserDetailComponent } from './user-detail/user-detail.component';
+import { UserCabinetComponent } from './user-cabinet/user-cabinet.component';
 
 
 @NgModule({
@@ -18,7 +19,8 @@ import { UserDetailComponent } from './user-detail/user-detail.component';
     UserListComponent,
     UserDeleteComponent,
     UserUpdateComponent,
-    UserDetailComponent
+    UserDetailComponent,
+    UserCabinetComponent
   ],
   imports: [
     CommonModule,

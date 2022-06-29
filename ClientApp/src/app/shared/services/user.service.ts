@@ -19,6 +19,14 @@ export class UserService {
     return this.http.get<userInfoModel>(this.createCompleteRoute(route, this.envUrl.urlAddress));
   }
 
+  public getUserCabinet = (route: string) => {
+    return this.http.get<userInfoModel>(this.createCompleteRoute(route, this.envUrl.urlAddress));
+  }
+
+  public updateUserCabinet = (route: string, userEntity: userInfoModel) => {
+    return this.http.put<response>(this.createCompleteRoute(route, this.envUrl.urlAddress), userEntity, this.generateHeaders());
+  }
+
   public getRoles = (route: string) => {
     return this.http.get<userRoleInfoModel[]>(this.createCompleteRoute(route, this.envUrl.urlAddress));
   }

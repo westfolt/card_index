@@ -32,8 +32,8 @@ export class MenuComponent implements OnInit {
   public logout = () => {
     this.authService.logout("api/authenticate/logout")
     .subscribe({
-      next: () => {
-        this.router.navigate(["/"]);
+      next: (_) => {
+        this.router.navigate(["/home"]);
       },
       error: (err: HttpErrorResponse) => {
         console.log(err.message);
