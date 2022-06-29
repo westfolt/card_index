@@ -13,7 +13,7 @@ export class ModeratorGuard implements CanActivate {
       return true;
     }
 
-    this.router.navigate(['/forbidden'], {queryParams: {returnUrl: state.url, state: 'You need to be moderator for this'}});
+    this.router.navigate(['/forbidden'], {queryParams: {returnUrl: state.url, state: 'You need to be moderator'}});
     return false;
   }
 
