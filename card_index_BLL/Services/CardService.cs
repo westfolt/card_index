@@ -88,7 +88,7 @@ namespace card_index_BLL.Services
                 {
                     mapped.Genre = genreExists;
                     mapped.GenreId = genreExists.Id;
-                    genreExists.TextCards.Add(mapped);
+                    genreExists.TextCards?.Add(mapped);
                     _unitOfWork.GenreRepository.Update(genreExists);
                 }
                 await _unitOfWork.TextCardRepository.AddAsync(mapped);

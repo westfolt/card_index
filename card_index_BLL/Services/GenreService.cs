@@ -14,7 +14,7 @@ namespace card_index_BLL.Services
     /// <summary>
     /// Implements interface between webapi and repository
     /// </summary>
-    internal class GenreService : IGenreService
+    public class GenreService : IGenreService
     {
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
