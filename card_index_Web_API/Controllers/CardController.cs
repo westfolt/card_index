@@ -15,7 +15,7 @@ namespace card_index_Web_API.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin,Moderator")]
+    [Authorize(Roles = "Admin,Moderator,Registered")]
     public class CardController : ControllerBase
     {
         private readonly ICardService _cardService;
@@ -85,6 +85,7 @@ namespace card_index_Web_API.Controllers
         /// <param name="model">New text card object</param>
         /// <returns>Http status code of operation with response object</returns>
         [HttpPost]
+        [Authorize(Roles="Admin,Moderator")]
         public async Task<ActionResult<Response>> Add([FromBody] TextCardDto model)
         {
             int insertId;
@@ -113,6 +114,7 @@ namespace card_index_Web_API.Controllers
         /// <param name="model">New text card object, must have the same id</param>
         /// <returns>Http status code of operation with response object</returns>
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin,Moderator")]
         public async Task<ActionResult<Response>> Update(int id, [FromBody] TextCardDto model)
         {
             model.Id = id;
@@ -138,6 +140,7 @@ namespace card_index_Web_API.Controllers
         /// <param name="id">Id of text card to delete</param>
         /// <returns>Http status code of operation with response object</returns>
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin,Moderator")]
         public async Task<ActionResult<Response>> Delete(int id)
         {
             try

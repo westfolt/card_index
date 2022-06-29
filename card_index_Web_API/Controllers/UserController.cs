@@ -16,7 +16,7 @@ namespace card_index_Web_API.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Moderator,Registered")]
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -35,6 +35,7 @@ namespace card_index_Web_API.Controllers
         /// </summary>
         /// <returns>All users collection</returns>
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<UserInfoModel>>> Get()
         {
             IEnumerable<UserInfoModel> users = null;
@@ -60,6 +61,7 @@ namespace card_index_Web_API.Controllers
         /// <param name="id">User id to search</param>
         /// <returns>User item</returns>
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<UserInfoModel>> GetById(int id)
         {
             UserInfoModel user = null;
@@ -86,6 +88,7 @@ namespace card_index_Web_API.Controllers
         /// <param name="model">New user object, must have the same id</param>
         /// <returns>Http status code of operation with response object</returns>
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<Response>> Update(int id, [FromBody] UserInfoModel model)
         {
             model.Id = id;
@@ -111,6 +114,7 @@ namespace card_index_Web_API.Controllers
         /// <param name="id">Id of user to delete</param>
         /// <returns>Http status code of operation with response object</returns>
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<Response>> Delete(int id)
         {
             try
@@ -130,6 +134,7 @@ namespace card_index_Web_API.Controllers
         /// </summary>
         /// <returns>All roles list</returns>
         [HttpGet("roles")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<UserRoleInfoModel>>> GetRoles()
         {
             IEnumerable<UserRoleInfoModel> roles = null;
@@ -155,6 +160,7 @@ namespace card_index_Web_API.Controllers
         /// <param name="roleName">Name of role to search</param>
         /// <returns>Role with specified name</returns>
         [HttpGet("roles/{roleName}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<UserRoleInfoModel>> GetRoleByName(string roleName)
         {
             UserRoleInfoModel role = null;
@@ -180,6 +186,7 @@ namespace card_index_Web_API.Controllers
         /// <param name="model">Role object to add</param>
         /// <returns>Http status code of operation with response object</returns>
         [HttpPost("roles")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<Response>> AddRole([FromBody] UserRoleInfoModel model)
         {
             int insertId;
@@ -207,6 +214,7 @@ namespace card_index_Web_API.Controllers
         /// <param name="roleName">Role name to delete</param>
         /// <returns>Http status code of operation with response object</returns>
         [HttpDelete("roles/{roleName}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<Response>> Delete(string roleName)
         {
             try
@@ -226,7 +234,6 @@ namespace card_index_Web_API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("cabinet")]
-        [Authorize(Roles = "Admin,Moderator,Registered")]
         public async Task<ActionResult<UserInfoModel>> GetUserCabinet()
         {
             UserInfoModel user = null;
@@ -252,7 +259,6 @@ namespace card_index_Web_API.Controllers
         /// <param name="model">User model for update</param>
         /// <returns></returns>
         [HttpPut("cabinet/modify")]
-        [Authorize(Roles = "Admin,Moderator,Registered")]
         public async Task<ActionResult<Response>> ModifyUserCabinet([FromBody] UserInfoModel model)
         {
             if (!ModelState.IsValid)

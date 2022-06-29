@@ -17,7 +17,7 @@ namespace card_index_Web_API.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Moderator,Registered")]
     public class GenreController : ControllerBase
     {
         private readonly IGenreService _genreService;
@@ -88,6 +88,7 @@ namespace card_index_Web_API.Controllers
         /// <param name="model">New genre object</param>
         /// <returns>Http status code of operation with response object</returns>
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<Response>> Add([FromBody] GenreDto model)
         {
             int insertId;
@@ -116,6 +117,7 @@ namespace card_index_Web_API.Controllers
         /// <param name="model">New genre object, must have the same id</param>
         /// <returns>Http status code of operation with response object</returns>
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<Response>> Update(int id, [FromBody] GenreDto model)
         {
             model.Id = id;
@@ -141,6 +143,7 @@ namespace card_index_Web_API.Controllers
         /// <param name="id">Id of genre to delete</param>
         /// <returns>Http status code of operation with response object</returns>
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<Response>> Delete(int id)
         {
             try
