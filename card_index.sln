@@ -30,7 +30,7 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "ClientApp", "ClientApp\", "
 		SlnRelativePath = "ClientApp\"
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardIndexTests", "CardIndexTests\CardIndexTests.csproj", "{1A72AAB4-8FA1-48E0-AD8E-0E088C730E63}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CardIndexTests", "CardIndexTests\CardIndexTests.csproj", "{1A72AAB4-8FA1-48E0-AD8E-0E088C730E63}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
