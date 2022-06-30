@@ -1,15 +1,15 @@
 ﻿using AutoMapper;
 using card_index_BLL.Exceptions;
 using card_index_BLL.Interfaces;
+using card_index_BLL.Models.DataShaping;
 using card_index_BLL.Models.Dto;
 using card_index_DAL.Entities;
+using card_index_DAL.Entities.DataShaping;
 using card_index_DAL.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using card_index_BLL.Models.DataShaping;
-using card_index_DAL.Entities.DataShaping;
 
 namespace card_index_BLL.Services
 {

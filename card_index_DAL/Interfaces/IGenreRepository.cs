@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using card_index_DAL.Entities;
+﻿using card_index_DAL.Entities;
 using card_index_DAL.Entities.DataShaping;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace card_index_DAL.Interfaces
 {

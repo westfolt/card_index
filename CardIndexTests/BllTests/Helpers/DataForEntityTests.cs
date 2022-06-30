@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using card_index_BLL.Models.Dto;
+﻿using card_index_BLL.Models.Dto;
 using card_index_BLL.Models.Identity.Models;
 using card_index_DAL.Entities;
+using System;
+using System.Collections.Generic;
 
 namespace CardIndexTests.BllTests.Helpers
 {
@@ -873,7 +872,7 @@ namespace CardIndexTests.BllTests.Helpers
         private UserRole role1 = new UserRole
         {
             Id = 1,
-            Name= "Admin"
+            Name = "Admin"
         };
         private UserRole role2 = new UserRole
         {

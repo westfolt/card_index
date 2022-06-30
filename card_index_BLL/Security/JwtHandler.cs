@@ -1,4 +1,5 @@
-﻿using card_index_DAL.Entities;
+﻿using card_index_BLL.Interfaces;
+using card_index_DAL.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -8,7 +9,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using card_index_BLL.Interfaces;
 
 namespace card_index_BLL.Security
 {
@@ -21,10 +21,10 @@ namespace card_index_BLL.Security
         private readonly UserManager<User> _userManager;
 
         /// <summary>
-        /// Constructor, takes app config and identity usermanager
+        /// Constructor, takes app config and object, wrapping userManager, roleManager and signInManager
         /// </summary>
         /// <param name="configuration">application configuration</param>
-        /// <param name="userManager">identity user manager</param>
+        /// <param name="usersRolesManager">Object, wrapping userManager, roleManager and signInManager</param>
         public JwtHandler(IConfiguration configuration, IManageUsersRoles usersRolesManager)
         {
             _jwtConfiguration = configuration.GetSection("JwtSettings");

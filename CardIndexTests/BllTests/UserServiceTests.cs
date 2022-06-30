@@ -1,24 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using card_index_BLL.Exceptions;
+﻿using card_index_BLL.Exceptions;
 using card_index_BLL.Interfaces;
-using card_index_BLL.Models.Identity.Models;
 using card_index_BLL.Services;
 using card_index_DAL.Entities;
-using card_index_DAL.Interfaces;
 using CardIndexTests.BllTests.Helpers;
 using CardIndexTests.Helpers;
 using FluentAssertions;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Moq;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace CardIndexTests.BllTests
 {
@@ -37,7 +30,7 @@ namespace CardIndexTests.BllTests
                 .ReturnsAsync(_data.Users.ToList());
             mockUsersRolesManager
                 .Setup(x => x.GetRolesFromUserManagerAsync(It.IsAny<User>()))
-                .ReturnsAsync(_data.RoleInfoModels.Select(r=>r.RoleName).ToList());
+                .ReturnsAsync(_data.RoleInfoModels.Select(r => r.RoleName).ToList());
 
             var userService = new UserService(DbTestHelper.CreateMapperProfile(), mockUsersRolesManager.Object);
 
@@ -63,7 +56,7 @@ namespace CardIndexTests.BllTests
         [TestCase(2)]
         public async Task UserService_GetById_ReturnsUser(int id)
         {
-            var expected = _data.UserInfoModels.ToList()[id-1];
+            var expected = _data.UserInfoModels.ToList()[id - 1];
             var mockUsersRolesManager = new Mock<IManageUsersRoles>();
             mockUsersRolesManager
                 .Setup(x => x.GetUsersUMAsync())
@@ -130,7 +123,7 @@ namespace CardIndexTests.BllTests
         [TestCase(2)]
         public async Task UserService_ModifyUser_ChangesUser(int id)
         {
-            var expected = _data.Users.First(u=>u.Id == id);
+            var expected = _data.Users.First(u => u.Id == id);
             var givenModel = _data.UserInfoModels.First(u => u.Id == id);
 
             var newModel = new User()
@@ -145,11 +138,11 @@ namespace CardIndexTests.BllTests
                 PhoneNumber = "+11(111)1111111"
             };
             var existingRoles = new List<string> { "Unknown" };
-            
+
             var mockUsersRolesManager = new Mock<IManageUsersRoles>();
             mockUsersRolesManager
                 .Setup(x => x.GetUsersUMAsync())
-                .ReturnsAsync(new List<User>{newModel});
+                .ReturnsAsync(new List<User> { newModel });
             mockUsersRolesManager
                 .Setup(x => x.GetRolesFromUserManagerAsync(It.IsAny<User>()))
                 .ReturnsAsync(existingRoles);
@@ -163,16 +156,16 @@ namespace CardIndexTests.BllTests
             var userService = new UserService(DbTestHelper.CreateMapperProfile(), mockUsersRolesManager.Object);
 
             await userService.ModifyUserAsync(givenModel);
-            
-            mockUsersRolesManager.Verify(x=>x.RemoveFromRolesAsync(It.Is<User>(
-                c=>c.Id == id), It.Is<IEnumerable<string>>(
+
+            mockUsersRolesManager.Verify(x => x.RemoveFromRolesAsync(It.Is<User>(
+                c => c.Id == id), It.Is<IEnumerable<string>>(
                 c => c.First() == existingRoles.First())), Times.Once);
 
             mockUsersRolesManager.Verify(x => x.AddUserToRoleAsync(It.Is<User>(
                 c => c.Id == givenModel.Id), It.Is<string>(
                 c => c == givenModel.UserRoles.First())), Times.Once);
 
-            mockUsersRolesManager.Verify(x=>x.UpdateUserAsync(It.Is<User>(
+            mockUsersRolesManager.Verify(x => x.UpdateUserAsync(It.Is<User>(
                 c => c.Id == givenModel.Id &&
                      c.FirstName == givenModel.FirstName &&
                      c.LastName == givenModel.LastName &&
@@ -212,7 +205,7 @@ namespace CardIndexTests.BllTests
 
             var actual = await userService.DeleteUserAsync(id);
 
-            mockUsersRolesManager.Verify(x=>x.DeleteUserAsync(It.IsAny<User>()), Times.Once);
+            mockUsersRolesManager.Verify(x => x.DeleteUserAsync(It.IsAny<User>()), Times.Once);
 
             Assert.That(actual.Succeeded, Is.EqualTo(true));
         }
@@ -260,7 +253,7 @@ namespace CardIndexTests.BllTests
         [TestCase("Moderator")]
         public async Task UserService_GetRoleByName_ReturnsRole(string roleName)
         {
-            var expected = _data.RoleInfoModels.First(r=>r.RoleName == roleName);
+            var expected = _data.RoleInfoModels.First(r => r.RoleName == roleName);
             var mockUsersRolesManager = new Mock<IManageUsersRoles>();
             mockUsersRolesManager
                 .Setup(x => x.GetRolesFromRoleManagerAsync())
@@ -299,7 +292,7 @@ namespace CardIndexTests.BllTests
             await userService.AddRoleAsync(roleToAdd);
 
             mockUsersRolesManager.Verify(x => x.CreateRoleAsync(It.Is<UserRole>(
-                c=>c.Id == 0 &&
+                c => c.Id == 0 &&
                    c.Name == roleToAdd.RoleName)), Times.Once);
         }
         [TestCase(1)]

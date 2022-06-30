@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using card_index_BLL.Infrastructure;
 
 namespace card_index_BLL.Services
 {
@@ -26,8 +25,7 @@ namespace card_index_BLL.Services
         /// <summary>
         /// Creates service
         /// </summary>
-        /// <param name="userManager">Identity user manager</param>
-        /// <param name="signInManager">Identity signin manager</param>
+        /// <param name="usersRolesManager">Object, wrapping userManager, roleManager and signInManager</param>
         /// <param name="jwtHandler">Handler of jwt creation</param>
         public AuthenticationService(IManageUsersRoles usersRolesManager, JwtHandler jwtHandler)
         {

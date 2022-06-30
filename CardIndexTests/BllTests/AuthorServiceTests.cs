@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using card_index_BLL.Exceptions;
-using card_index_BLL.Models.Dto;
-using card_index_BLL.Models.Identity.Models;
+﻿using card_index_BLL.Exceptions;
 using card_index_BLL.Services;
 using card_index_DAL.Entities;
 using card_index_DAL.Interfaces;
@@ -15,6 +7,9 @@ using CardIndexTests.Helpers;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace CardIndexTests.BllTests
 {
@@ -22,7 +17,7 @@ namespace CardIndexTests.BllTests
     public class AuthorServiceTests
     {
         private readonly DataForEntityTests _data = DataForEntityTests.GetTestData();
-        
+
         [Test]
         public async Task AuthorService_GetAll_ReturnsAllAuthors()
         {
@@ -34,9 +29,9 @@ namespace CardIndexTests.BllTests
                 .ReturnsAsync(_data.Authors.AsEnumerable());
 
             var authorService = new AuthorService(DbTestHelper.CreateMapperProfile(), mockUnitOfWork.Object);
-            
+
             var actual = await authorService.GetAllAsync();
-            
+
             actual.Should().BeEquivalentTo(expected, options =>
                 options.Excluding(x => x.TextCardIds));
         }
@@ -50,8 +45,8 @@ namespace CardIndexTests.BllTests
                 .Throws(new Exception());
 
             var authorService = new AuthorService(DbTestHelper.CreateMapperProfile(), mockUnitOfWork.Object);
-            
-            Assert.ThrowsAsync<CardIndexException>(async()=> await authorService.GetAllAsync());
+
+            Assert.ThrowsAsync<CardIndexException>(async () => await authorService.GetAllAsync());
         }
         [TestCase(1)]
         [TestCase(2)]
@@ -93,9 +88,9 @@ namespace CardIndexTests.BllTests
 
             var authorService = new AuthorService(DbTestHelper.CreateMapperProfile(), mockUnitOfWork.Object);
             var author = _data.AuthorDtos.First();
-            
+
             var resultId = await authorService.AddAsync(author);
-            
+
             mockUnitOfWork.Verify(x => x.AuthorRepository.AddAsync(It.Is<Author>(
                 c => c.Id == 0 &&
                      c.FirstName == author.FirstName &&
@@ -126,9 +121,9 @@ namespace CardIndexTests.BllTests
 
             var authorService = new AuthorService(DbTestHelper.CreateMapperProfile(), mockUnitOfWork.Object);
             var author = _data.AuthorDtos.First();
-            
+
             await authorService.UpdateAsync(author);
-            
+
             mockUnitOfWork.Verify(x => x.AuthorRepository.Update(It.Is<Author>(
                 c => c.Id == author.Id &&
                      c.FirstName == author.FirstName &&
@@ -157,9 +152,9 @@ namespace CardIndexTests.BllTests
             var mockUnitOfWork = new Mock<IUnitOfWork>();
             mockUnitOfWork.Setup(m => m.AuthorRepository.DeleteByIdAsync(It.IsAny<int>()));
             var authorService = new AuthorService(DbTestHelper.CreateMapperProfile(), mockUnitOfWork.Object);
-            
+
             await authorService.DeleteAsync(id);
-            
+
             mockUnitOfWork.Verify(x => x.AuthorRepository.DeleteByIdAsync(id), Times.Once);
             mockUnitOfWork.Verify(x => x.SaveChangesAsync(), Times.Once);
         }
@@ -194,7 +189,7 @@ namespace CardIndexTests.BllTests
             var authorService = new AuthorService(DbTestHelper.CreateMapperProfile(), mockUnitOfWork.Object);
 
             //act
-            var actual = await authorService.GetAuthorsForPeriodAsync(startYear,endYear);
+            var actual = await authorService.GetAuthorsForPeriodAsync(startYear, endYear);
 
             //assert
             actual.Should().BeEquivalentTo(expected, options =>
@@ -207,7 +202,7 @@ namespace CardIndexTests.BllTests
         public async Task AuthorService_GetAuthorsForPeriodAsync_ReturnsCardIndexException(int startYear, int endYear)
         {
             var mockUnitOfWork = new Mock<IUnitOfWork>();
-            
+
             mockUnitOfWork
                 .Setup(x => x.AuthorRepository.GetAllWithDetailsAsync())
                 .Throws(new Exception());

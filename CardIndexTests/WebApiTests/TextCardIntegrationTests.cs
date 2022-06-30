@@ -13,6 +13,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using card_index_BLL.Models.DataShaping;
 
 namespace CardIndexTests.WebApiTests
 {
@@ -54,13 +55,13 @@ namespace CardIndexTests.WebApiTests
         {
             var expected = TextCardDtos.ToList();
 
-            var httpResponse = await _client.GetAsync(RequestUri);
+            var httpResponse = await _client.GetAsync($"{RequestUri}?PageSize=30&PageNumber=1");
 
             httpResponse.EnsureSuccessStatusCode();
             var stringResponse = await httpResponse.Content.ReadAsStringAsync();
-            var actual = JsonConvert.DeserializeObject<IEnumerable<TextCardDto>>(stringResponse);
+            var actual = JsonConvert.DeserializeObject<DataShapingResponse<TextCardDto>>(stringResponse);
 
-            Assert.That(actual, Is.EqualTo(expected).Using(new TextCardComparer()));
+            Assert.That(actual.Data, Is.EqualTo(expected).Using(new TextCardComparer()));
         }
 
         [TestCase(1)]
@@ -121,13 +122,13 @@ namespace CardIndexTests.WebApiTests
             var httpResponse = await _client.PostAsync($"{RequestUri}", content);
             httpResponse.EnsureSuccessStatusCode();
 
-            var getAllResponse = await _client.GetAsync(RequestUri);
+            var getAllResponse = await _client.GetAsync($"{RequestUri}?PageSize=30&PageNumber=1");
             getAllResponse.EnsureSuccessStatusCode();
             var stringResponse = await getAllResponse.Content.ReadAsStringAsync();
-            var actual = JsonConvert.DeserializeObject<IEnumerable<TextCardDto>>(stringResponse);
-            var added = actual.FirstOrDefault(a => a.Id == TextCard6.Id);
+            var actual = JsonConvert.DeserializeObject<DataShapingResponse<TextCardDto>>(stringResponse);
+            var added = actual.Data.FirstOrDefault(a => a.Id == TextCard6.Id);
 
-            Assert.That(actual.Count(), Is.EqualTo(expectedLength));
+            Assert.That(actual.Data.Count(), Is.EqualTo(expectedLength));
             Assert.That(added, Is.EqualTo(TextCard6).Using(new TextCardComparer()));
         }
 
@@ -163,12 +164,12 @@ namespace CardIndexTests.WebApiTests
             var httpResponse = await _client.DeleteAsync($"{RequestUri}{id}");
             httpResponse.EnsureSuccessStatusCode();
 
-            var getAllResponse = await _client.GetAsync(RequestUri);
+            var getAllResponse = await _client.GetAsync($"{RequestUri}?PageSize=30&PageNumber=1");
             getAllResponse.EnsureSuccessStatusCode();
             var stringResponse = await getAllResponse.Content.ReadAsStringAsync();
-            var actual = JsonConvert.DeserializeObject<IEnumerable<TextCardDto>>(stringResponse);
+            var actual = JsonConvert.DeserializeObject<DataShapingResponse<TextCardDto>>(stringResponse);
 
-            Assert.That(actual.Count(), Is.EqualTo(newLength));
+            Assert.That(actual.Data.Count(), Is.EqualTo(newLength));
         }
     }
 

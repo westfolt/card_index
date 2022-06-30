@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using card_index_BLL.Exceptions;
+﻿using card_index_BLL.Exceptions;
 using card_index_BLL.Services;
 using card_index_DAL.Entities;
 using card_index_DAL.Interfaces;
@@ -10,6 +7,9 @@ using CardIndexTests.Helpers;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace CardIndexTests.BllTests
 {
@@ -48,11 +48,11 @@ namespace CardIndexTests.BllTests
 
             Assert.ThrowsAsync<CardIndexException>(async () => await genreService.GetAllAsync());
         }
-        [TestCase("GenreOne",1)]
+        [TestCase("GenreOne", 1)]
         [TestCase("GenreTwo", 2)]
         public async Task GenreService_GetByName_ReturnsGenre(string name, int id)
         {
-            var expected = _data.GenreDtos.ToList()[id-1];
+            var expected = _data.GenreDtos.ToList()[id - 1];
             var mockUnitOfWork = new Mock<IUnitOfWork>();
 
             mockUnitOfWork

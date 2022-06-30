@@ -39,7 +39,7 @@ namespace card_index_DAL.Infrastructure
         {
             get { return _textCardRepository ??= new TextCardRepository(_dbContext); }
         }
-        
+
         public async Task SaveChangesAsync()
         {
             await _dbContext.SaveChangesAsync();

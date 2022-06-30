@@ -30,7 +30,7 @@ namespace card_index_BLL.Models.Identity.Models
         /// </summary>
         [RegularExpression(@"\+[\d]{1, 3}\([\d]{3}\)[\d] { 7}",
             ErrorMessage = "Phone should be +X(XXX)XXXXXXX")]
-        public string? Phone { get; set; }
+        public string Phone { get; set; }
         /// <summary>
         /// User password
         /// </summary>

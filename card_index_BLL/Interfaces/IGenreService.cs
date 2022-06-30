@@ -1,7 +1,7 @@
-﻿using card_index_BLL.Models.Dto;
+﻿using card_index_BLL.Models.DataShaping;
+using card_index_BLL.Models.Dto;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using card_index_BLL.Models.DataShaping;
 
 namespace card_index_BLL.Interfaces
 {

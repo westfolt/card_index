@@ -3,7 +3,7 @@
 namespace card_index_BLL.Models.Identity.Infrastructure
 {
     /// <summary>
-    /// Object to send when user loggs in
+    /// Object to send when user logs in
     /// </summary>
     public class LoginResponse
     {
@@ -34,11 +34,11 @@ namespace card_index_BLL.Models.Identity.Infrastructure
         /// <summary>
         /// Info message
         /// </summary>
-        public string? Message { get; set; }
+        public string Message { get; set; }
         /// <summary>
         /// JSON Web Token
         /// </summary>
-        public string? Token { get; set; }
+        public string Token { get; set; }
         /// <summary>
         /// Errors list
         /// </summary>

@@ -1,13 +1,12 @@
 ﻿using card_index_BLL.Exceptions;
 using card_index_BLL.Interfaces;
+using card_index_BLL.Models.DataShaping;
 using card_index_BLL.Models.Dto;
 using card_index_BLL.Models.Identity.Infrastructure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using card_index_BLL.Models.DataShaping;
 
 namespace card_index_Web_API.Controllers
 {
@@ -87,7 +86,7 @@ namespace card_index_Web_API.Controllers
         /// <param name="model">New text card object</param>
         /// <returns>Http status code of operation with response object</returns>
         [HttpPost]
-        [Authorize(Roles="Admin,Moderator")]
+        [Authorize(Roles = "Admin,Moderator")]
         public async Task<ActionResult<Response>> Add([FromBody] TextCardDto model)
         {
             int insertId;

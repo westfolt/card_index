@@ -1,5 +1,6 @@
 ﻿using card_index_DAL.Data;
 using card_index_DAL.Entities;
+using card_index_DAL.Entities.DataShaping;
 using card_index_DAL.Exceptions;
 using card_index_DAL.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using card_index_DAL.Entities.DataShaping;
 
 namespace card_index_DAL.Repositories
 {
@@ -26,7 +26,7 @@ namespace card_index_DAL.Repositories
         public async Task<IEnumerable<TextCard>> GetAllAsync(PagingParameters parameters)
         {
             return await _db.TextCards
-                .Skip((parameters.PageNumber-1)*parameters.PageSize)
+                .Skip((parameters.PageNumber - 1) * parameters.PageSize)
                 .Take(parameters.PageSize)
                 .ToListAsync();
         }

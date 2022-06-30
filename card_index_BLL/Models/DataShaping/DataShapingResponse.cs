@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace card_index_BLL.Models.DataShaping
 {
@@ -8,7 +6,7 @@ namespace card_index_BLL.Models.DataShaping
     /// For returning portions of data to user
     /// </summary>
     /// <typeparam name="T">One of object Dto models</typeparam>
-    public class DataShapingResponse<T> where T: class
+    public class DataShapingResponse<T> where T : class
     {
         /// <summary>
         /// Total number of objects in DB

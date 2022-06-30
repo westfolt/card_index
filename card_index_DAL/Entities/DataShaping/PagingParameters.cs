@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace card_index_DAL.Entities.DataShaping
+﻿namespace card_index_DAL.Entities.DataShaping
 {
     public class PagingParameters
     {
