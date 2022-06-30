@@ -1,6 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { genre } from 'src/app/_interfaces/genre';
+import { dataShapingResponse } from 'src/app/_interfaces/infrastructure/dataShapingResponse';
 import { response } from 'src/app/_interfaces/infrastructure/response';
 import { EnvironmentUrlService } from './environment-url.service';
 
@@ -11,8 +12,12 @@ export class GenreService {
 
   constructor(private http: HttpClient, private envUrl: EnvironmentUrlService) { }
 
-  public getGenres = (route: string) => {
+  public getAllGenres = (route: string) => {
     return this.http.get<genre[]>(this.createCompleteRoute(route, this.envUrl.urlAddress));
+  }
+
+  public getGenres = (route: string) => {
+    return this.http.get<dataShapingResponse<genre>>(this.createCompleteRoute(route, this.envUrl.urlAddress));
   }
 
   public getGenre = (route: string) => {

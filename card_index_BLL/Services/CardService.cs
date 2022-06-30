@@ -9,6 +9,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using card_index_BLL.Models.DataShaping;
+using card_index_DAL.Entities.DataShaping;
 
 namespace card_index_BLL.Services
 {
@@ -41,6 +43,26 @@ namespace card_index_BLL.Services
             try
             {
                 var takenFromDb = await _unitOfWork.TextCardRepository.GetAllWithDetailsAsync();
+                var mapped = _mapper.Map<IEnumerable<TextCard>, IEnumerable<TextCardDto>>(takenFromDb);
+                return mapped;
+            }
+            catch (Exception ex)
+            {
+                throw new CardIndexException("Cannot get text cards", ex);
+            }
+        }
+        /// <summary>
+        /// Overloaded version, takes parameters model with filtering data
+        /// </summary>
+        /// <param name="parameters">Parameters model, filters result</param>
+        /// <returns>Filtered cards</returns>
+        /// <exception cref="CardIndexException">Thrown if problems during DB operations</exception>
+        public async Task<IEnumerable<TextCardDto>> GetAllAsync(PagingParametersModel parameters)
+        {
+            var filter = new PagingParameters { PageNumber = parameters.PageNumber, PageSize = parameters.PageSize };
+            try
+            {
+                var takenFromDb = await _unitOfWork.TextCardRepository.GetAllWithDetailsAsync(filter);
                 var mapped = _mapper.Map<IEnumerable<TextCard>, IEnumerable<TextCardDto>>(takenFromDb);
                 return mapped;
             }
@@ -148,6 +170,22 @@ namespace card_index_BLL.Services
             catch (Exception ex)
             {
                 throw new CardIndexException($"Cannot delete text card with id: {modelId}", ex);
+            }
+        }
+        /// <summary>
+        /// Gets total number of cards stored
+        /// </summary>
+        /// <returns>Cards number</returns>
+        /// <exception cref="CardIndexException">Thrown if problems during DB operations</exception>
+        public async Task<int> GetTotalNumber()
+        {
+            try
+            {
+                return await _unitOfWork.TextCardRepository.GetTotalNumberAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new CardIndexException($"Cannot get number of cards", ex);
             }
         }
 

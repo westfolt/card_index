@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using card_index_DAL.Entities.DataShaping;
 
 namespace card_index_DAL.Repositories
 {
@@ -80,6 +81,19 @@ namespace card_index_DAL.Repositories
             _db.Authors.Update(entity);
         }
 
+        public async Task<int> GetTotalNumberAsync()
+        {
+            return await _db.Authors.CountAsync();
+        }
+
+        public async Task<IEnumerable<Author>> GetAllAsync(PagingParameters parameters)
+        {
+            return await _db.Authors
+                .Skip((parameters.PageNumber - 1) * parameters.PageSize)
+                .Take(parameters.PageSize)
+                .ToListAsync();
+        }
+
         public async Task<IEnumerable<Author>> GetAllWithDetailsAsync()
         {
             return await _db.Authors.Include(a => a.TextCards)
@@ -98,6 +112,19 @@ namespace card_index_DAL.Repositories
                 .ThenInclude(tc => tc.RateDetails)
                 .ThenInclude(rd => rd.User)
                 .FirstOrDefaultAsync(a => a.Id == id);
+        }
+
+        public async Task<IEnumerable<Author>> GetAllWithDetailsAsync(PagingParameters parameters)
+        {
+            return await _db.Authors
+                .Skip((parameters.PageNumber - 1) * parameters.PageSize)
+                .Take(parameters.PageSize)
+                .Include(a => a.TextCards)
+                .ThenInclude(tc => tc.Genre)
+                .Include(a => a.TextCards)
+                .ThenInclude(tc => tc.RateDetails)
+                .ThenInclude(rd => rd.User)
+                .ToListAsync();
         }
     }
 }

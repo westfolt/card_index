@@ -107,7 +107,7 @@ export class CardUpdateComponent implements OnInit {
     }
     getAllAuthors = () =>{
       this.showError = false;
-      this.autService.getAuthors(`api/author`)
+      this.autService.getAllAuthors(`api/author/all`)
           .subscribe({
             next: (a: author[]) => this.allAuthors = a,
             error:(err: HttpErrorResponse) => {
@@ -119,7 +119,7 @@ export class CardUpdateComponent implements OnInit {
 
         getAllGenres = () => {
           this.showError = false;
-          this.genService.getGenres(`api/genre`)
+          this.genService.getAllGenres(`api/genre/all`)
               .subscribe({
                 next: (g: genre[]) => this.allGenres = g,
                 error:(err: HttpErrorResponse) => {

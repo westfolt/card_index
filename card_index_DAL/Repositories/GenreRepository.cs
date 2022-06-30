@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using card_index_DAL.Entities.DataShaping;
 
 namespace card_index_DAL.Repositories
 {
@@ -78,6 +79,27 @@ namespace card_index_DAL.Repositories
                 throw new EntityNotFoundException($"Genre with id: {entity.Id} not found in db");
 
             _db.Genres.Update(entity);
+        }
+
+        public async Task<int> GetTotalNumberAsync()
+        {
+            return await _db.Genres.CountAsync();
+        }
+
+        public async Task<IEnumerable<Genre>> GetAllAsync(PagingParameters parameters)
+        {
+            return await _db.Genres
+                .Skip((parameters.PageNumber - 1) * parameters.PageSize)
+                .Take(parameters.PageSize)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Genre>> GetAllWithDetailsAsync(PagingParameters parameters)
+        {
+            return await _db.Genres
+                .Skip((parameters.PageNumber - 1) * parameters.PageSize)
+                .Take(parameters.PageSize)
+                .ToListAsync();
         }
     }
 }

@@ -29,4 +29,14 @@
            </tbody>
          </table>
        </div>
+       <div>
+        <mat-paginator
+         [length]="totalNumber"
+         [pageSize]="pageSize"
+         [pageIndex]="pageIndex"
+         [pageSizeOptions]="[2, 4, 10, 20]"
+         aria-label="Select page"
+         (page)="pageChanged($event)">
+       </mat-paginator>
+     </div>
   </div>

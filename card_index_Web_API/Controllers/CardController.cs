@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using card_index_BLL.Models.DataShaping;
 
 namespace card_index_Web_API.Controllers
 {
@@ -30,28 +31,29 @@ namespace card_index_Web_API.Controllers
         }
 
         /// <summary>
-        /// Returns all text cards from DB
+        /// Returns all text cards from DB preselected by pagination filter
         /// </summary>
-        /// <returns>All text cards collection</returns>
+        /// <returns>Response object, contains selected cards and total number in db</returns>
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult<IEnumerable<TextCardDto>>> Get()
+        public async Task<ActionResult<DataShapingResponse<TextCardDto>>> Get([FromQuery] PagingParametersModel pagingParametersModel)
         {
-            IEnumerable<TextCardDto> cards = null;
+            DataShapingResponse<TextCardDto> response = new DataShapingResponse<TextCardDto>();
 
             try
             {
-                cards = await _cardService.GetAllAsync();
+                response.TotalNumber = await _cardService.GetTotalNumber();
+                response.Data = await _cardService.GetAllAsync(pagingParametersModel);
             }
             catch (CardIndexException ex)
             {
                 BadRequest(ex.Message);
             }
 
-            if (cards == null || !cards.Any())
+            if (response.Data == null || !response.Data.Any())
                 return NotFound();
 
-            return Ok(cards);
+            return Ok(response);
         }
 
         /// <summary>

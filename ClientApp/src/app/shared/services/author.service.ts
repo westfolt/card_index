@@ -3,6 +3,7 @@ import { EnvironmentUrlService } from './environment-url.service';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { response } from 'src/app/_interfaces/infrastructure/response';
+import { dataShapingResponse } from 'src/app/_interfaces/infrastructure/dataShapingResponse';
 
 @Injectable({
   providedIn: 'root'
@@ -11,8 +12,11 @@ export class AuthorService {
 
   constructor(private http: HttpClient, private envUrl: EnvironmentUrlService) { }
 
-  public getAuthors = (route: string) => {
+  public getAllAuthors = (route: string) => {
     return this.http.get<author[]>(this.createCompleteRoute(route, this.envUrl.urlAddress));
+  }
+  public getAuthors = (route: string) => {
+    return this.http.get<dataShapingResponse<author>>(this.createCompleteRoute(route, this.envUrl.urlAddress));
   }
 
   public getAuthor = (route: string) => {

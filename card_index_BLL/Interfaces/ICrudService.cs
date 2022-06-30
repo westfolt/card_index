@@ -38,5 +38,10 @@ namespace card_index_BLL.Interfaces
         /// <param name="modelId">Id of instance to delete</param>
         /// <returns>Async operation</returns>
         Task DeleteAsync(int modelId);
+        /// <summary>
+        /// Gets total number of objects stored in db
+        /// </summary>
+        /// <returns>Number of objects</returns>
+        Task<int> GetTotalNumber();
     }
 }

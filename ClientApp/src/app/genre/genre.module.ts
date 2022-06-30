@@ -8,6 +8,9 @@ import { GenreDetailComponent } from './genre-detail/genre-detail.component';
 import { GenreAddComponent } from './genre-add/genre-add.component';
 import { GenreUpdateComponent } from './genre-update/genre-update.component';
 import { GenreDeleteComponent } from './genre-delete/genre-delete.component';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 
 @NgModule({
@@ -21,7 +24,10 @@ import { GenreDeleteComponent } from './genre-delete/genre-delete.component';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    GenreRoutingModule
+    GenreRoutingModule,
+    MatSelectModule,
+    MatTableModule,
+    MatPaginatorModule
   ]
 })
 export class GenreModule { }

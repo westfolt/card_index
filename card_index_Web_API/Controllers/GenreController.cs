@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using card_index_BLL.Models.DataShaping;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -32,11 +33,35 @@ namespace card_index_Web_API.Controllers
         }
 
         /// <summary>
-        /// Returns all genres from DB
+        /// Returns all genres from DB preselected by pagination filter
         /// </summary>
-        /// <returns>All genres collection</returns>
+        /// <returns>All genres collection, contains selected genres and total number in db</returns>
         [HttpGet]
         [AllowAnonymous]
+        public async Task<ActionResult<DataShapingResponse<GenreDto>>> Get([FromQuery] PagingParametersModel pagingParametersModel)
+        {
+            DataShapingResponse<GenreDto> response = new DataShapingResponse<GenreDto>();
+
+            try
+            {
+                response.TotalNumber = await _genreService.GetTotalNumber();
+                response.Data = await _genreService.GetAllAsync(pagingParametersModel);
+            }
+            catch (CardIndexException ex)
+            {
+                BadRequest(ex.Message);
+            }
+
+            if (response.Data == null || !response.Data.Any())
+                return NotFound();
+
+            return Ok(response);
+        }
+        /// <summary>
+        /// Returns all genres from DB without filters, authenticated only allowed
+        /// </summary>
+        /// <returns>All genres collection</returns>
+        [HttpGet("all")]
         public async Task<ActionResult<IEnumerable<GenreDto>>> Get()
         {
             IEnumerable<GenreDto> genres = null;

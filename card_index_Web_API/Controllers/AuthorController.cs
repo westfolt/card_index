@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using card_index_BLL.Models.DataShaping;
 
 namespace card_index_Web_API.Controllers
 {
@@ -30,11 +31,35 @@ namespace card_index_Web_API.Controllers
         }
 
         /// <summary>
-        /// Returns all authors from DB
+        /// Returns all authors from DB preselected by pagination filter
         /// </summary>
-        /// <returns>All authors collection</returns>
+        /// <returns>All authors collection, contains selected genres and total number in db</returns>
         [HttpGet]
         [AllowAnonymous]
+        public async Task<ActionResult<DataShapingResponse<AuthorDto>>> Get([FromQuery] PagingParametersModel pagingParametersModel)
+        {
+            DataShapingResponse<AuthorDto> response = new DataShapingResponse<AuthorDto>();
+
+            try
+            {
+                response.TotalNumber = await _authorService.GetTotalNumber();
+                response.Data = await _authorService.GetAllAsync(pagingParametersModel);
+            }
+            catch (CardIndexException ex)
+            {
+                BadRequest(ex.Message);
+            }
+
+            if (response.Data == null || !response.Data.Any())
+                return NotFound();
+
+            return Ok(response);
+        }
+        /// <summary>
+        /// Returns all authors from DB without filters, authenticated only allowed
+        /// </summary>
+        /// <returns>All authors collection</returns>
+        [HttpGet("all")]
         public async Task<ActionResult<IEnumerable<AuthorDto>>> Get()
         {
             IEnumerable<AuthorDto> authors = null;
@@ -53,7 +78,6 @@ namespace card_index_Web_API.Controllers
 
             return Ok(authors);
         }
-
         /// <summary>
         /// Get author by specified id
         /// </summary>

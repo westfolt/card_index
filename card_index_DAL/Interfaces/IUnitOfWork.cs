@@ -8,8 +8,6 @@ namespace card_index_DAL.Interfaces
         IGenreRepository GenreRepository { get; }
         IRateDetailRepository RateDetailRepository { get; }
         ITextCardRepository TextCardRepository { get; }
-        //UserManager<User> UserManager { get; }
-        //RoleManager<UserRole> RoleManager { get; }
         Task SaveChangesAsync();
     }
 }

@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using card_index_DAL.Entities.DataShaping;
 
 namespace card_index_DAL.Repositories
 {
@@ -21,6 +22,13 @@ namespace card_index_DAL.Repositories
         public async Task<IEnumerable<TextCard>> GetAllAsync()
         {
             return await _db.TextCards.ToListAsync();
+        }
+        public async Task<IEnumerable<TextCard>> GetAllAsync(PagingParameters parameters)
+        {
+            return await _db.TextCards
+                .Skip((parameters.PageNumber-1)*parameters.PageSize)
+                .Take(parameters.PageSize)
+                .ToListAsync();
         }
 
         public async Task<TextCard> GetByIdAsync(int id)
@@ -80,9 +88,26 @@ namespace card_index_DAL.Repositories
             _db.TextCards.Update(entity);
         }
 
+        public async Task<int> GetTotalNumberAsync()
+        {
+            return await _db.TextCards.CountAsync();
+        }
+
         public async Task<IEnumerable<TextCard>> GetAllWithDetailsAsync()
         {
             return await _db.TextCards.Include(tc => tc.RateDetails)
+                .ThenInclude(rd => rd.User)
+                .Include(tc => tc.Genre)
+                .Include(tc => tc.Authors)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<TextCard>> GetAllWithDetailsAsync(PagingParameters parameters)
+        {
+            return await _db.TextCards
+                .Skip((parameters.PageNumber - 1) * parameters.PageSize)
+                .Take(parameters.PageSize)
+                .Include(tc => tc.RateDetails)
                 .ThenInclude(rd => rd.User)
                 .Include(tc => tc.Genre)
                 .Include(tc => tc.Authors)

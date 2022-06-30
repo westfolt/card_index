@@ -80,6 +80,11 @@ namespace card_index_DAL.Repositories
             _db.RateDetails.Update(entity);
         }
 
+        public async Task<int> GetTotalNumberAsync()
+        {
+            return await _db.RateDetails.CountAsync();
+        }
+
         public async Task<IEnumerable<RateDetail>> GetAllWithDetailsAsync()
         {
             return await _db.RateDetails.Include(rd => rd.User)

@@ -1,6 +1,7 @@
 ﻿using card_index_BLL.Models.Dto;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using card_index_BLL.Models.DataShaping;
 
 namespace card_index_BLL.Interfaces
 {
@@ -38,5 +39,16 @@ namespace card_index_BLL.Interfaces
         /// <param name="modelId">Id of genre to delete</param>
         /// <returns>Async operation</returns>
         Task DeleteAsync(int modelId);
+        /// <summary>
+        /// Gets total number of genres stored
+        /// </summary>
+        /// <returns>Genre number</returns>
+        public Task<int> GetTotalNumber();
+        /// <summary>
+        /// Gets all genres with paging
+        /// </summary>
+        /// <param name="parameters">Paging model parameters</param>
+        /// <returns>Genres list</returns>
+        Task<IEnumerable<GenreDto>> GetAllAsync(PagingParametersModel parameters);
     }
 }

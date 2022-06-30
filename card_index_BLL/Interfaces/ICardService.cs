@@ -3,6 +3,7 @@ using card_index_BLL.Models.Dto;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using card_index_BLL.Models.DataShaping;
 
 namespace card_index_BLL.Interfaces
 {
@@ -43,5 +44,11 @@ namespace card_index_BLL.Interfaces
         /// <param name="userId">user id, who gave rating</param>
         /// <returns>Async operation</returns>
         Task DeleteRatingFromCard(int cardId, int userId);
+        /// <summary>
+        /// Gets all cards with paging
+        /// </summary>
+        /// <param name="parameters">Paging parameters model</param>
+        /// <returns>Cards list</returns>
+        Task<IEnumerable<TextCardDto>> GetAllAsync(PagingParametersModel parameters);
     }
 }

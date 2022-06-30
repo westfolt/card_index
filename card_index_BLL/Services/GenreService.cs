@@ -8,6 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using card_index_BLL.Models.DataShaping;
+using card_index_DAL.Entities.DataShaping;
 
 namespace card_index_BLL.Services
 {
@@ -48,7 +50,26 @@ namespace card_index_BLL.Services
                 throw new CardIndexException("Cannot get genres", ex);
             }
         }
-
+        /// <summary>
+        /// Overloaded version, takes parameters model with filtering data
+        /// </summary>
+        /// <param name="parameters">Parameters model, filters result</param>
+        /// <returns>Filtered genres</returns>
+        /// <exception cref="CardIndexException">Thrown if problems during DB operations</exception>
+        public async Task<IEnumerable<GenreDto>> GetAllAsync(PagingParametersModel parameters)
+        {
+            var filter = new PagingParameters { PageNumber = parameters.PageNumber, PageSize = parameters.PageSize };
+            try
+            {
+                var takenFromDb = await _unitOfWork.GenreRepository.GetAllWithDetailsAsync(filter);
+                var mapped = _mapper.Map<IEnumerable<Genre>, IEnumerable<GenreDto>>(takenFromDb);
+                return mapped;
+            }
+            catch (Exception ex)
+            {
+                throw new CardIndexException("Cannot get text cards", ex);
+            }
+        }
         /// <summary>
         /// Gets genre with given name
         /// </summary>
@@ -128,6 +149,22 @@ namespace card_index_BLL.Services
             catch (Exception ex)
             {
                 throw new CardIndexException($"Cannot delete genre with id: {modelId}", ex);
+            }
+        }
+        /// <summary>
+        /// Gets total number of genres stored
+        /// </summary>
+        /// <returns>Genre number</returns>
+        /// <exception cref="CardIndexException">Thrown if problems during DB operations</exception>
+        public async Task<int> GetTotalNumber()
+        {
+            try
+            {
+                return await _unitOfWork.GenreRepository.GetTotalNumberAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new CardIndexException($"Cannot get number of genres", ex);
             }
         }
     }

@@ -25,8 +25,7 @@ namespace card_index_BLL.Services
         /// Creates service
         /// </summary>
         /// <param name="mapper">Object for entities mapping</param>
-        /// <param name="userManager">Identity user manager</param>
-        /// <param name="roleManager">Identity role manager</param>
+        /// <param name="usersRolesManager">Wrapping object for userManager, roleManager and signInManager</param>
         public UserService(IMapper mapper, IManageUsersRoles usersRolesManager)
         {
             _mapper = mapper;

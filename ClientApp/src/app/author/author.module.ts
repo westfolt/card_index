@@ -8,6 +8,9 @@ import { AuthorDetailComponent } from './author-detail/author-detail.component';
 import { AuthorAddComponent } from './author-add/author-add.component';
 import { AuthorUpdateComponent } from './author-update/author-update.component';
 import { AuthorDeleteComponent } from './author-delete/author-delete.component';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 
 @NgModule({
@@ -21,7 +24,10 @@ import { AuthorDeleteComponent } from './author-delete/author-delete.component';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    AuthorRoutingModule
+    AuthorRoutingModule,
+    MatSelectModule,
+    MatTableModule,
+    MatPaginatorModule
   ]
 })
 export class AuthorModule { }

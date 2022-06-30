@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using card_index_DAL.Entities.DataShaping;
 
 namespace card_index_DAL.Interfaces
 {
@@ -11,5 +12,6 @@ namespace card_index_DAL.Interfaces
         void Delete(TEntity entity);
         Task DeleteByIdAsync(int id);
         void Update(TEntity entity);
+        Task<int> GetTotalNumberAsync();
     }
 }

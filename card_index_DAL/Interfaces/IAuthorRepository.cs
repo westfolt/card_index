@@ -1,6 +1,7 @@
 ﻿using card_index_DAL.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using card_index_DAL.Entities.DataShaping;
 
 namespace card_index_DAL.Interfaces
 {
@@ -8,5 +9,7 @@ namespace card_index_DAL.Interfaces
     {
         Task<IEnumerable<Author>> GetAllWithDetailsAsync();
         Task<Author> GetByIdWithDetailsAsync(int id);
+        Task<IEnumerable<Author>> GetAllWithDetailsAsync(PagingParameters parameters);
+        Task<IEnumerable<Author>> GetAllAsync(PagingParameters parameters);
     }
 }
