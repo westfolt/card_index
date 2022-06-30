@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using card_index_BLL.Exceptions;
+using card_index_BLL.Interfaces;
+using card_index_BLL.Models.Identity.Models;
 using card_index_BLL.Services;
 using card_index_DAL.Entities;
 using card_index_DAL.Interfaces;
@@ -28,205 +30,321 @@ namespace CardIndexTests.BllTests
         [Test]
         public async Task UserService_GetAll_ReturnsAllUsers()
         {
-            var expected = _data.AuthorDtos;
-            var mockUserManager = new Mock<UserManager<User>>(Mock.Of<IUserStore<User>>(), null);
-            var mockRoleManager =
-                new Mock<RoleManager<UserRole>>(Mock.Of<IRoleStore<UserRole>>(), null, null, null, null);
-            IQueryable<User> queryableUsers = _data.Users.AsQueryable();
-            mockUserManager
-                .Setup(x => x.Users)
-                .Returns(queryableUsers);
+            var expected = _data.UserInfoModels;
+            var mockUsersRolesManager = new Mock<IManageUsersRoles>();
+            mockUsersRolesManager
+                .Setup(x => x.GetUsersUMAsync())
+                .ReturnsAsync(_data.Users.ToList());
+            mockUsersRolesManager
+                .Setup(x => x.GetRolesFromUserManagerAsync(It.IsAny<User>()))
+                .ReturnsAsync(_data.RoleInfoModels.Select(r=>r.RoleName).ToList());
 
-            mockUserManager
-                .Setup(x => x.GetRolesAsync(It.IsAny<User>()))
-                .ReturnsAsync((User u) => _data.Roles.Where(r => r.Id == u.Id).Select(r => r.Name).ToList());
-            
-            var UserService = new UserService(DbTestHelper.CreateMapperProfile(), mockUserManager.Object,
-                mockRoleManager.Object);
+            var userService = new UserService(DbTestHelper.CreateMapperProfile(), mockUsersRolesManager.Object);
 
-            var actual = await UserService.GetAllAsync();
+            var actual = await userService.GetAllAsync();
 
             actual.Should().BeEquivalentTo(expected, options =>
-                options.Excluding(x => x.TextCardIds));
+                options.Excluding(x => x.UserRoles));
         }
         [Test]
         public async Task UserService_GetAll_ReturnsCardIndexException()
         {
-            var mockUserManager = new Mock<UserManager<User>>(Mock.Of<IUserStore<User>>(), null, null, null, null, null, null, null, null);
-            var mockRoleManager =
-                new Mock<RoleManager<UserRole>>(Mock.Of<IRoleStore<UserRole>>(), null, null, null, null);
-
-            mockUserManager
-                .Setup(x => x.Users)
+            var mockUsersRolesManager = new Mock<IManageUsersRoles>();
+            mockUsersRolesManager
+                .Setup(x => x.GetUsersUMAsync())
                 .Throws(new Exception());
 
-            var UserService = new UserService(DbTestHelper.CreateMapperProfile(), mockUserManager.Object,
-                mockRoleManager.Object);
+            var userService = new UserService(DbTestHelper.CreateMapperProfile(), mockUsersRolesManager.Object);
 
-            Assert.ThrowsAsync<CardIndexException>(async () => await UserService.GetAllAsync());
+            Assert.ThrowsAsync<CardIndexException>(async () => await userService.GetAllAsync());
         }
-        //[TestCase(1)]
-        //[TestCase(2)]
-        //public async Task UserService_GetById_ReturnsAuthor(int id)
-        //{
-        //    var expected = _data.AuthorDtos.ToList()[id];
-        //    var mockUnitOfWork = new Mock<IUnitOfWork>();
 
-        //    mockUnitOfWork
-        //        .Setup(x => x.UserRepository.GetByIdWithDetailsAsync(It.IsAny<int>()))
-        //        .ReturnsAsync(_data.UserInfoModels.ToList()[id]);
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task UserService_GetById_ReturnsUser(int id)
+        {
+            var expected = _data.UserInfoModels.ToList()[id-1];
+            var mockUsersRolesManager = new Mock<IManageUsersRoles>();
+            mockUsersRolesManager
+                .Setup(x => x.GetUsersUMAsync())
+                .ReturnsAsync(_data.Users.ToList());
+            mockUsersRolesManager
+                .Setup(x => x.GetRolesFromUserManagerAsync(It.IsAny<User>()))
+                .ReturnsAsync(_data.RoleInfoModels.Select(r => r.RoleName).ToList());
 
-        //    var UserService = new UserService(DbTestHelper.CreateMapperProfile(), mockUnitOfWork.Object);
+            var userService = new UserService(DbTestHelper.CreateMapperProfile(), mockUsersRolesManager.Object);
 
-        //    var actual = await UserService.GetByIdAsync(id);
+            var actual = await userService.GetByIdAsync(id);
 
-        //    actual.Should().BeEquivalentTo(expected, options =>
-        //        options.Excluding(x => x.TextCardIds));
-        //}
-        //[TestCase(1)]
-        //[TestCase(2)]
-        //public async Task UserService_GetById_ReturnsCardIndexException(int id)
-        //{
-        //    var mockUnitOfWork = new Mock<IUnitOfWork>();
+            actual.Should().BeEquivalentTo(expected, options =>
+                options.Excluding(x => x.UserRoles));
+        }
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task UserService_GetById_ReturnsCardIndexException(int id)
+        {
+            var mockUsersRolesManager = new Mock<IManageUsersRoles>();
+            mockUsersRolesManager
+                .Setup(x => x.GetUsersUMAsync())
+                .Throws(new Exception());
 
-        //    mockUnitOfWork
-        //        .Setup(x => x.UserRepository.GetByIdWithDetailsAsync(It.IsAny<int>()))
-        //        .Throws(new Exception());
+            var userService = new UserService(DbTestHelper.CreateMapperProfile(), mockUsersRolesManager.Object);
 
-        //    var UserService = new UserService(DbTestHelper.CreateMapperProfile(), mockUnitOfWork.Object);
+            Assert.ThrowsAsync<CardIndexException>(async () => await userService.GetByIdAsync(id));
+        }
+        [TestCase("First@mail.com")]
+        [TestCase("Second@mail.com")]
+        public async Task UserService_GetByEmail_ReturnsUser(string email)
+        {
+            var expected = _data.UserInfoModels.First(u => u.Email == email);
+            var fromDb = _data.Users.First(u => u.Email == email);
+            var mockUsersRolesManager = new Mock<IManageUsersRoles>();
+            mockUsersRolesManager
+                .Setup(x => x.FindByEmailAsync(It.IsAny<string>()))
+                .ReturnsAsync(fromDb);
+            mockUsersRolesManager
+                .Setup(x => x.GetRolesFromUserManagerAsync(It.IsAny<User>()))
+                .ReturnsAsync(_data.RoleInfoModels.Select(r => r.RoleName).ToList());
 
-        //    Assert.ThrowsAsync<CardIndexException>(async () => await UserService.GetByIdAsync(id));
-        //}
-        //[Test]
-        //public async Task UserService_AddAsync_AddsAuthor()
-        //{
-        //    var mockUnitOfWork = new Mock<IUnitOfWork>();
-        //    mockUnitOfWork.Setup(x => x.UserRepository.AddAsync(It.IsAny<Author>()));
+            var userService = new UserService(DbTestHelper.CreateMapperProfile(), mockUsersRolesManager.Object);
 
-        //    var UserService = new UserService(DbTestHelper.CreateMapperProfile(), mockUnitOfWork.Object);
-        //    var author = _data.AuthorDtos.First();
+            var actual = await userService.GetByEmailAsync(email);
 
-        //    var resultId = await UserService.AddAsync(author);
+            actual.Should().BeEquivalentTo(expected, options =>
+                options.Excluding(x => x.UserRoles));
+        }
+        [TestCase("First@mail.com")]
+        [TestCase("Second@mail.com")]
+        public async Task UserService_GetById_ReturnsCardIndexException(string email)
+        {
+            var mockUsersRolesManager = new Mock<IManageUsersRoles>();
+            mockUsersRolesManager
+                .Setup(x => x.FindByEmailAsync(It.IsAny<string>()))
+                .Throws(new Exception());
 
-        //    mockUnitOfWork.Verify(x => x.UserRepository.AddAsync(It.Is<Author>(
-        //        c => c.Id == 0 &&
-        //             c.FirstName == author.FirstName &&
-        //             c.LastName == author.LastName &&
-        //             c.YearOfBirth == author.YearOfBirth)), Times.Once);
+            var userService = new UserService(DbTestHelper.CreateMapperProfile(), mockUsersRolesManager.Object);
 
-        //    mockUnitOfWork.Verify(x => x.SaveChangesAsync(), Times.Once);
-        //}
-        //[Test]
-        //public async Task UserService_AddAsync_ReturnsCardIndexException()
-        //{
-        //    var mockUnitOfWork = new Mock<IUnitOfWork>();
-        //    var author = _data.AuthorDtos.First();
+            Assert.ThrowsAsync<CardIndexException>(async () => await userService.GetByEmailAsync(email));
+        }
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task UserService_ModifyUser_ChangesUser(int id)
+        {
+            var expected = _data.Users.First(u=>u.Id == id);
+            var givenModel = _data.UserInfoModels.First(u => u.Id == id);
 
-        //    mockUnitOfWork
-        //        .Setup(x => x.UserRepository.AddAsync(It.IsAny<Author>()))
-        //        .Throws(new Exception());
+            var newModel = new User()
+            {
+                Id = id,
+                FirstName = "NewModel",
+                LastName = "NewModel",
+                DateOfBirth = new DateTime(1950, 1, 1),
+                City = "NewCity",
+                Email = "newnew@mail.com",
+                UserName = "newnew@mail.com",
+                PhoneNumber = "+11(111)1111111"
+            };
+            var existingRoles = new List<string> { "Unknown" };
+            
+            var mockUsersRolesManager = new Mock<IManageUsersRoles>();
+            mockUsersRolesManager
+                .Setup(x => x.GetUsersUMAsync())
+                .ReturnsAsync(new List<User>{newModel});
+            mockUsersRolesManager
+                .Setup(x => x.GetRolesFromUserManagerAsync(It.IsAny<User>()))
+                .ReturnsAsync(existingRoles);
+            mockUsersRolesManager
+                .Setup(x => x.RemoveFromRolesAsync(It.IsAny<User>(), It.IsAny<IEnumerable<string>>()));
+            mockUsersRolesManager
+                .Setup(x => x.AddUserToRoleAsync(It.IsAny<User>(), It.IsAny<string>()));
+            mockUsersRolesManager
+                .Setup(x => x.UpdateUserAsync(It.IsAny<User>()))
+                .ReturnsAsync(IdentityResult.Success);
+            var userService = new UserService(DbTestHelper.CreateMapperProfile(), mockUsersRolesManager.Object);
 
-        //    var UserService = new UserService(DbTestHelper.CreateMapperProfile(), mockUnitOfWork.Object);
+            await userService.ModifyUserAsync(givenModel);
+            
+            mockUsersRolesManager.Verify(x=>x.RemoveFromRolesAsync(It.Is<User>(
+                c=>c.Id == id), It.Is<IEnumerable<string>>(
+                c => c.First() == existingRoles.First())), Times.Once);
 
-        //    Assert.ThrowsAsync<CardIndexException>(async () => await UserService.AddAsync(author));
-        //}
-        //[Test]
-        //public async Task UserService_UpdateAsync_UpdatesAuthor()
-        //{
-        //    var mockUnitOfWork = new Mock<IUnitOfWork>();
-        //    mockUnitOfWork.Setup(m => m.UserRepository.Update(It.IsAny<Author>()));
+            mockUsersRolesManager.Verify(x => x.AddUserToRoleAsync(It.Is<User>(
+                c => c.Id == givenModel.Id), It.Is<string>(
+                c => c == givenModel.UserRoles.First())), Times.Once);
 
-        //    var UserService = new UserService(DbTestHelper.CreateMapperProfile(), mockUnitOfWork.Object);
-        //    var author = _data.AuthorDtos.First();
+            mockUsersRolesManager.Verify(x=>x.UpdateUserAsync(It.Is<User>(
+                c => c.Id == givenModel.Id &&
+                     c.FirstName == givenModel.FirstName &&
+                     c.LastName == givenModel.LastName &&
+                     c.DateOfBirth == givenModel.DateOfBirth &&
+                     c.City == givenModel.City &&
+                     c.Email == givenModel.Email &&
+                     c.UserName == givenModel.Email &&
+                     c.PhoneNumber == givenModel.Phone)), Times.Once);
+        }
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task UserService_ModifyUser_ReturnsCardIndexException(int id)
+        {
+            var model = _data.UserInfoModels.ToList()[id];
+            var mockUsersRolesManager = new Mock<IManageUsersRoles>();
+            mockUsersRolesManager
+                .Setup(x => x.GetUsersUMAsync())
+                .Throws(new Exception());
 
-        //    await UserService.UpdateAsync(author);
+            var userService = new UserService(DbTestHelper.CreateMapperProfile(), mockUsersRolesManager.Object);
 
-        //    mockUnitOfWork.Verify(x => x.UserRepository.Update(It.Is<Author>(
-        //        c => c.Id == author.Id &&
-        //             c.FirstName == author.FirstName &&
-        //             c.LastName == author.LastName &&
-        //             c.YearOfBirth == author.YearOfBirth)), Times.Once);
-        //    mockUnitOfWork.Verify(x => x.SaveChangesAsync(), Times.Once);
-        //}
-        //[Test]
-        //public async Task UserService_UpdateAsync_ReturnsCardIndexException()
-        //{
-        //    var mockUnitOfWork = new Mock<IUnitOfWork>();
-        //    var author = _data.AuthorDtos.First();
+            Assert.ThrowsAsync<CardIndexException>(async () => await userService.ModifyUserAsync(model));
+        }
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task UserService_DeleteUser_DeletesUser(int id)
+        {
+            var mockUsersRolesManager = new Mock<IManageUsersRoles>();
+            mockUsersRolesManager
+                .Setup(x => x.GetUsersUMAsync())
+                .ReturnsAsync(_data.Users.ToList());
+            mockUsersRolesManager
+                .Setup(x => x.DeleteUserAsync(It.IsAny<User>()))
+                .ReturnsAsync(IdentityResult.Success);
 
-        //    mockUnitOfWork
-        //        .Setup(x => x.UserRepository.Update(It.IsAny<Author>()))
-        //        .Throws(new Exception());
+            var userService = new UserService(DbTestHelper.CreateMapperProfile(), mockUsersRolesManager.Object);
 
-        //    var UserService = new UserService(DbTestHelper.CreateMapperProfile(), mockUnitOfWork.Object);
+            var actual = await userService.DeleteUserAsync(id);
 
-        //    Assert.ThrowsAsync<CardIndexException>(async () => await UserService.UpdateAsync(author));
-        //}
-        //[TestCase(1)]
-        //[TestCase(2)]
-        //public async Task UserService_DeleteAsync_DeletesProduct(int id)
-        //{
-        //    var mockUnitOfWork = new Mock<IUnitOfWork>();
-        //    mockUnitOfWork.Setup(m => m.UserRepository.DeleteByIdAsync(It.IsAny<int>()));
-        //    var UserService = new UserService(DbTestHelper.CreateMapperProfile(), mockUnitOfWork.Object);
+            mockUsersRolesManager.Verify(x=>x.DeleteUserAsync(It.IsAny<User>()), Times.Once);
 
-        //    await UserService.DeleteAsync(id);
+            Assert.That(actual.Succeeded, Is.EqualTo(true));
+        }
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task UserService_DeleteUser_ReturnsCardIndexException(int id)
+        {
+            var mockUsersRolesManager = new Mock<IManageUsersRoles>();
+            mockUsersRolesManager
+                .Setup(x => x.GetUsersUMAsync())
+                .Throws(new Exception());
 
-        //    mockUnitOfWork.Verify(x => x.UserRepository.DeleteByIdAsync(id), Times.Once);
-        //    mockUnitOfWork.Verify(x => x.SaveChangesAsync(), Times.Once);
-        //}
-        //[TestCase(1)]
-        //[TestCase(2)]
-        //public async Task UserService_DeleteAsync_ReturnsCardIndexException(int id)
-        //{
-        //    var mockUnitOfWork = new Mock<IUnitOfWork>();
+            var userService = new UserService(DbTestHelper.CreateMapperProfile(), mockUsersRolesManager.Object);
 
-        //    mockUnitOfWork
-        //        .Setup(x => x.UserRepository.DeleteByIdAsync(It.IsAny<int>()))
-        //        .Throws(new Exception());
+            Assert.ThrowsAsync<CardIndexException>(async () => await userService.DeleteUserAsync(id));
+        }
+        [Test]
+        public async Task UserService_GetAllRoles_ReturnsAllRoles()
+        {
+            var expected = _data.RoleInfoModels;
+            var mockUsersRolesManager = new Mock<IManageUsersRoles>();
+            mockUsersRolesManager
+                .Setup(x => x.GetRolesFromRoleManagerAsync())
+                .ReturnsAsync(_data.Roles.ToList());
 
-        //    var UserService = new UserService(DbTestHelper.CreateMapperProfile(), mockUnitOfWork.Object);
+            var userService = new UserService(DbTestHelper.CreateMapperProfile(), mockUsersRolesManager.Object);
 
-        //    Assert.ThrowsAsync<CardIndexException>(async () => await UserService.DeleteAsync(id));
-        //}
-        //[TestCase(1981, 1983, new[] { 1, 2, 3 })]
-        //[TestCase(1983, 1985, new[] { 3, 4, 5 })]
-        //[TestCase(1982, 1983, new[] { 2, 3 })]
-        //public async Task UserService_GetUsersForPeriodAsync_ReturnsCardIndexException(int startYear, int endYear, int[] expectedAuthorIds)
-        //{
-        //    //arrange
-        //    var expected = _data.AuthorDtos.Where(x => expectedAuthorIds.Contains(x.Id));
+            var actual = await userService.GetAllRolesAsync();
 
-        //    var mockUnitOfWork = new Mock<IUnitOfWork>();
+            actual.Should().BeEquivalentTo(expected);
+        }
+        [Test]
+        public async Task UserService_GetAllRoles_ReturnsCardIndexException()
+        {
+            var mockUsersRolesManager = new Mock<IManageUsersRoles>();
+            mockUsersRolesManager
+                .Setup(x => x.GetRolesFromRoleManagerAsync())
+                .Throws(new Exception());
 
-        //    mockUnitOfWork
-        //        .Setup(x => x.UserRepository.GetAllWithDetailsAsync())
-        //        .ReturnsAsync(_data.UserInfoModels.AsEnumerable());
+            var userService = new UserService(DbTestHelper.CreateMapperProfile(), mockUsersRolesManager.Object);
 
-        //    var UserService = new UserService(DbTestHelper.CreateMapperProfile(), mockUnitOfWork.Object);
+            Assert.ThrowsAsync<CardIndexException>(async () => await userService.GetAllRolesAsync());
+        }
+        [TestCase("Admin")]
+        [TestCase("Moderator")]
+        public async Task UserService_GetRoleByName_ReturnsRole(string roleName)
+        {
+            var expected = _data.RoleInfoModels.First(r=>r.RoleName == roleName);
+            var mockUsersRolesManager = new Mock<IManageUsersRoles>();
+            mockUsersRolesManager
+                .Setup(x => x.GetRolesFromRoleManagerAsync())
+                .ReturnsAsync(_data.Roles.ToList());
 
-        //    //act
-        //    var actual = await UserService.GetUsersForPeriodAsync(startYear, endYear);
+            var userService = new UserService(DbTestHelper.CreateMapperProfile(), mockUsersRolesManager.Object);
 
-        //    //assert
-        //    actual.Should().BeEquivalentTo(expected, options =>
-        //        options.Excluding(x => x.TextCardIds)
-        //    );
-        //}
-        //[TestCase(1981, 1983)]
-        //[TestCase(1983, 1985)]
-        //[TestCase(1982, 1983)]
-        //public async Task UserService_GetUsersForPeriodAsync_ReturnsUsersByCategory(int startYear, int endYear)
-        //{
-        //    var mockUnitOfWork = new Mock<IUnitOfWork>();
+            var actual = await userService.GetRoleByNameAsync(roleName);
 
-        //    mockUnitOfWork
-        //        .Setup(x => x.UserRepository.GetAllWithDetailsAsync())
-        //        .Throws(new Exception());
+            actual.Should().BeEquivalentTo(expected);
+        }
+        [TestCase("Admin")]
+        [TestCase("Moderator")]
+        public async Task UserService_GetRoleByName_ReturnsCardIndexException(string roleName)
+        {
+            var mockUsersRolesManager = new Mock<IManageUsersRoles>();
+            mockUsersRolesManager
+                .Setup(x => x.GetRolesFromRoleManagerAsync())
+                .Throws(new Exception());
 
-        //    var UserService = new UserService(DbTestHelper.CreateMapperProfile(), mockUnitOfWork.Object);
+            var userService = new UserService(DbTestHelper.CreateMapperProfile(), mockUsersRolesManager.Object);
 
-        //    Assert.ThrowsAsync<CardIndexException>(async () => await UserService.GetUsersForPeriodAsync(startYear, endYear));
-        //}
+            Assert.ThrowsAsync<CardIndexException>(async () => await userService.GetRoleByNameAsync(roleName));
+        }
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task UserService_AddRole_AddsRole(int id)
+        {
+            var mockUsersRolesManager = new Mock<IManageUsersRoles>();
+            mockUsersRolesManager
+                .Setup(x => x.CreateRoleAsync(It.IsAny<UserRole>()));
+
+            var userService = new UserService(DbTestHelper.CreateMapperProfile(), mockUsersRolesManager.Object);
+            var roleToAdd = _data.RoleInfoModels.First(r => r.Id == id);
+
+            await userService.AddRoleAsync(roleToAdd);
+
+            mockUsersRolesManager.Verify(x => x.CreateRoleAsync(It.Is<UserRole>(
+                c=>c.Id == 0 &&
+                   c.Name == roleToAdd.RoleName)), Times.Once);
+        }
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task UserService_AddRole_ReturnsCardIndexException(int id)
+        {
+            var mockUsersRolesManager = new Mock<IManageUsersRoles>();
+            mockUsersRolesManager
+                .Setup(x => x.CreateRoleAsync(It.IsAny<UserRole>()))
+                .Throws(new Exception());
+
+            var userService = new UserService(DbTestHelper.CreateMapperProfile(), mockUsersRolesManager.Object);
+
+            Assert.ThrowsAsync<CardIndexException>(async () => await userService.DeleteUserAsync(id));
+        }
+        [TestCase("Admin")]
+        [TestCase("Moderator")]
+        public async Task UserService_DeleteRole_DeletesRole(string roleName)
+        {
+            var mockUsersRolesManager = new Mock<IManageUsersRoles>();
+            mockUsersRolesManager
+                .Setup(x => x.GetRolesFromRoleManagerAsync())
+                .ReturnsAsync(_data.Roles.ToList());
+            mockUsersRolesManager
+                .Setup(x => x.DeleteRoleAsync(It.IsAny<UserRole>()))
+                .ReturnsAsync(IdentityResult.Success);
+
+            var userService = new UserService(DbTestHelper.CreateMapperProfile(), mockUsersRolesManager.Object);
+
+            await userService.DeleteRoleAsync(roleName);
+
+            mockUsersRolesManager.Verify(x => x.DeleteRoleAsync(It.IsAny<UserRole>()), Times.Once);
+        }
+        [TestCase("Admin")]
+        [TestCase("Moderator")]
+        public async Task UserService_DeleteRole_ReturnsCardIndexException(string roleName)
+        {
+            var mockUsersRolesManager = new Mock<IManageUsersRoles>();
+            mockUsersRolesManager
+                .Setup(x => x.GetRolesFromRoleManagerAsync())
+                .Throws(new Exception());
+
+            var userService = new UserService(DbTestHelper.CreateMapperProfile(), mockUsersRolesManager.Object);
+
+            Assert.ThrowsAsync<CardIndexException>(async () => await userService.DeleteRoleAsync(roleName));
+        }
     }
 }
