@@ -15,6 +15,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using Microsoft.Net.Http.Headers;
 
 namespace card_index_Web_API
 {
@@ -45,6 +46,34 @@ namespace card_index_Web_API
 
                 var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+
+                options.AddSecurityDefinition(
+                    "token",
+                    new OpenApiSecurityScheme
+                    {
+                        Type = SecuritySchemeType.Http,
+                        BearerFormat = "JWT",
+                        Scheme = "Bearer",
+                        In = ParameterLocation.Header,
+                        Name = HeaderNames.Authorization
+                    }
+                );
+                options.AddSecurityRequirement(
+                    new OpenApiSecurityRequirement
+                    {
+                        {
+                            new OpenApiSecurityScheme
+                            {
+                                Reference = new OpenApiReference
+                                {
+                                    Type = ReferenceType.SecurityScheme,
+                                    Id = "token"
+                                },
+                            },
+                            Array.Empty<string>()
+                        }
+                    }
+                );
             });
             services.AddCors(options =>
             {

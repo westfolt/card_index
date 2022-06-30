@@ -8,6 +8,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using card_index_BLL.Interfaces;
 
 namespace card_index_BLL.Security
 {
@@ -24,10 +25,10 @@ namespace card_index_BLL.Security
         /// </summary>
         /// <param name="configuration">application configuration</param>
         /// <param name="userManager">identity user manager</param>
-        public JwtHandler(IConfiguration configuration, UserManager<User> userManager)
+        public JwtHandler(IConfiguration configuration, IManageUsersRoles usersRolesManager)
         {
             _jwtConfiguration = configuration.GetSection("JwtSettings");
-            _userManager = userManager;
+            _userManager = usersRolesManager.GetUserManager();
         }
 
         /// <summary>

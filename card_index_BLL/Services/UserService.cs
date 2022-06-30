@@ -19,8 +19,7 @@ namespace card_index_BLL.Services
     public class UserService : IUserService
     {
         private readonly IMapper _mapper;
-        private readonly UserManager<User> _userManager;
-        private readonly RoleManager<UserRole> _roleManager;
+        private readonly IManageUsersRoles _usersRolesManager;
 
         /// <summary>
         /// Creates service
@@ -28,11 +27,10 @@ namespace card_index_BLL.Services
         /// <param name="mapper">Object for entities mapping</param>
         /// <param name="userManager">Identity user manager</param>
         /// <param name="roleManager">Identity role manager</param>
-        public UserService(IMapper mapper, UserManager<User> userManager, RoleManager<UserRole> roleManager)
+        public UserService(IMapper mapper, IManageUsersRoles usersRolesManager)
         {
             _mapper = mapper;
-            _userManager = userManager;
-            _roleManager = roleManager;
+            _usersRolesManager = usersRolesManager;
         }
 
         /// <summary>
@@ -44,12 +42,12 @@ namespace card_index_BLL.Services
         {
             try
             {
-                var takenFromDb = await _userManager.Users.ToListAsync();
+                var takenFromDb = await _usersRolesManager.GetUsersUMAsync();
                 var mapped = new List<UserInfoModel>(takenFromDb.Count);
                 for (int i = 0; i < takenFromDb.Count; i++)
                 {
                     mapped.Add(_mapper.Map<User, UserInfoModel>(takenFromDb[i]));
-                    mapped[i].UserRoles = await _userManager.GetRolesAsync(takenFromDb[i]);
+                    mapped[i].UserRoles = await _usersRolesManager.GetRolesFromUserManagerAsync(takenFromDb[i]);
                 }
 
                 return mapped;
@@ -70,9 +68,9 @@ namespace card_index_BLL.Services
         {
             try
             {
-                var takenFromDb = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == id);
+                var takenFromDb = (await _usersRolesManager.GetUsersUMAsync()).FirstOrDefault(u => u.Id == id);
                 var mapped = _mapper.Map<User, UserInfoModel>(takenFromDb);
-                mapped.UserRoles = await _userManager.GetRolesAsync(takenFromDb);
+                mapped.UserRoles = await _usersRolesManager.GetRolesFromUserManagerAsync(takenFromDb);
                 return mapped;
             }
             catch (Exception ex)
@@ -91,9 +89,9 @@ namespace card_index_BLL.Services
         {
             try
             {
-                var takenFromDb = await _userManager.FindByEmailAsync(email);
+                var takenFromDb = await _usersRolesManager.FindByEmailAsync(email);
                 var mapped = _mapper.Map<User, UserInfoModel>(takenFromDb);
-                mapped.UserRoles = await _userManager.GetRolesAsync(takenFromDb);
+                mapped.UserRoles = await _usersRolesManager.GetRolesFromUserManagerAsync(takenFromDb);
                 return mapped;
             }
             catch (Exception ex)
@@ -113,15 +111,15 @@ namespace card_index_BLL.Services
         {
             try
             {
-                var takenFromDb = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == model.Id);
-                var userExistingRoles = await _userManager.GetRolesAsync(takenFromDb);
+                var takenFromDb = (await _usersRolesManager.GetUsersUMAsync()).FirstOrDefault(u => u.Id == model.Id);
+                var userExistingRoles = await _usersRolesManager.GetRolesFromUserManagerAsync(takenFromDb);
                 var givenRole = model.UserRoles.ToList()[0];
 
                 //deleting old roles and changing to new
                 if (!userExistingRoles.Contains(givenRole))
                 {
-                    await _userManager.RemoveFromRolesAsync(takenFromDb, userExistingRoles);
-                    await _userManager.AddToRoleAsync(takenFromDb, givenRole);
+                    await _usersRolesManager.RemoveFromRolesAsync(takenFromDb, userExistingRoles);
+                    await _usersRolesManager.AddUserToRoleAsync(takenFromDb, givenRole);
                 }
 
                 takenFromDb.FirstName = model.FirstName;
@@ -134,7 +132,7 @@ namespace card_index_BLL.Services
                 takenFromDb.NormalizedUserName = model.Email.ToUpperInvariant();
                 takenFromDb.PhoneNumber = model.Phone;
 
-                var result = await _userManager.UpdateAsync(takenFromDb);
+                var result = await _usersRolesManager.UpdateUserAsync(takenFromDb);
 
                 if (result.Succeeded)
                     return new Response(true, $"User {model.FirstName} {model.LastName} successfully modified");
@@ -158,11 +156,11 @@ namespace card_index_BLL.Services
         {
             try
             {
-                var userToDelete = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == id);
+                var userToDelete = (await _usersRolesManager.GetUsersUMAsync()).FirstOrDefault(u => u.Id == id);
                 if (userToDelete == null)
                     return new Response(false, "No such user in database");
 
-                var result = await _userManager.DeleteAsync(userToDelete);
+                var result = await _usersRolesManager.DeleteUserAsync(userToDelete);
 
                 if (result.Succeeded)
                     return new Response(true, $"User with id: {id} successfully deleted");
@@ -184,7 +182,7 @@ namespace card_index_BLL.Services
         {
             try
             {
-                var takenFromDb = await _roleManager.Roles.ToListAsync();
+                var takenFromDb = await _usersRolesManager.GetRolesFromRoleManagerAsync();
                 return _mapper.Map<IEnumerable<UserRole>, IEnumerable<UserRoleInfoModel>>(takenFromDb);
             }
             catch (Exception ex)
@@ -203,7 +201,7 @@ namespace card_index_BLL.Services
         {
             try
             {
-                var takenFromDb = await _roleManager.Roles.FirstOrDefaultAsync(r => r.Name == roleName);
+                var takenFromDb = (await _usersRolesManager.GetRolesFromRoleManagerAsync()).FirstOrDefault(r => r.Name == roleName);
                 return _mapper.Map<UserRole, UserRoleInfoModel>(takenFromDb);
 
             }
@@ -225,7 +223,7 @@ namespace card_index_BLL.Services
             {
                 var mapped = _mapper.Map<UserRoleInfoModel, UserRole>(model);
                 mapped.Id = 0;
-                await _roleManager.CreateAsync(mapped);
+                await _usersRolesManager.CreateRoleAsync(mapped);
                 return mapped.Id;
             }
             catch (Exception ex)
@@ -244,8 +242,8 @@ namespace card_index_BLL.Services
         {
             try
             {
-                var roleToDelete = await _roleManager.Roles.FirstOrDefaultAsync(r => r.Name == roleName);
-                await _roleManager.DeleteAsync(roleToDelete);
+                var roleToDelete = (await _usersRolesManager.GetRolesFromRoleManagerAsync()).FirstOrDefault(r => r.Name == roleName);
+                await _usersRolesManager.DeleteRoleAsync(roleToDelete);
             }
             catch (Exception ex)
             {

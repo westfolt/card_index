@@ -31,6 +31,7 @@ namespace card_index_BLL.Infrastructure
                 })
                 .AddEntityFrameworkStores<CardIndexDbContext>()
                 .AddDefaultTokenProviders();
+            serviceCollection.AddTransient<IManageUsersRoles, ManageUsersRoles>();
             serviceCollection.AddTransient<IAuthorService, AuthorService>();
             serviceCollection.AddTransient<ICardService, CardService>();
             serviceCollection.AddTransient<IGenreService, GenreService>();

@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using card_index_BLL.Infrastructure;
 
 namespace card_index_BLL.Services
 {
@@ -18,8 +19,8 @@ namespace card_index_BLL.Services
     /// </summary>
     public class AuthenticationService : IAuthenticationService
     {
-        private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
+        private readonly IManageUsersRoles _usersRolesManager;
         private readonly JwtHandler _jwtHandler;
 
         /// <summary>
@@ -28,10 +29,10 @@ namespace card_index_BLL.Services
         /// <param name="userManager">Identity user manager</param>
         /// <param name="signInManager">Identity signin manager</param>
         /// <param name="jwtHandler">Handler of jwt creation</param>
-        public AuthenticationService(UserManager<User> userManager, SignInManager<User> signInManager, JwtHandler jwtHandler)
+        public AuthenticationService(IManageUsersRoles usersRolesManager, JwtHandler jwtHandler)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
+            _usersRolesManager = usersRolesManager;
+            _signInManager = usersRolesManager.GetSignInManager();
             _jwtHandler = jwtHandler;
         }
 
@@ -46,7 +47,7 @@ namespace card_index_BLL.Services
         {
             try
             {
-                var user = await _userManager.FindByNameAsync(model.Email);
+                var user = await _usersRolesManager.FindByNameAsync(model.Email);
 
                 if (user == null)
                     return new LoginResponse { Errors = new List<string> { $"No user with email: {model.Email}" } };
@@ -75,7 +76,7 @@ namespace card_index_BLL.Services
         /// <exception cref="CardIndexException">Thrown if problems during registration process</exception>
         public async Task<Response> RegisterUser(UserRegistrationModel model)
         {
-            var alreadyExists = await _userManager.FindByEmailAsync(model.Email);
+            var alreadyExists = await _usersRolesManager.FindByEmailAsync(model.Email);
             if (alreadyExists != null)
                 return new Response() { Message = "Cannot create user", Errors = new List<string> { $"Email {model.Email} is already taken" } };
 
@@ -89,10 +90,10 @@ namespace card_index_BLL.Services
                     UserName = model.Email,
                     PhoneNumber = model.Phone
                 };
-                var result = await _userManager.CreateAsync(user, model.Password);
+                var result = await _usersRolesManager.CreateUserAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    await _userManager.AddToRoleAsync(user, "Registered");
+                    await _usersRolesManager.AddUserToRoleAsync(user, "Registered");
                     return new Response(true, $"User {model.FirstName} {model.LastName} successfully added");
                 }
 
