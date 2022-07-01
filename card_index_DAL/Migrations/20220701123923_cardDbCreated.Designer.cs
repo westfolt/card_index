@@ -9,9 +9,8 @@ using card_index_DAL.Data;
 
 namespace card_index_DAL.Migrations
 {
-#pragma warning disable CS1591
     [DbContext(typeof(CardIndexDbContext))]
-    [Migration("20220621162338_cardDbCreated")]
+    [Migration("20220701123923_cardDbCreated")]
     partial class cardDbCreated
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

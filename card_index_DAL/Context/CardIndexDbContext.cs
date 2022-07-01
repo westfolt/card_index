@@ -54,14 +54,14 @@ namespace card_index_DAL.Data
                 entity.ToTable("UserTokens");
             });
 
-            builder.Entity<User>()
-                .HasMany(u => u.RateDetails)
-                .WithOne(rd => rd.User)
-                .HasForeignKey(rd => rd.UserId);
+            builder.Entity<RateDetail>()
+                .HasOne(rd=>rd.User)
+                .WithMany(u=>u.RateDetails)
+                .HasForeignKey(rd=>rd.UserId);
 
-            builder.Entity<TextCard>()
-                .HasMany(c => c.RateDetails)
-                .WithOne(rd => rd.TextCard)
+            builder.Entity<RateDetail>()
+                .HasOne(rd => rd.TextCard)
+                .WithMany(tc => tc.RateDetails)
                 .HasForeignKey(rd => rd.TextCardId);
 
             builder.Entity<TextCard>()

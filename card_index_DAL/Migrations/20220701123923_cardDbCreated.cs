@@ -2,7 +2,6 @@
 
 namespace card_index_DAL.Migrations
 {
-#pragma warning disable CS1591
     public partial class cardDbCreated : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
