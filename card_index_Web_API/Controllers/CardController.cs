@@ -1,4 +1,5 @@
-﻿using card_index_BLL.Exceptions;
+﻿using System.Collections.Generic;
+using card_index_BLL.Exceptions;
 using card_index_BLL.Interfaces;
 using card_index_BLL.Models.DataShaping;
 using card_index_BLL.Models.Dto;
@@ -6,6 +7,7 @@ using card_index_BLL.Models.Identity.Infrastructure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace card_index_Web_API.Controllers
@@ -19,14 +21,17 @@ namespace card_index_Web_API.Controllers
     public class CardController : ControllerBase
     {
         private readonly ICardService _cardService;
+        private readonly IUserService _userService;
 
         /// <summary>
         /// Constructor, inject text card service here
         /// </summary>
         /// <param name="cardService">Text card service object</param>
-        public CardController(ICardService cardService)
+        /// <param name="userService">User service object</param>
+        public CardController(ICardService cardService, IUserService userService)
         {
             _cardService = cardService;
+            _userService = userService;
         }
 
         /// <summary>
@@ -154,6 +159,60 @@ namespace card_index_Web_API.Controllers
             }
 
             return Ok(new Response(true, $"Successfully deleted card with id: {id}"));
+        }
+        /// <summary>
+        /// Gets rating details, connecting given user and card
+        /// </summary>
+        /// <param name="userId">Id of user</param>
+        /// <param name="cardId">Id of card</param>
+        /// <returns>Object containing rate details</returns>
+        [HttpGet("rate")]
+        public async Task<ActionResult<RateDetailDto>> GetRatingForCardUser([FromQuery]int userId, int cardId)
+        {
+            RateDetailDto rate = null;
+            
+            try
+            {
+                rate = await _cardService.GetRateDetailByUserIdCardId(userId, cardId);
+            }
+            catch (CardIndexException ex)
+            {
+                return BadRequest(new Response(false, ex.Message));
+            }
+
+            if (rate == null)
+                return NotFound();
+
+            return Ok(rate);
+        }
+        /// <summary>
+        /// Gives rating to text card from currently logged in user
+        /// </summary>
+        /// <param name="newDetails"></param>
+        /// <returns></returns>
+        [HttpPost("rate")]
+        public async Task<ActionResult<Response>> GiveRatingToCard([FromBody] RateDetailDto newDetails)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(new Response()
+                    { Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList() });
+            try
+            {
+                //user can modify only marks, given by himself
+                var loggedInId = (await _userService.GetByEmailAsync(User.FindFirstValue(ClaimTypes.Name))).Id;
+                if (loggedInId != newDetails.UserId)
+                    return BadRequest(new Response()
+                        { Errors = new List<string> { "Trying to modify other user's mark!" } });
+
+                await _cardService.AddRatingToCard(newDetails);
+            }
+            catch (CardIndexException ex)
+            {
+                return BadRequest(new Response(false, ex.Message));
+            }
+
+            return Ok(new Response(true,
+                $"Successfully added rating: {newDetails.RateValue} to card id: {newDetails.TextCardId}"));
         }
     }
 }

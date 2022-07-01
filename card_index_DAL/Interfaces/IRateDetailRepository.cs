@@ -14,5 +14,12 @@ namespace card_index_DAL.Interfaces
         /// </summary>
         /// <returns>Rate details list</returns>
         Task<IEnumerable<RateDetail>> GetAllWithDetailsAsync();
+        /// <summary>
+        /// Gets rate detail with connected instances included,
+        /// matching given id
+        /// </summary>
+        /// <param name="id">Id of rate detail to search</param>
+        /// <returns>Rate detail object</returns>
+        Task<RateDetail> GetByIdWithDetailsAsync(int id);
     }
 }

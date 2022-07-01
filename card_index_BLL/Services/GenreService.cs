@@ -80,8 +80,7 @@ namespace card_index_BLL.Services
         {
             try
             {
-                var takenFromDb =
-                    (await _unitOfWork.GenreRepository.GetAllAsync()).FirstOrDefault(g => g.Title == name);
+                var takenFromDb = await _unitOfWork.GenreRepository.GetByNameWithDetailsAsync(name);
                 var mapped = _mapper.Map<Genre, GenreDto>(takenFromDb);
                 return mapped;
             }

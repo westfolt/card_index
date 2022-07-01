@@ -32,7 +32,6 @@ namespace card_index_BLL.Services
             _mapper = mapper;
             _unitOfWork = unitOfWork;
         }
-
         /// <summary>
         /// Gets all cards from db
         /// </summary>
@@ -49,6 +48,26 @@ namespace card_index_BLL.Services
             catch (Exception ex)
             {
                 throw new CardIndexException("Cannot get text cards", ex);
+            }
+        }
+        /// <summary>
+        /// Gets rate detail for given card and user
+        /// </summary>
+        /// <param name="userId">id of user, who has given rating</param>
+        /// <param name="textCardId">id of text card</param>
+        /// <returns>Rate detail matching criteria, if exists</returns>
+        public async Task<RateDetailDto> GetRateDetailByUserIdCardId(int userId, int textCardId)
+        {
+            try
+            {
+                var takenFromDb = (await _unitOfWork.RateDetailRepository.GetAllAsync())
+                    .FirstOrDefault(rd => rd.UserId == userId && rd.TextCardId == textCardId);
+                var mapped = _mapper.Map<RateDetail, RateDetailDto>(takenFromDb);
+                return mapped;
+            }
+            catch (Exception ex)
+            {
+                throw new CardIndexException($"Problem while searching rating for cardId: {textCardId} and userId: {userId}", ex);
             }
         }
         /// <summary>
@@ -133,18 +152,34 @@ namespace card_index_BLL.Services
         {
             try
             {
-                var mapped = _mapper.Map<TextCardDto, TextCard>(model);
-                var genreExists =
-                    (await _unitOfWork.GenreRepository.GetAllAsync()).FirstOrDefault(g => g.Title == model.GenreName);
-                if (genreExists != null)
+                var fromDb = await _unitOfWork.TextCardRepository.GetByIdWithDetailsAsync(model.Id);
+                if (fromDb != null)
                 {
-                    mapped.Genre = genreExists;
-                    mapped.GenreId = genreExists.Id;
-                    genreExists.TextCards.Add(mapped);
-                    _unitOfWork.GenreRepository.Update(genreExists);
+                    var genre = await _unitOfWork.GenreRepository.GetByNameWithDetailsAsync(model.GenreName);
+                    fromDb.Title = model.Title;
+                    fromDb.ReleaseDate = model.ReleaseDate;
+                    fromDb.CardRating = model.CardRating;
+                    fromDb.GenreId = genre.Id;
+                    fromDb.Genre = genre;
+                    if (model.RateDetailsIds != null)
+                    {
+                        fromDb.RateDetails = new List<RateDetail>(model.RateDetailsIds.Count);
+                        foreach (var id in model.RateDetailsIds)
+                        {
+                            fromDb.RateDetails.Add(await _unitOfWork.RateDetailRepository.GetByIdWithDetailsAsync(id));
+                        }
+                    }
+                    if (model.AuthorIds != null)
+                    {
+                        fromDb.Authors = new List<Author>(model.AuthorIds.Count);
+                        foreach (var id in model.AuthorIds)
+                        {
+                            fromDb.Authors.Add(await _unitOfWork.AuthorRepository.GetByIdWithDetailsAsync(id));
+                        }
+                    }
                 }
 
-                _unitOfWork.TextCardRepository.Update(mapped);
+                _unitOfWork.TextCardRepository.Update(fromDb);
                 await _unitOfWork.SaveChangesAsync();
 
             }
@@ -255,27 +290,39 @@ namespace card_index_BLL.Services
         }
 
         /// <summary>
-        /// Adds new rating to rate details and recalculates rate value for card
+        /// Adds new rating to rate details and recalculates rate value for card,
+        /// If rating with such card and user already exists - modifies it
         /// </summary>
         /// <param name="model">new rate detail, connecting card and user</param>
         /// <returns>Async operation</returns>
         /// <exception cref="CardIndexException">Thrown if problems during DB operations</exception>
         public async Task AddRatingToCard(RateDetailDto model)
         {
-            var alreadyExists = (await _unitOfWork.RateDetailRepository.GetAllAsync())
-                .FirstOrDefault(rd => rd.TextCardId == model.TextCardId && rd.UserId == model.UserId);
-            if (alreadyExists != null)
-                throw new CardIndexException($"User has already left his rating");
-
             try
             {
-                var mapped = _mapper.Map<RateDetailDto, RateDetail>(model);
-                mapped.Id = 0;
-                await _unitOfWork.RateDetailRepository.AddAsync(mapped);
+                var alreadyExists = (await _unitOfWork.RateDetailRepository.GetAllAsync())
+                .FirstOrDefault(rd => rd.TextCardId == model.TextCardId && rd.UserId == model.UserId);
+                //if user already left his rating for this card
+                if (alreadyExists != null)
+                {
+                    alreadyExists.RateValue = model.RateValue;
+                    _unitOfWork.RateDetailRepository.Update(alreadyExists);//TODO
+                }
+                else
+                {
+                    var mapped = _mapper.Map<RateDetailDto,RateDetail>(model);
+                    mapped.Id = 0;
+                    mapped.TextCard = null;
+                    mapped.User = null;
+                    await _unitOfWork.RateDetailRepository.AddAsync(mapped);
+                }
+
                 await _unitOfWork.SaveChangesAsync();
+
                 double newRating = await CalculateCardRatingAsync(model.TextCardId);
                 var cardToUpdate = await _unitOfWork.TextCardRepository.GetByIdWithDetailsAsync(model.TextCardId);
                 cardToUpdate.CardRating = newRating;
+                _unitOfWork.TextCardRepository.Update(cardToUpdate);//tODO
                 await _unitOfWork.SaveChangesAsync();
             }
             catch (Exception ex)

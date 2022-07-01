@@ -131,6 +131,34 @@ namespace card_index_DAL.Repositories
                 .ToListAsync();
         }
         /// <summary>
+        /// Gets genre with all connected entities matching given id
+        /// </summary>
+        /// <param name="id">Genre id to search</param>
+        /// <returns>Genre object</returns>
+        public async Task<Genre> GetByIdWithDetailsAsync(int id)
+        {
+            return await _db.Genres.Include(g => g.TextCards)
+                .ThenInclude(tc => tc.Authors)
+                .Include(g => g.TextCards)
+                .ThenInclude(tc => tc.RateDetails)
+                .ThenInclude(rd => rd.User)
+                .FirstOrDefaultAsync(g => g.Id == id);
+        }
+        /// <summary>
+        /// Gets genre with all connected entities matching given name
+        /// </summary>
+        /// <param name="name">Genre name to search</param>
+        /// <returns>Genre object</returns>
+        public async Task<Genre> GetByNameWithDetailsAsync(string name)
+        {
+            return await _db.Genres.Include(g => g.TextCards)
+                .ThenInclude(tc => tc.Authors)
+                .Include(g => g.TextCards)
+                .ThenInclude(tc => tc.RateDetails)
+                .ThenInclude(rd => rd.User)
+                .FirstOrDefaultAsync(g => g.Title == name);
+        }
+        /// <summary>
         /// Takes all genres, including other instances connected,
         /// filtered by paging parameters
         /// </summary>

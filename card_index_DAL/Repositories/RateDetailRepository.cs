@@ -129,5 +129,20 @@ namespace card_index_DAL.Repositories
                 .ThenInclude(tc => tc.Genre)
                 .ToListAsync();
         }
+        /// <summary>
+        /// Gets rate detail with connected instances included,
+        /// matching given id
+        /// </summary>
+        /// <param name="id">Id of rate detail to search</param>
+        /// <returns>Rate detail object</returns>
+        public async Task<RateDetail> GetByIdWithDetailsAsync(int id)
+        {
+            return await _db.RateDetails.Include(rd => rd.User)
+                .Include(rd => rd.TextCard)
+                .ThenInclude(tc => tc.Authors)
+                .Include(rd => rd.TextCard)
+                .ThenInclude(tc => tc.Genre)
+                .FirstOrDefaultAsync(rd => rd.Id == id);
+        }
     }
 }
