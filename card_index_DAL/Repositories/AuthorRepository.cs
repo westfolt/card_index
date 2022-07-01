@@ -11,24 +11,42 @@ using System.Threading.Tasks;
 
 namespace card_index_DAL.Repositories
 {
+    /// <summary>
+    /// Repository to work with Authors data set
+    /// </summary>
     public class AuthorRepository : IAuthorRepository
     {
         private readonly CardIndexDbContext _db;
-
+        /// <summary>
+        /// Repository constructor, takes database context as parameter
+        /// </summary>
+        /// <param name="context">DB context</param>
         public AuthorRepository(CardIndexDbContext context)
         {
             _db = context;
         }
+        /// <summary>
+        /// Gets all author of given type from DB
+        /// </summary>
+        /// <returns>Authors collection of given type</returns>
         public async Task<IEnumerable<Author>> GetAllAsync()
         {
             return await _db.Authors.ToListAsync();
         }
-
+        /// <summary>
+        /// Gets author with given id from DB
+        /// </summary>
+        /// <param name="id">Author identifier to search</param>
+        /// <returns>Author matching criteria</returns>
         public async Task<Author> GetByIdAsync(int id)
         {
             return await _db.Authors.FirstOrDefaultAsync(a => a.Id == id);
         }
-
+        /// <summary>
+        /// Adds author to DB
+        /// </summary>
+        /// <param name="entity">New author to add</param>
+        /// <returns>Async operation</returns>
         public async Task AddAsync(Author entity)
         {
             if (entity == null)
@@ -44,7 +62,10 @@ namespace card_index_DAL.Repositories
                 throw new EntityAlreadyExistsException($"Author with id: {entity.Id} already exists");
             }
         }
-
+        /// <summary>
+        /// Deletes given author from DB
+        /// </summary>
+        /// <param name="entity">Author to delete</param>
         public void Delete(Author entity)
         {
             if (entity == null)
@@ -57,7 +78,11 @@ namespace card_index_DAL.Repositories
 
             _db.Authors.Remove(itemToDelete);
         }
-
+        /// <summary>
+        /// Deletes author with given id from DB
+        /// </summary>
+        /// <param name="id">Id of author to delete</param>
+        /// <returns>Async operation</returns>
         public async Task DeleteByIdAsync(int id)
         {
             var itemToDelete = await _db.Authors.FirstOrDefaultAsync(a => a.Id == id);
@@ -67,7 +92,10 @@ namespace card_index_DAL.Repositories
 
             _db.Authors.Remove(itemToDelete);
         }
-
+        /// <summary>
+        /// Updates given author in DB
+        /// </summary>
+        /// <param name="entity">Author to update</param>
         public void Update(Author entity)
         {
             if (entity == null)
@@ -80,12 +108,20 @@ namespace card_index_DAL.Repositories
 
             _db.Authors.Update(entity);
         }
-
+        /// <summary>
+        /// Gets total number of authors,
+        /// stored in database
+        /// </summary>
+        /// <returns>Number of authors</returns>
         public async Task<int> GetTotalNumberAsync()
         {
             return await _db.Authors.CountAsync();
         }
-
+        /// <summary>
+        /// Gets all author entities without connected objects
+        /// included from DB
+        /// </summary>
+        /// <returns>Author entities collection</returns>
         public async Task<IEnumerable<Author>> GetAllAsync(PagingParameters parameters)
         {
             return await _db.Authors
@@ -93,7 +129,11 @@ namespace card_index_DAL.Repositories
                 .Take(parameters.PageSize)
                 .ToListAsync();
         }
-
+        /// <summary>
+        /// Gets all author entities with connected objects
+        /// included from DB
+        /// </summary>
+        /// <returns>Author entities collection</returns>
         public async Task<IEnumerable<Author>> GetAllWithDetailsAsync()
         {
             return await _db.Authors.Include(a => a.TextCards)
@@ -103,7 +143,12 @@ namespace card_index_DAL.Repositories
                 .ThenInclude(rd => rd.User)
                 .ToListAsync();
         }
-
+        /// <summary>
+        /// Gets author with given id from DB,
+        /// includes all connected entities details
+        /// </summary>
+        /// <param name="id">Author id to search</param>
+        /// <returns>Author entity, matching criteria</returns>
         public async Task<Author> GetByIdWithDetailsAsync(int id)
         {
             return await _db.Authors.Include(a => a.TextCards)
@@ -113,7 +158,11 @@ namespace card_index_DAL.Repositories
                 .ThenInclude(rd => rd.User)
                 .FirstOrDefaultAsync(a => a.Id == id);
         }
-
+        /// <summary>
+        /// Gets all author entities with connected objects
+        /// included from DB, matching given paging filter
+        /// </summary>
+        /// <returns>Author entities collection</returns>
         public async Task<IEnumerable<Author>> GetAllWithDetailsAsync(PagingParameters parameters)
         {
             return await _db.Authors

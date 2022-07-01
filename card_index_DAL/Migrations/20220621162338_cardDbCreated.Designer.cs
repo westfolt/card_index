@@ -9,6 +9,7 @@ using card_index_DAL.Data;
 
 namespace card_index_DAL.Migrations
 {
+#pragma warning disable CS1591
     [DbContext(typeof(CardIndexDbContext))]
     [Migration("20220621162338_cardDbCreated")]
     partial class cardDbCreated

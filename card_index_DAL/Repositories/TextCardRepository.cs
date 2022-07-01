@@ -11,18 +11,34 @@ using System.Threading.Tasks;
 
 namespace card_index_DAL.Repositories
 {
+    /// <summary>
+    /// Repository to work with Text cards data set
+    /// </summary>
     public class TextCardRepository : ITextCardRepository
     {
         private readonly CardIndexDbContext _db;
-
+        /// <summary>
+        /// Repository constructor, takes database context as parameter
+        /// </summary>
+        /// <param name="context">DB context</param>
         public TextCardRepository(CardIndexDbContext context)
         {
             _db = context;
         }
+        /// <summary>
+        /// Takes all text cards, without connected instances
+        /// </summary>
+        /// <returns>Text cards collection</returns>
         public async Task<IEnumerable<TextCard>> GetAllAsync()
         {
             return await _db.TextCards.ToListAsync();
         }
+        /// <summary>
+        /// Takes all text cards, without connected instances,
+        /// filtered by paging parameters
+        /// </summary>
+        /// <param name="parameters">Paging filter object</param>
+        /// <returns>Text cards collection</returns>
         public async Task<IEnumerable<TextCard>> GetAllAsync(PagingParameters parameters)
         {
             return await _db.TextCards
@@ -30,12 +46,20 @@ namespace card_index_DAL.Repositories
                 .Take(parameters.PageSize)
                 .ToListAsync();
         }
-
+        /// <summary>
+        /// Gets text card entity with given id from DB
+        /// </summary>
+        /// <param name="id">entity identifier to search</param>
+        /// <returns>Object matching criteria</returns>
         public async Task<TextCard> GetByIdAsync(int id)
         {
             return await _db.TextCards.FirstOrDefaultAsync(tc => tc.Id == id);
         }
-
+        /// <summary>
+        /// Adds text card to DB
+        /// </summary>
+        /// <param name="entity">New text card to add</param>
+        /// <returns>Async operation</returns>
         public async Task AddAsync(TextCard entity)
         {
             if (entity == null)
@@ -51,7 +75,10 @@ namespace card_index_DAL.Repositories
                 throw new EntityAlreadyExistsException($"TextCard with id: {entity.Id} already exists");
             }
         }
-
+        /// <summary>
+        /// Deletes given text card from DB
+        /// </summary>
+        /// <param name="entity">Text card to delete</param>
         public void Delete(TextCard entity)
         {
             if (entity == null)
@@ -64,7 +91,11 @@ namespace card_index_DAL.Repositories
 
             _db.TextCards.Remove(itemToDelete);
         }
-
+        /// <summary>
+        /// Deletes text card with given id from DB
+        /// </summary>
+        /// <param name="id">Id of text card to delete</param>
+        /// <returns>Async operation</returns>
         public async Task DeleteByIdAsync(int id)
         {
             var itemToDelete = await _db.TextCards.FirstOrDefaultAsync(tc => tc.Id == id);
@@ -74,7 +105,10 @@ namespace card_index_DAL.Repositories
 
             _db.TextCards.Remove(itemToDelete);
         }
-
+        /// <summary>
+        /// Updates given text card in DB
+        /// </summary>
+        /// <param name="entity">Text card to update</param>
         public void Update(TextCard entity)
         {
             if (entity == null)
@@ -87,12 +121,19 @@ namespace card_index_DAL.Repositories
 
             _db.TextCards.Update(entity);
         }
-
+        /// <summary>
+        /// Gets total number of text cards,
+        /// stored in database
+        /// </summary>
+        /// <returns>Number of objects</returns>
         public async Task<int> GetTotalNumberAsync()
         {
             return await _db.TextCards.CountAsync();
         }
-
+        /// <summary>
+        /// Takes all text cards, including other instances connected
+        /// </summary>
+        /// <returns>Text cards collection</returns>
         public async Task<IEnumerable<TextCard>> GetAllWithDetailsAsync()
         {
             return await _db.TextCards.Include(tc => tc.RateDetails)
@@ -101,7 +142,12 @@ namespace card_index_DAL.Repositories
                 .Include(tc => tc.Authors)
                 .ToListAsync();
         }
-
+        /// <summary>
+        /// Takes all text cards, including other instances connected,
+        /// filtered by paging parameters
+        /// </summary>
+        /// <param name="parameters">Paging filter parameters</param>
+        /// <returns>Text cards collection</returns>
         public async Task<IEnumerable<TextCard>> GetAllWithDetailsAsync(PagingParameters parameters)
         {
             return await _db.TextCards
@@ -113,7 +159,12 @@ namespace card_index_DAL.Repositories
                 .Include(tc => tc.Authors)
                 .ToListAsync();
         }
-
+        /// <summary>
+        /// Gets text card with given id and all connected
+        /// instances included from database
+        /// </summary>
+        /// <param name="id">Id of text card to search</param>
+        /// <returns>Text cards collection</returns>
         public async Task<TextCard> GetByIdWithDetailsAsync(int id)
         {
             return await _db.TextCards.Include(tc => tc.RateDetails)

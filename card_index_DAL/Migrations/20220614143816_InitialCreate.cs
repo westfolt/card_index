@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 using System;
-
+#pragma warning disable CS1591
 namespace card_index_DAL.Migrations
 {
     public partial class InitialCreate : Migration

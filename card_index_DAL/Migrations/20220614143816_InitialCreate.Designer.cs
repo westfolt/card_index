@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using card_index_DAL.Data;
-
+#pragma warning disable CS1591
 namespace card_index_DAL.Migrations
 {
     [DbContext(typeof(CardIndexDbContext))]
