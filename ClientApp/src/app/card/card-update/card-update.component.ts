@@ -32,6 +32,7 @@ export class CardUpdateComponent implements OnInit {
     private router: Router, private modal: BsModalService, private activeRoute: ActivatedRoute) { }
 
   ngOnInit(): void {
+    console.log('start');
     this.getAllAuthors();
     this.getAllGenres();
     this.getCardById();

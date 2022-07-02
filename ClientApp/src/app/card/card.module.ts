@@ -14,6 +14,7 @@ import { CardAddComponent } from './card-add/card-add.component';
 import { CardDetailComponent } from './card-detail/card-detail.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { CardRateComponent } from './card-rate/card-rate.component';
 
 
 @NgModule({
@@ -22,7 +23,8 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     CardDeleteComponent,
     CardUpdateComponent,
     CardAddComponent,
-    CardDetailComponent
+    CardDetailComponent,
+    CardRateComponent
   ],
   imports: [
     CommonModule,

@@ -161,28 +161,26 @@ namespace card_index_Web_API.Controllers
             return Ok(new Response(true, $"Successfully deleted card with id: {id}"));
         }
         /// <summary>
-        /// Gets rating details, connecting given user and card
+        /// Gets rating details, connecting given user and card,
+        /// takes data for currently logged in user
         /// </summary>
-        /// <param name="userId">Id of user</param>
         /// <param name="cardId">Id of card</param>
-        /// <returns>Object containing rate details</returns>
+        /// <returns>Object containing rate details, null obj if nothing found</returns>
         [HttpGet("rate")]
-        public async Task<ActionResult<RateDetailDto>> GetRatingForCardUser([FromQuery]int userId, int cardId)
+        public async Task<ActionResult<RateDetailDto>> GetRatingForCardUser([FromQuery] int cardId)
         {
             RateDetailDto rate = null;
             
             try
             {
-                rate = await _cardService.GetRateDetailByUserIdCardId(userId, cardId);
+                var loggedInId = (await _userService.GetByEmailAsync(User.FindFirstValue(ClaimTypes.Name))).Id;
+                rate = await _cardService.GetRateDetailByUserIdCardId(loggedInId, cardId);
             }
             catch (CardIndexException ex)
             {
                 return BadRequest(new Response(false, ex.Message));
             }
-
-            if (rate == null)
-                return NotFound();
-
+            
             return Ok(rate);
         }
         /// <summary>
@@ -200,10 +198,7 @@ namespace card_index_Web_API.Controllers
             {
                 //user can modify only marks, given by himself
                 var loggedInId = (await _userService.GetByEmailAsync(User.FindFirstValue(ClaimTypes.Name))).Id;
-                if (loggedInId != newDetails.UserId)
-                    return BadRequest(new Response()
-                        { Errors = new List<string> { "Trying to modify other user's mark!" } });
-
+                newDetails.UserId = loggedInId;
                 await _cardService.AddRatingToCard(newDetails);
             }
             catch (CardIndexException ex)

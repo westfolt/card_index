@@ -1,0 +1,77 @@
+<div class="card">
+  <div class="card-body">
+    <div>
+    <h2 class="card-title">Rate card</h2>
+  </div>
+    <div *ngIf="showError" class="alert alert-danger" role="alert">
+      <span [innerHTML]="errorMessage"></span>
+    </div>
+    <div class="row">
+      <div class="col-md-3">
+        <strong>Title:</strong>
+      </div>
+      <div class="col-md-3">
+        {{cardEntity?.title}}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-3">
+        <strong>Release date:</strong>
+      </div>
+      <div class="col-md-3">
+        {{this.formatDate(cardEntity?.releaseDate)}}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-3">
+        <strong>Card rating:</strong>
+      </div>
+      <div class="col-md-3">
+        {{cardEntity?.cardRating}}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-3">
+        <strong>Authors:</strong>
+      </div>
+      <div *ngFor="let a of cardAuthors" class="col-md-3">
+        <div>{{a.firstName + " " + a.lastName}}</div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-3">
+        <strong>Your current mark:</strong>
+      </div>
+      <div class="col-md-3">
+        <div>{{(cardUserRateDetails !== undefined && cardUserRateDetails !== null)?cardUserRateDetails.rateValue: "none"}}</div>
+      </div>
+    </div>
+    <form [formGroup]="cardRatingForm" autocomplete="off" novalidate (ngSubmit)="changeCardRating(cardRatingForm.value)">
+      <div class="mb-3 row">
+          <input type="hidden" id="hidden" formControlName="hidden" class="form-control" />
+      </div>
+      <div class="mb-3 row">
+        <label for="rateGiven" class="col-form-label col-sm-2">Give rating:</label>
+        <div class="col-md-5">
+          <mat-form-field inputmode="number">
+            <mat-select placeholder="Select" formControlName="rateGiven">
+              <mat-option *ngFor="let givenRate of rateListOptions" [value]="givenRate">{{givenRate}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <div class="col-md-5">
+            <em *ngIf="validateControl('rateGiven') && hasError('rateGiven', 'required')">Rating required for save</em>
+          </div>
+        </div>
+      </div>
+      <br>
+      <div class="mb-3 row">
+        <div class="offset-2 col-md-2">
+            <button type="submit" class="btn btn-info" [disabled]="!cardRatingForm.valid">Save</button>
+        </div>
+        <div class="col-md-3">
+            <button type="button" class="btn btn-danger" (click)="redirectToList()">Cancel</button>
+        </div>
+        </div>
+    </form>
+  </div>
+</div>

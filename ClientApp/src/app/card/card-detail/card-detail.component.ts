@@ -23,8 +23,7 @@ export class CardDetailComponent implements OnInit {
     private activeRoute: ActivatedRoute, private errorHandler: ErrorHandlerService) { }
 
   ngOnInit(): void {
-    this.getCardDetails()
-    this.getCardAuthors(this.cardEntity);
+    this.getCardDetails();
   }
 
   getCardDetails = () => {

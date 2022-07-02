@@ -66,6 +66,11 @@ export class CardListComponent implements OnInit {
     this.router.navigate([redirectUrl]);
   }
 
+  public redirectToRatePage = (id) => {
+    const redirectUrl: string = `/card/rate/${id}`;
+    this.router.navigate([redirectUrl]);
+  }
+
   public redirectToUpdatePage = (id) => {
     const redirectUrl: string = `/card/update/${id}`;
     this.router.navigate([redirectUrl]);

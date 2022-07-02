@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { dataShapingResponse } from 'src/app/_interfaces/infrastructure/dataShapingResponse';
 import { response } from 'src/app/_interfaces/infrastructure/response';
+import { rateDetail } from 'src/app/_interfaces/rateDetail';
 import { textCard } from 'src/app/_interfaces/textCard';
 import { EnvironmentUrlService } from './environment-url.service';
 
@@ -30,6 +31,13 @@ export class CardService {
 
   public deleteCard = (route: string) => {
     return this.http.delete<response>(this.createCompleteRoute(route, this.envUrl.urlAddress));
+  }
+
+  public getRateDetailsForCardUser = (route: string) => {
+    return this.http.get<rateDetail>(this.createCompleteRoute(route, this.envUrl.urlAddress));
+  }
+  public giveRatingToCard = (route: string, newRate: rateDetail) => {
+    return this.http.post<response>(this.createCompleteRoute(route, this.envUrl.urlAddress), newRate, this.generateHeaders());
   }
 
   private createCompleteRoute = (route: string, envAddress: string) => {

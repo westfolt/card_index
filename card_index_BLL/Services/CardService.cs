@@ -188,7 +188,6 @@ namespace card_index_BLL.Services
                 throw new CardIndexException($"Cannot update text card with id: {model.Id}", ex);
             }
         }
-
         /// <summary>
         /// Deletes existing card from DB
         /// </summary>
@@ -306,7 +305,7 @@ namespace card_index_BLL.Services
                 if (alreadyExists != null)
                 {
                     alreadyExists.RateValue = model.RateValue;
-                    _unitOfWork.RateDetailRepository.Update(alreadyExists);//TODO
+                    _unitOfWork.RateDetailRepository.Update(alreadyExists);
                 }
                 else
                 {
@@ -322,7 +321,7 @@ namespace card_index_BLL.Services
                 double newRating = await CalculateCardRatingAsync(model.TextCardId);
                 var cardToUpdate = await _unitOfWork.TextCardRepository.GetByIdWithDetailsAsync(model.TextCardId);
                 cardToUpdate.CardRating = newRating;
-                _unitOfWork.TextCardRepository.Update(cardToUpdate);//tODO
+                _unitOfWork.TextCardRepository.Update(cardToUpdate);
                 await _unitOfWork.SaveChangesAsync();
             }
             catch (Exception ex)
