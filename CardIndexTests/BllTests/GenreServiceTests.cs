@@ -53,11 +53,12 @@ namespace CardIndexTests.BllTests
         public async Task GenreService_GetByName_ReturnsGenre(string name, int id)
         {
             var expected = _data.GenreDtos.ToList()[id - 1];
+            var expectedFromDb = _data.Genres.ToList()[id - 1];
             var mockUnitOfWork = new Mock<IUnitOfWork>();
 
             mockUnitOfWork
-                .Setup(x => x.GenreRepository.GetAllAsync())
-                .ReturnsAsync(_data.Genres.AsEnumerable());
+                .Setup(x => x.GenreRepository.GetByNameWithDetailsAsync(It.IsAny<string>()))
+                .ReturnsAsync(expectedFromDb);
 
             var genreService = new GenreService(DbTestHelper.CreateMapperProfile(), mockUnitOfWork.Object);
 
@@ -73,7 +74,7 @@ namespace CardIndexTests.BllTests
             var mockUnitOfWork = new Mock<IUnitOfWork>();
 
             mockUnitOfWork
-                .Setup(x => x.GenreRepository.GetAllAsync())
+                .Setup(x => x.GenreRepository.GetByNameWithDetailsAsync(It.IsAny<string>()))
                 .Throws(new Exception());
 
             var genreService = new GenreService(DbTestHelper.CreateMapperProfile(), mockUnitOfWork.Object);

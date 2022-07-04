@@ -24,11 +24,11 @@ namespace CardIndexTests.WebApiTests
 
         protected IEnumerable<GenreDto> GenreDtos = new List<GenreDto>
         {
-            new GenreDto { Id = 1, Title = "Genre1", TextCardIds = new List<int>() },
-            new GenreDto { Id = 2, Title = "Genre2", TextCardIds = new List<int>() },
-            new GenreDto { Id = 3, Title = "Genre3", TextCardIds = new List<int>() },
-            new GenreDto { Id = 4, Title = "Genre4", TextCardIds = new List<int>() },
-            new GenreDto { Id = 5, Title = "Genre5", TextCardIds = new List<int>() }
+            new GenreDto { Id = 1, Title = "Genre1", TextCardIds = new List<int>{1} },
+            new GenreDto { Id = 2, Title = "Genre2", TextCardIds = new List<int>{2} },
+            new GenreDto { Id = 3, Title = "Genre3", TextCardIds = new List<int>{3} },
+            new GenreDto { Id = 4, Title = "Genre4", TextCardIds = new List<int>{4} },
+            new GenreDto { Id = 5, Title = "Genre5", TextCardIds = new List<int>{5} }
         };
     }
 
@@ -126,7 +126,7 @@ namespace CardIndexTests.WebApiTests
         [Test]
         public async Task GenreController_UpdateExisting_Success()
         {
-            var genre6 = new GenreDto { Id = 5, Title = "Genre6", TextCardIds = new List<int>() };
+            var genre6 = new GenreDto { Id = 5, Title = "Genre6", TextCardIds = new List<int>{5} };
 
             var content = new StringContent(JsonConvert.SerializeObject(genre6), Encoding.UTF8, "application/json");
             var httpResponse = await _client.PutAsync($"{RequestUri}{genre6.Id}", content);

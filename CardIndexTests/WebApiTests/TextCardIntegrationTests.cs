@@ -139,9 +139,9 @@ namespace CardIndexTests.WebApiTests
             {
                 Id = 5,
                 Title = "Cardnew6",
-                ReleaseDate = new DateTime(1980, 3, 3),
-                CardRating = 0,
-                GenreName = "Genre",
+                ReleaseDate = new DateTime(1980, 4, 3),
+                CardRating = 2,
+                GenreName = "Genre1",
                 RateDetailsIds = new List<int>(),
                 AuthorIds = new List<int>()
             };

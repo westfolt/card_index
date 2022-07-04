@@ -125,21 +125,52 @@ namespace CardIndexTests.BllTests
         [Test]
         public async Task CardService_UpdateAsync_UpdatesTextCard()
         {
+            var expected = _data.TextCardDtos.First();
+            var expectedGenre = _data.Genres.First();
+            
+            var entityToUpdate = new TextCard
+            {
+                Id = expected.Id,
+                Title = "notupdated",
+                CardRating = 0,
+                GenreId = 0,
+                Genre = new Genre(),
+                ReleaseDate = new DateTime(2000, 1, 1),
+                Authors = new List<Author>
+                {
+                    new Author()
+                },
+                RateDetails = new List<RateDetail>
+                {
+                    new RateDetail()
+                }
+            };
+
             var mockUnitOfWork = new Mock<IUnitOfWork>();
             mockUnitOfWork.Setup(m => m.TextCardRepository.Update(It.IsAny<TextCard>()));
-            mockUnitOfWork.Setup(x => x.GenreRepository.GetAllAsync())
-                .ReturnsAsync(new List<Genre>());
+            mockUnitOfWork.Setup(x => x.TextCardRepository.GetByIdWithDetailsAsync(It.IsAny<int>()))
+                .ReturnsAsync(entityToUpdate);
+            mockUnitOfWork.Setup(x => x.GenreRepository.GetByNameWithDetailsAsync(It.IsAny<string>()))
+                .ReturnsAsync(expectedGenre);
+            mockUnitOfWork.Setup(x => x.RateDetailRepository.GetByIdWithDetailsAsync(It.IsAny<int>()))
+                .ReturnsAsync(_data.RateDetails.First());
+            mockUnitOfWork.Setup(x => x.AuthorRepository.GetByIdWithDetailsAsync(It.IsAny<int>()))
+                .ReturnsAsync(_data.Authors.First());
 
             var cardService = new CardService(DbTestHelper.CreateMapperProfile(), mockUnitOfWork.Object);
-            var cardDto = _data.TextCardDtos.First();
+            
+            await cardService.UpdateAsync(expected);
 
-            await cardService.UpdateAsync(cardDto);
-
+            mockUnitOfWork.Verify(x => x.RateDetailRepository.GetByIdWithDetailsAsync(It.IsAny<int>()),
+                Times.Exactly(expected.RateDetailsIds.Count));
+            mockUnitOfWork.Verify(x => x.AuthorRepository.GetByIdWithDetailsAsync(It.IsAny<int>()),
+                Times.Exactly(expected.AuthorIds.Count));
             mockUnitOfWork.Verify(x => x.TextCardRepository.Update(It.Is<TextCard>(
-                c => c.Id == cardDto.Id &&
-                     c.Title == cardDto.Title &&
-                     c.ReleaseDate == cardDto.ReleaseDate &&
-                     Math.Abs(c.CardRating - cardDto.CardRating) < 10E-6)), Times.Once);
+                c => c.Title == expected.Title &&
+                     c.ReleaseDate == expected.ReleaseDate &&
+                     Math.Abs(c.CardRating - expected.CardRating) < 10E-6 &&
+                     c.GenreId == expectedGenre.Id &&
+                     c.Genre.Title == expectedGenre.Title)), Times.Once);
             mockUnitOfWork.Verify(x => x.SaveChangesAsync(), Times.Once);
         }
         [Test]

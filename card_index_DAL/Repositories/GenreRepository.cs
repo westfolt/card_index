@@ -169,6 +169,11 @@ namespace card_index_DAL.Repositories
             return await _db.Genres
                 .Skip((parameters.PageNumber - 1) * parameters.PageSize)
                 .Take(parameters.PageSize)
+                .Include(g=>g.TextCards)
+                .ThenInclude(tc=>tc.RateDetails)
+                .ThenInclude(rd=>rd.User)
+                .Include(tc=>tc.TextCards)
+                .ThenInclude(tc=>tc.Authors)
                 .ToListAsync();
         }
     }
