@@ -25,8 +25,8 @@ namespace CardIndexTests.WebApiTests
 
         protected IEnumerable<TextCardDto> TextCardDtos = new List<TextCardDto>
         {
-            new TextCardDto { Id = 1, Title = "Card1", ReleaseDate = new DateTime(1980, 3, 3), CardRating = 0, GenreName = "Genre1", RateDetailsIds = new List<int>(), AuthorIds = new List<int>{1} },
-            new TextCardDto { Id = 2, Title = "Card2", ReleaseDate = new DateTime(1980, 3, 3), CardRating = 0, GenreName = "Genre2", RateDetailsIds = new List<int>(), AuthorIds = new List<int>{2} },
+            new TextCardDto { Id = 1, Title = "Card1", ReleaseDate = new DateTime(1980, 3, 3), CardRating = 0, GenreName = "Genre1", RateDetailsIds = new List<int>{1,2}, AuthorIds = new List<int>{1} },
+            new TextCardDto { Id = 2, Title = "Card2", ReleaseDate = new DateTime(1980, 3, 3), CardRating = 0, GenreName = "Genre2", RateDetailsIds = new List<int>{3}, AuthorIds = new List<int>{2} },
             new TextCardDto { Id = 3, Title = "Card3", ReleaseDate = new DateTime(1980, 3, 3), CardRating = 0, GenreName = "Genre3", RateDetailsIds = new List<int>(), AuthorIds = new List<int>{3} },
             new TextCardDto { Id = 4, Title = "Card4", ReleaseDate = new DateTime(1980, 3, 3), CardRating = 0, GenreName = "Genre4", RateDetailsIds = new List<int>(), AuthorIds = new List<int>{4} },
             new TextCardDto { Id = 5, Title = "Card5", ReleaseDate = new DateTime(1980, 3, 3), CardRating = 0, GenreName = "Genre5", RateDetailsIds = new List<int>(), AuthorIds = new List<int>{5}}

@@ -19,7 +19,7 @@ namespace CardIndexTests.Helpers
 
             using (var context = new CardIndexDbContext(options))
             {
-                SeedData(context);
+                SeedData(context, true);
             }
 
             return options;
@@ -32,7 +32,7 @@ namespace CardIndexTests.Helpers
 
             return new Mapper(configuration);
         }
-        public static void SeedData(CardIndexDbContext context)
+        public static void SeedData(CardIndexDbContext context, bool initUsers)
         {
             Author author1 = new Author { FirstName = "James", LastName = "Benton", YearOfBirth = 1956 };
             Author author2 = new Author { FirstName = "Donette", LastName = "Foller", YearOfBirth = 1989 };
@@ -80,11 +80,70 @@ namespace CardIndexTests.Helpers
 
             context.TextCards.AddRange(card1,card2,card3, card4, card5);
             context.SaveChanges();
+
+            RateDetail rate1 = new RateDetail
+            {
+                UserId = 1,
+                TextCardId = 1,
+                RateValue = 3
+            };
+            RateDetail rate2 = new RateDetail
+            {
+                UserId = 2,
+                TextCardId = 1,
+                RateValue = 5
+            };
+            RateDetail rate3 = new RateDetail
+            {
+                UserId = 1,
+                TextCardId = 2,
+                RateValue = 3
+            };
+
+            context.RateDetails.AddRange(rate1, rate2, rate3);
+            context.SaveChanges();
+            
+            if (initUsers)
+            {
+                var user1 = new User()
+                {
+                    FirstName = "Oleksandr",
+                    LastName = "Shyman",
+                    Email = "mymail@gmail.com",
+                    City = "Rivne",
+                    UserName = "mymail@gmail.com",
+                    DateOfBirth = new DateTime(1988, 12, 12),
+                    PhoneNumber = "+38(012)3456789"
+                };
+                var user2 = new User()
+                {
+                    FirstName = "Aleksey",
+                    LastName = "Grishkov",
+                    Email = "newmail@gmail.com",
+                    City = "Rivne",
+                    UserName = "newmail@gmail.com",
+                    DateOfBirth = new DateTime(2001, 01, 12),
+                    PhoneNumber = "+38(012)3456789"
+                };
+                var user3 = new User()
+                {
+                    FirstName = "Taras",
+                    LastName = "Bobkin",
+                    Email = "taras@gmail.com",
+                    City = "Rivne",
+                    UserName = "taras@gmail.com",
+                    DateOfBirth = new DateTime(1976, 01, 12),
+                    PhoneNumber = "+38(012)3456789"
+                };
+
+                context.Users.AddRange(user1, user2, user3);
+                context.SaveChanges();
+            }
         }
 
         public static async void SeedData(CardIndexDbContext context, UserManager<User> userManager, RoleManager<UserRole> roleManager)
         {
-            SeedData(context);
+            SeedData(context, false);
             var roles = new[] { "Admin", "Registered", "Moderator" };
             foreach (var role in roles)
             {
@@ -127,6 +186,27 @@ namespace CardIndexTests.Helpers
             await userManager.AddToRoleAsync(user1, "Admin");
             await userManager.AddToRoleAsync(user2, "Registered");
             await userManager.AddToRoleAsync(user3, "Moderator");
+
+            RateDetail rate1 = new RateDetail
+            {
+                UserId = 1,
+                TextCardId = 1,
+                RateValue = 3
+            };
+            RateDetail rate2 = new RateDetail
+            {
+                UserId = 2,
+                TextCardId = 1,
+                RateValue = 5
+            };
+            RateDetail rate3 = new RateDetail
+            {
+                UserId = 1,
+                TextCardId = 2,
+                RateValue = 3
+            };
+
+            await context.RateDetails.AddRangeAsync(rate1, rate2, rate3);
         }
     }
 }

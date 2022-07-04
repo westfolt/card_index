@@ -8,6 +8,7 @@ using card_index_DAL.Entities;
 using card_index_DAL.Entities.DataShaping;
 using card_index_DAL.Exceptions;
 using card_index_DAL.Repositories;
+using CardIndexTests.DalTests.Helpers;
 using CardIndexTests.Helpers;
 using NUnit.Framework;
 
@@ -18,12 +19,18 @@ namespace CardIndexTests.DalTests
     {
         private CardIndexDbContext _context;
         private AuthorRepository _authorRepository;
+        private DalTestsData _data;
+        private IEnumerable<Author> _expectedAuthors;
+        private IEnumerable<Author> _expectedAuthorsWithDetails;
 
         [SetUp]
         public void Initialize()
         {
             _context = new CardIndexDbContext(DbTestHelper.GetTestDbOptions());
             _authorRepository = new AuthorRepository(_context);
+            _data = new DalTestsData();
+            _expectedAuthors = _data.ExpectedAuthors;
+            _expectedAuthorsWithDetails = _data.ExpectedAuthorsWithDetails;
         }
 
         [TearDown]
@@ -37,7 +44,7 @@ namespace CardIndexTests.DalTests
         {
             var authors = await _authorRepository.GetAllAsync();
 
-            Assert.That(authors, Is.EqualTo(ExpectedAuthors).Using(new AuthorComparer()));
+            Assert.That(authors, Is.EqualTo(_expectedAuthors).Using(new AuthorComparer()));
         }
 
         [TestCase(1)]
@@ -46,7 +53,7 @@ namespace CardIndexTests.DalTests
         {
             var author = await _authorRepository.GetByIdAsync(id);
 
-            Assert.That(author, Is.EqualTo(ExpectedAuthors.ToList()[id - 1]).Using(new AuthorComparer()));
+            Assert.That(author, Is.EqualTo(_expectedAuthors.ToList()[id - 1]).Using(new AuthorComparer()));
         }
 
         [Test]
@@ -57,7 +64,7 @@ namespace CardIndexTests.DalTests
             await _authorRepository.AddAsync(authorToAdd);
             await _context.SaveChangesAsync();
 
-            Assert.That(_context.Authors.Count(), Is.EqualTo(ExpectedAuthors.Count() + 1));
+            Assert.That(_context.Authors.Count(), Is.EqualTo(_expectedAuthors.Count() + 1));
         }
 
         [Test]
@@ -69,7 +76,7 @@ namespace CardIndexTests.DalTests
         [Test]
         public async Task AuthorRepository_AddAsync_ReturnsExceptionOnDuplicate()
         {
-            var authorToAdd = ExpectedAuthors.Last();
+            var authorToAdd = _expectedAuthors.Last();
 
             Assert.ThrowsAsync<EntityAlreadyExistsException>(async () => await _authorRepository.AddAsync(authorToAdd));
         }
@@ -77,12 +84,12 @@ namespace CardIndexTests.DalTests
         [Test]
         public async Task AuthorRepository_Delete_DeletesValueFromDatabase()
         {
-            var authorToDelete = ExpectedAuthors.Last();
+            var authorToDelete = _expectedAuthors.Last();
 
             _authorRepository.Delete(authorToDelete);
             await _context.SaveChangesAsync();
 
-            Assert.That(_context.Authors.Count(), Is.EqualTo(ExpectedAuthors.Count() - 1));
+            Assert.That(_context.Authors.Count(), Is.EqualTo(_expectedAuthors.Count() - 1));
         }
 
         [Test]
@@ -102,12 +109,12 @@ namespace CardIndexTests.DalTests
         [Test]
         public async Task AuthorRepository_DeleteByIdAsync_DeletesValueFromDb()
         {
-            var idToDelete = ExpectedAuthors.Last().Id;
+            var idToDelete = _expectedAuthors.Last().Id;
 
             await _authorRepository.DeleteByIdAsync(idToDelete);
             await _context.SaveChangesAsync();
 
-            Assert.That(_context.Authors.Count(), Is.EqualTo(ExpectedAuthors.Count() - 1));
+            Assert.That(_context.Authors.Count(), Is.EqualTo(_expectedAuthors.Count() - 1));
         }
 
         [Test]
@@ -145,14 +152,14 @@ namespace CardIndexTests.DalTests
         [Test]
         public async Task AuthorRepository_GetTotalNumberAsync_ReturnsAuthorsCount()
         {
-            Assert.That(await _authorRepository.GetTotalNumberAsync(), Is.EqualTo(ExpectedAuthors.Count()));
+            Assert.That(await _authorRepository.GetTotalNumberAsync(), Is.EqualTo(_expectedAuthors.Count()));
         }
 
         [Test]
         public async Task AuthorRepository_GetAllAsync_ReturnsAuthorsByPage()
         {
             var pageParameters = new PagingParameters { PageSize = 2, PageNumber = 2 };
-            var expected = ExpectedAuthors.Skip(2).Take(2);
+            var expected = _expectedAuthors.Skip(2).Take(2);
 
             var actual = await _authorRepository.GetAllAsync(pageParameters);
 
@@ -162,7 +169,7 @@ namespace CardIndexTests.DalTests
         [Test]
         public async Task AuthorRepository_GetAllWithDetailsAsync_ReturnsAllAuthorsWithDetails()
         {
-            var expected = ExpectedAuthorsWithDetails;
+            var expected = _expectedAuthorsWithDetails;
 
             var actual = await _authorRepository.GetAllWithDetailsAsync();
             Assert.That(actual, Is.EqualTo(expected).Using(new AuthorComparer()));
@@ -171,7 +178,7 @@ namespace CardIndexTests.DalTests
         [Test]
         public async Task AuthorRepository_GetByIdWithDetailsAsync_ReturnsAuthorWithDetails()
         {
-            var expected = ExpectedAuthorsWithDetails.First();
+            var expected = _expectedAuthorsWithDetails.First();
 
             var actual = await _authorRepository.GetByIdWithDetailsAsync(1);
             Assert.That(actual, Is.EqualTo(expected).Using(new AuthorComparer()));
@@ -181,31 +188,10 @@ namespace CardIndexTests.DalTests
         public async Task AuthorRepository_GetAllWithDetailsAsync_ReturnsAllAuthorsWithDetailsByPage()
         {
             var pageParameters = new PagingParameters { PageSize = 2, PageNumber = 2 };
-            var expected = ExpectedAuthorsWithDetails.Skip(2).Take(2);
+            var expected = _expectedAuthorsWithDetails.Skip(2).Take(2);
 
             var actual = await _authorRepository.GetAllWithDetailsAsync(pageParameters);
             Assert.That(actual, Is.EqualTo(expected).Using(new AuthorComparer()));
         }
-
-
-        private static IEnumerable<Author> ExpectedAuthors =>
-            new[]
-            {
-                new Author { Id = 1, FirstName = "James", LastName = "Benton", YearOfBirth = 1956 },
-                new Author { Id = 2, FirstName = "Donette", LastName = "Foller", YearOfBirth = 1989 },
-                new Author { Id = 3, FirstName = "Veronika", LastName = "Donald", YearOfBirth = 1990 },
-                new Author { Id = 4, FirstName = "Jack", LastName = "Wieser", YearOfBirth = 2000 },
-                new Author { Id = 5, FirstName = "Arnold", LastName = "Clark", YearOfBirth = 2001 }
-            };
-        private static IEnumerable<Author> ExpectedAuthorsWithDetails =>
-            new[]
-            {
-                new Author { Id = 1, FirstName = "James", LastName = "Benton", YearOfBirth = 1956, TextCards = new List<TextCard>{new TextCard()}},
-                new Author { Id = 2, FirstName = "Donette", LastName = "Foller", YearOfBirth = 1989, TextCards = new List<TextCard>{new TextCard()}},
-                new Author { Id = 3, FirstName = "Veronika", LastName = "Donald", YearOfBirth = 1990, TextCards = new List<TextCard>{new TextCard()}},
-                new Author { Id = 4, FirstName = "Jack", LastName = "Wieser", YearOfBirth = 2000, TextCards = new List<TextCard>{new TextCard()}},
-                new Author { Id = 5, FirstName = "Arnold", LastName = "Clark", YearOfBirth = 2001, TextCards = new List<TextCard>{new TextCard()}}
-            };
-
     }
 }

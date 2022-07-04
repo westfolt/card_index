@@ -9,6 +9,7 @@ using card_index_DAL.Entities;
 using card_index_DAL.Entities.DataShaping;
 using card_index_DAL.Exceptions;
 using card_index_DAL.Repositories;
+using CardIndexTests.DalTests.Helpers;
 using CardIndexTests.Helpers;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using NUnit.Framework;
@@ -20,12 +21,18 @@ namespace CardIndexTests.DalTests
     {
         private CardIndexDbContext _context;
         private GenreRepository _genreRepository;
+        private DalTestsData _data;
+        private IEnumerable<Genre> _expectedGenres;
+        private IEnumerable<Genre> _expectedGenresWithDetails;
 
         [SetUp]
         public void Initialize()
         {
             _context = new CardIndexDbContext(DbTestHelper.GetTestDbOptions());
             _genreRepository = new GenreRepository(_context);
+            _data = new DalTestsData();
+            _expectedGenres = _data.ExpectedGenres;
+            _expectedGenresWithDetails = _data.ExpectedGenresWithDetails;
         }
 
         [TearDown]
@@ -39,7 +46,7 @@ namespace CardIndexTests.DalTests
         {
             var genres = await _genreRepository.GetAllAsync();
 
-            Assert.That(genres.OrderBy(g=>g.Id), Is.EqualTo(ExpectedGenres).Using(new GenreComparer()));
+            Assert.That(genres, Is.EqualTo(_expectedGenres).Using(new GenreComparer()));
         }
 
         [TestCase(1)]
@@ -48,7 +55,7 @@ namespace CardIndexTests.DalTests
         {
             var genre = await _genreRepository.GetByIdAsync(id);
 
-            Assert.That(genre, Is.EqualTo(ExpectedGenres.ToList()[id-1]).Using(new GenreComparer()));
+            Assert.That(genre, Is.EqualTo(_expectedGenres.ToList()[id-1]).Using(new GenreComparer()));
         }
 
         [Test]
@@ -59,7 +66,7 @@ namespace CardIndexTests.DalTests
             await _genreRepository.AddAsync(genreToAdd);
             await _context.SaveChangesAsync();
 
-            Assert.That(_context.Genres.Count(), Is.EqualTo(ExpectedGenres.Count() + 1));
+            Assert.That(_context.Genres.Count(), Is.EqualTo(_expectedGenres.Count() + 1));
         }
 
         [Test]
@@ -71,7 +78,7 @@ namespace CardIndexTests.DalTests
         [Test]
         public async Task GenreRepository_AddAsync_ReturnsExceptionOnDuplicate()
         {
-            var genreToAdd = ExpectedGenres.Last();
+            var genreToAdd = _expectedGenres.Last();
 
             Assert.ThrowsAsync<EntityAlreadyExistsException>(async () => await _genreRepository.AddAsync(genreToAdd));
         }
@@ -79,12 +86,12 @@ namespace CardIndexTests.DalTests
         [Test]
         public async Task GenreRepository_Delete_DeletesValueFromDatabase()
         {
-            var genreToDelete = ExpectedGenres.Last();
+            var genreToDelete = _expectedGenres.Last();
 
             _genreRepository.Delete(genreToDelete);
             await _context.SaveChangesAsync();
 
-            Assert.That(_context.Genres.Count(), Is.EqualTo(ExpectedGenres.Count() - 1));
+            Assert.That(_context.Genres.Count(), Is.EqualTo(_expectedGenres.Count() - 1));
         }
 
         [Test]
@@ -104,12 +111,12 @@ namespace CardIndexTests.DalTests
         [Test]
         public async Task GenreRepository_DeleteByIdAsync_DeletesValueFromDb()
         {
-            var idToDelete = ExpectedGenres.Last().Id;
+            var idToDelete = _expectedGenres.Last().Id;
 
             await _genreRepository.DeleteByIdAsync(idToDelete);
             await _context.SaveChangesAsync();
 
-            Assert.That(_context.Genres.Count(), Is.EqualTo(ExpectedGenres.Count() - 1));
+            Assert.That(_context.Genres.Count(), Is.EqualTo(_expectedGenres.Count() - 1));
         }
 
         [Test]
@@ -147,14 +154,14 @@ namespace CardIndexTests.DalTests
         [Test]
         public async Task GenreRepository_GetTotalNumberAsync_ReturnsGenresCount()
         {
-            Assert.That(await _genreRepository.GetTotalNumberAsync(), Is.EqualTo(ExpectedGenres.Count()));
+            Assert.That(await _genreRepository.GetTotalNumberAsync(), Is.EqualTo(_expectedGenres.Count()));
         }
 
         [Test]
         public async Task GenreRepository_GetAllAsync_ReturnsGenresByPage()
         {
             var pageParameters = new PagingParameters { PageSize = 2, PageNumber = 2 };
-            var expected = ExpectedGenres.Skip(2).Take(2);
+            var expected = _expectedGenres.Skip(2).Take(2);
 
             var actual = await _genreRepository.GetAllAsync(pageParameters);
 
@@ -164,7 +171,7 @@ namespace CardIndexTests.DalTests
         [Test]
         public async Task GenreRepository_GetByIdWithDetailsAsync_ReturnsGenreWithDetails()
         {
-            var expected = ExpectedGenres.First();
+            var expected = _expectedGenres.First();
             expected.TextCards = new List<TextCard>
             {
                 new TextCard 
@@ -183,7 +190,7 @@ namespace CardIndexTests.DalTests
         [Test]
         public async Task GenreRepository_GetByNameWithDetailsAsync_ReturnsGenreWithDetails()
         {
-            var expected = ExpectedGenresWithDetails.First();
+            var expected = _expectedGenresWithDetails.First();
 
             var actual = await _genreRepository.GetByNameWithDetailsAsync("Genre1");
             Assert.That(actual, Is.EqualTo(expected).Using(new GenreComparer()));
@@ -193,30 +200,10 @@ namespace CardIndexTests.DalTests
         public async Task GenreRepository_GetAllWithDetailsAsync_ReturnsAllGenresWithDetailsByPage()
         {
             var pageParameters = new PagingParameters { PageSize = 2, PageNumber = 2 };
-            var expected = ExpectedGenresWithDetails.Skip(2).Take(2);
+            var expected = _expectedGenresWithDetails.Skip(2).Take(2);
 
             var actual = await _genreRepository.GetAllWithDetailsAsync(pageParameters);
             Assert.That(actual, Is.EqualTo(expected).Using(new GenreComparer()));
         }
-
-        private static IEnumerable<Genre> ExpectedGenres =>
-            new[]
-            {
-                new Genre { Id=1, Title = "Genre1" },
-                new Genre { Id=2, Title = "Genre2" },
-                new Genre { Id=3, Title = "Genre3" },
-                new Genre { Id=4, Title = "Genre4" },
-                new Genre { Id=5, Title = "Genre5" }
-            };
-        private static IEnumerable<Genre> ExpectedGenresWithDetails =>
-            new[]
-            {
-                new Genre { Id=1, Title = "Genre1", TextCards = new List<TextCard>{new TextCard()}},
-                new Genre { Id=2, Title = "Genre2", TextCards = new List<TextCard>{new TextCard()} },
-                new Genre { Id=3, Title = "Genre3", TextCards = new List<TextCard>{new TextCard()} },
-                new Genre { Id=4, Title = "Genre4", TextCards = new List<TextCard>{new TextCard()} },
-                new Genre { Id=5, Title = "Genre5", TextCards = new List<TextCard>{new TextCard()} }
-            };
-
     }
 }

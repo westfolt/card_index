@@ -220,8 +220,7 @@ namespace CardIndexTests.Helpers
             return x.Id == y.Id
                    && x.UserId == y.UserId
                    && x.TextCardId == y.TextCardId
-                   && x.RateValue == y.RateValue
-                   && x.UserId == y.UserId;
+                   && x.RateValue == y.RateValue;
         }
 
         public int GetHashCode([DisallowNull] RateDetail obj)

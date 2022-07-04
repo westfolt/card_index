@@ -122,7 +122,8 @@ namespace card_index_DAL.Repositories
         /// <returns>Rate details list</returns>
         public async Task<IEnumerable<RateDetail>> GetAllWithDetailsAsync()
         {
-            return await _db.RateDetails.Include(rd => rd.User)
+            return await _db.RateDetails
+                .Include(rd => rd.User)
                 .Include(rd => rd.TextCard)
                 .ThenInclude(tc => tc.Authors)
                 .Include(rd => rd.TextCard)
