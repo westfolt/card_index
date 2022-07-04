@@ -23,7 +23,8 @@ export class GenreListComponent implements OnInit {
   constructor(private service: GenreService, private router: Router) { }
 
   ngOnInit(): void {
-    this.getGenres(2,0);
+    this.pageSize = 4;
+    this.getGenres(this.pageSize,0);
   }
 
   getGenres = (pageSize, pageNumber) => {

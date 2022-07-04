@@ -23,7 +23,8 @@ export class CardListComponent implements OnInit {
   constructor(private service: CardService, private router: Router) { }
 
   ngOnInit(): void {
-    this.getCards(2,0);
+    this.pageSize = 4;
+    this.getCards(this.pageSize,0);
   }
 
   getCards = (pageSize, pageNumber) => {

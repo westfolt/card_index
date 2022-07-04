@@ -23,7 +23,8 @@ export class AuthorListComponent implements OnInit {
   constructor(private service: AuthorService, private router: Router) { }
 
   ngOnInit(): void {
-    this.getAuthors(2,0);
+    this.pageSize = 4;
+    this.getAuthors(this.pageSize,0);
   }
 
   getAuthors = (pageSize, pageNumber) => {
