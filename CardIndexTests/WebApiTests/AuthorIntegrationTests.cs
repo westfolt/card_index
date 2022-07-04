@@ -25,11 +25,11 @@ namespace CardIndexTests.WebApiTests
         protected IEnumerable<AuthorDto> AuthorDtos =
             new List<AuthorDto>()
             {
-                new AuthorDto { Id = 1, FirstName = "James", LastName = "Benton", YearOfBirth = 1956, TextCardIds = new List<int>()},
-                new AuthorDto { Id = 2, FirstName = "Donette", LastName = "Foller", YearOfBirth = 1989, TextCardIds = new List<int>() },
-                new AuthorDto { Id = 3, FirstName = "Veronika", LastName = "Donald", YearOfBirth = 1990, TextCardIds = new List<int>() },
-                new AuthorDto { Id = 4, FirstName = "Jack", LastName = "Wieser", YearOfBirth = 2000, TextCardIds = new List<int>() },
-                new AuthorDto { Id = 5, FirstName = "Arnold", LastName = "Clark", YearOfBirth = 2001, TextCardIds = new List<int>() }
+                new AuthorDto { Id = 1, FirstName = "James", LastName = "Benton", YearOfBirth = 1956, TextCardIds = new List<int>{1}},
+                new AuthorDto { Id = 2, FirstName = "Donette", LastName = "Foller", YearOfBirth = 1989, TextCardIds = new List<int>{2} },
+                new AuthorDto { Id = 3, FirstName = "Veronika", LastName = "Donald", YearOfBirth = 1990, TextCardIds = new List<int>{3}},
+                new AuthorDto { Id = 4, FirstName = "Jack", LastName = "Wieser", YearOfBirth = 2000, TextCardIds = new List<int>{4} },
+                new AuthorDto { Id = 5, FirstName = "Arnold", LastName = "Clark", YearOfBirth = 2001, TextCardIds = new List<int>{5} }
             };
     }
 
@@ -60,7 +60,7 @@ namespace CardIndexTests.WebApiTests
             var stringResponse = await httpResponse.Content.ReadAsStringAsync();
             var actual = JsonConvert.DeserializeObject<DataShapingResponse<AuthorDto>>(stringResponse);
 
-            Assert.That(actual.Data, Is.EqualTo(expected).Using(new AuthorComparer()));
+            Assert.That(actual.Data, Is.EqualTo(expected).Using(new AuthorDtoComparer()));
         }
         [TestCase(1)]
         [TestCase(2)]
@@ -74,7 +74,7 @@ namespace CardIndexTests.WebApiTests
             var stringResponse = await httpResponse.Content.ReadAsStringAsync();
             var actual = JsonConvert.DeserializeObject<AuthorDto>(stringResponse);
 
-            Assert.That(actual, Is.EqualTo(expected[id - 1]).Using(new AuthorComparer()));
+            Assert.That(actual, Is.EqualTo(expected[id - 1]).Using(new AuthorDtoComparer()));
         }
     }
 
@@ -126,7 +126,7 @@ namespace CardIndexTests.WebApiTests
             var added = actual.Data.FirstOrDefault(a => a.Id == author6.Id);
 
             Assert.That(actual.Data.Count(), Is.EqualTo(expectedLength));
-            Assert.That(added, Is.EqualTo(author6).Using(new AuthorComparer()));
+            Assert.That(added, Is.EqualTo(author6).Using(new AuthorDtoComparer()));
         }
 
         [Test]
@@ -138,7 +138,7 @@ namespace CardIndexTests.WebApiTests
                 FirstName = "Author6",
                 LastName = "Author6",
                 YearOfBirth = 2001,
-                TextCardIds = new List<int>()
+                TextCardIds = new List<int>{5}
             };
 
             var content = new StringContent(JsonConvert.SerializeObject(author6), Encoding.UTF8, "application/json");
@@ -150,7 +150,7 @@ namespace CardIndexTests.WebApiTests
             var stringResponse = await getResponse.Content.ReadAsStringAsync();
             var actual = JsonConvert.DeserializeObject<AuthorDto>(stringResponse);
 
-            Assert.That(actual, Is.EqualTo(author6).Using(new AuthorComparer()));
+            Assert.That(actual, Is.EqualTo(author6).Using(new AuthorDtoComparer()));
         }
 
         [TestCase(1, 4)]

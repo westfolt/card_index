@@ -21,10 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="DalTests\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\card_index_Web_API\card_index_Web_API.csproj" />
   </ItemGroup>
 

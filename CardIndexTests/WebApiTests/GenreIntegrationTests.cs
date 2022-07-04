@@ -60,7 +60,7 @@ namespace CardIndexTests.WebApiTests
             var stringResponse = await httpResponse.Content.ReadAsStringAsync();
             var actual = JsonConvert.DeserializeObject<DataShapingResponse<GenreDto>>(stringResponse);
 
-            Assert.That(actual.Data, Is.EqualTo(expected).Using(new GenreComparer()));
+            Assert.That(actual.Data, Is.EqualTo(expected).Using(new GenreDtoComparer()));
         }
 
         [TestCase("Genre1", 1)]
@@ -75,7 +75,7 @@ namespace CardIndexTests.WebApiTests
             var stringResponse = await httpResponse.Content.ReadAsStringAsync();
             var actual = JsonConvert.DeserializeObject<GenreDto>(stringResponse);
 
-            Assert.That(actual, Is.EqualTo(expected[id - 1]).Using(new GenreComparer()));
+            Assert.That(actual, Is.EqualTo(expected[id - 1]).Using(new GenreDtoComparer()));
         }
     }
 
@@ -120,7 +120,7 @@ namespace CardIndexTests.WebApiTests
             var added = actual.Data.FirstOrDefault(g => g.Id == genre6.Id);
 
             Assert.That(actual.Data.Count(), Is.EqualTo(expectedLength));
-            Assert.That(added, Is.EqualTo(genre6).Using(new GenreComparer()));
+            Assert.That(added, Is.EqualTo(genre6).Using(new GenreDtoComparer()));
         }
 
         [Test]
@@ -137,7 +137,7 @@ namespace CardIndexTests.WebApiTests
             var stringResponse = await getResponse.Content.ReadAsStringAsync();
             var actual = JsonConvert.DeserializeObject<GenreDto>(stringResponse);
 
-            Assert.That(actual, Is.EqualTo(genre6).Using(new GenreComparer()));
+            Assert.That(actual, Is.EqualTo(genre6).Using(new GenreDtoComparer()));
         }
 
         [TestCase(1, 4)]

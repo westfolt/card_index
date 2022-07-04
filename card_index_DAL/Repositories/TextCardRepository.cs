@@ -31,7 +31,7 @@ namespace card_index_DAL.Repositories
         /// <returns>Text cards collection</returns>
         public async Task<IEnumerable<TextCard>> GetAllAsync()
         {
-            return await _db.TextCards.ToListAsync();
+            return await _db.TextCards.OrderBy(tc=>tc.Id).ToListAsync();
         }
         /// <summary>
         /// Takes all text cards, without connected instances,
@@ -42,6 +42,7 @@ namespace card_index_DAL.Repositories
         public async Task<IEnumerable<TextCard>> GetAllAsync(PagingParameters parameters)
         {
             return await _db.TextCards
+                .OrderBy(tc => tc.Id)
                 .Skip((parameters.PageNumber - 1) * parameters.PageSize)
                 .Take(parameters.PageSize)
                 .ToListAsync();
@@ -140,6 +141,7 @@ namespace card_index_DAL.Repositories
                 .ThenInclude(rd => rd.User)
                 .Include(tc => tc.Genre)
                 .Include(tc => tc.Authors)
+                .OrderBy(tc => tc.Id)
                 .ToListAsync();
         }
         /// <summary>
@@ -151,6 +153,7 @@ namespace card_index_DAL.Repositories
         public async Task<IEnumerable<TextCard>> GetAllWithDetailsAsync(PagingParameters parameters)
         {
             return await _db.TextCards
+                .OrderBy(tc => tc.Id)
                 .Skip((parameters.PageNumber - 1) * parameters.PageSize)
                 .Take(parameters.PageSize)
                 .Include(tc => tc.RateDetails)
@@ -171,6 +174,7 @@ namespace card_index_DAL.Repositories
                 .ThenInclude(rd => rd.User)
                 .Include(tc => tc.Genre)
                 .Include(tc => tc.Authors)
+                .OrderBy(tc => tc.Id)
                 .FirstOrDefaultAsync(tc => tc.Id == id);
         }
     }

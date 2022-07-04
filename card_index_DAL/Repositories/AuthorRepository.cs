@@ -31,7 +31,7 @@ namespace card_index_DAL.Repositories
         /// <returns>Authors collection of given type</returns>
         public async Task<IEnumerable<Author>> GetAllAsync()
         {
-            return await _db.Authors.ToListAsync();
+            return await _db.Authors.OrderBy(a=>a.Id).ToListAsync();
         }
         /// <summary>
         /// Gets author with given id from DB
@@ -125,6 +125,7 @@ namespace card_index_DAL.Repositories
         public async Task<IEnumerable<Author>> GetAllAsync(PagingParameters parameters)
         {
             return await _db.Authors
+                .OrderBy(a => a.Id)
                 .Skip((parameters.PageNumber - 1) * parameters.PageSize)
                 .Take(parameters.PageSize)
                 .ToListAsync();
@@ -141,6 +142,7 @@ namespace card_index_DAL.Repositories
                 .Include(a => a.TextCards)
                 .ThenInclude(tc => tc.RateDetails)
                 .ThenInclude(rd => rd.User)
+                .OrderBy(a => a.Id)
                 .ToListAsync();
         }
         /// <summary>
@@ -166,6 +168,7 @@ namespace card_index_DAL.Repositories
         public async Task<IEnumerable<Author>> GetAllWithDetailsAsync(PagingParameters parameters)
         {
             return await _db.Authors
+                .OrderBy(a => a.Id)
                 .Skip((parameters.PageNumber - 1) * parameters.PageSize)
                 .Take(parameters.PageSize)
                 .Include(a => a.TextCards)

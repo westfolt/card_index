@@ -25,11 +25,11 @@ namespace CardIndexTests.WebApiTests
 
         protected IEnumerable<TextCardDto> TextCardDtos = new List<TextCardDto>
         {
-            new TextCardDto { Id = 1, Title = "Card1", ReleaseDate = new DateTime(1980, 3, 3), CardRating = 0, GenreName = "Genre1", RateDetailsIds = new List<int>(), AuthorIds = new List<int>() },
-            new TextCardDto { Id = 2, Title = "Card2", ReleaseDate = new DateTime(1980, 3, 3), CardRating = 0, GenreName = "Genre2", RateDetailsIds = new List<int>(), AuthorIds = new List<int>() },
-            new TextCardDto { Id = 3, Title = "Card3", ReleaseDate = new DateTime(1980, 3, 3), CardRating = 0, GenreName = "Genre3", RateDetailsIds = new List<int>(), AuthorIds = new List<int>() },
-            new TextCardDto { Id = 4, Title = "Card4", ReleaseDate = new DateTime(1980, 3, 3), CardRating = 0, GenreName = "Genre4", RateDetailsIds = new List<int>(), AuthorIds = new List<int>() },
-            new TextCardDto { Id = 5, Title = "Card5", ReleaseDate = new DateTime(1980, 3, 3), CardRating = 0, GenreName = "Genre5", RateDetailsIds = new List<int>(), AuthorIds = new List<int>()}
+            new TextCardDto { Id = 1, Title = "Card1", ReleaseDate = new DateTime(1980, 3, 3), CardRating = 0, GenreName = "Genre1", RateDetailsIds = new List<int>(), AuthorIds = new List<int>{1} },
+            new TextCardDto { Id = 2, Title = "Card2", ReleaseDate = new DateTime(1980, 3, 3), CardRating = 0, GenreName = "Genre2", RateDetailsIds = new List<int>(), AuthorIds = new List<int>{2} },
+            new TextCardDto { Id = 3, Title = "Card3", ReleaseDate = new DateTime(1980, 3, 3), CardRating = 0, GenreName = "Genre3", RateDetailsIds = new List<int>(), AuthorIds = new List<int>{3} },
+            new TextCardDto { Id = 4, Title = "Card4", ReleaseDate = new DateTime(1980, 3, 3), CardRating = 0, GenreName = "Genre4", RateDetailsIds = new List<int>(), AuthorIds = new List<int>{4} },
+            new TextCardDto { Id = 5, Title = "Card5", ReleaseDate = new DateTime(1980, 3, 3), CardRating = 0, GenreName = "Genre5", RateDetailsIds = new List<int>(), AuthorIds = new List<int>{5}}
         };
     }
 
@@ -61,7 +61,7 @@ namespace CardIndexTests.WebApiTests
             var stringResponse = await httpResponse.Content.ReadAsStringAsync();
             var actual = JsonConvert.DeserializeObject<DataShapingResponse<TextCardDto>>(stringResponse);
 
-            Assert.That(actual.Data, Is.EqualTo(expected).Using(new TextCardComparer()));
+            Assert.That(actual.Data, Is.EqualTo(expected).Using(new TextCardDtoComparer()));
         }
 
         [TestCase(1)]
@@ -76,7 +76,7 @@ namespace CardIndexTests.WebApiTests
             var stringResponse = await httpResponse.Content.ReadAsStringAsync();
             var actual = JsonConvert.DeserializeObject<TextCardDto>(stringResponse);
 
-            Assert.That(actual, Is.EqualTo(expected[id - 1]).Using(new TextCardComparer()));
+            Assert.That(actual, Is.EqualTo(expected[id - 1]).Using(new TextCardDtoComparer()));
         }
     }
 
@@ -129,7 +129,7 @@ namespace CardIndexTests.WebApiTests
             var added = actual.Data.FirstOrDefault(a => a.Id == TextCard6.Id);
 
             Assert.That(actual.Data.Count(), Is.EqualTo(expectedLength));
-            Assert.That(added, Is.EqualTo(TextCard6).Using(new TextCardComparer()));
+            Assert.That(added, Is.EqualTo(TextCard6).Using(new TextCardDtoComparer()));
         }
 
         [Test]
@@ -155,7 +155,7 @@ namespace CardIndexTests.WebApiTests
             var stringResponse = await getResponse.Content.ReadAsStringAsync();
             var actual = JsonConvert.DeserializeObject<TextCardDto>(stringResponse);
 
-            Assert.That(actual, Is.EqualTo(TextCard6).Using(new TextCardComparer()));
+            Assert.That(actual, Is.EqualTo(TextCard6).Using(new TextCardDtoComparer()));
         }
 
         [TestCase(1, 4)]

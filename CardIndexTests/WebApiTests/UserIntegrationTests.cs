@@ -114,7 +114,7 @@ namespace CardIndexTests.WebApiTests
             var stringResponse = await httpResponse.Content.ReadAsStringAsync();
             var actual = JsonConvert.DeserializeObject<IEnumerable<UserInfoModel>>(stringResponse);
 
-            Assert.That(actual, Is.EqualTo(expected).Using(new UserComparer()));
+            Assert.That(actual, Is.EqualTo(expected).Using(new UserInfoModelComparer()));
         }
 
         [TestCase(1)]
@@ -129,7 +129,7 @@ namespace CardIndexTests.WebApiTests
             var stringResponse = await httpResponse.Content.ReadAsStringAsync();
             var actual = JsonConvert.DeserializeObject<UserInfoModel>(stringResponse);
 
-            Assert.That(actual, Is.EqualTo(expected[id - 1]).Using(new UserComparer()));
+            Assert.That(actual, Is.EqualTo(expected[id - 1]).Using(new UserInfoModelComparer()));
         }
 
         [Test]
@@ -156,7 +156,7 @@ namespace CardIndexTests.WebApiTests
             var stringResponse = await getResponse.Content.ReadAsStringAsync();
             var actual = JsonConvert.DeserializeObject<UserInfoModel>(stringResponse);
 
-            Assert.That(actual, Is.EqualTo(User4).Using(new UserComparer()));
+            Assert.That(actual, Is.EqualTo(User4).Using(new UserInfoModelComparer()));
         }
 
         [TestCase(1, 2)]
@@ -184,7 +184,7 @@ namespace CardIndexTests.WebApiTests
             var stringResponse = await httpResponse.Content.ReadAsStringAsync();
             var actual = JsonConvert.DeserializeObject<IEnumerable<UserRoleInfoModel>>(stringResponse);
 
-            Assert.That(actual, Is.EqualTo(expected).Using(new UserRoleComparer()));
+            Assert.That(actual, Is.EqualTo(expected).Using(new UserRoleInfoModelComparer()));
         }
 
         [TestCase("Admin", 1)]
@@ -199,7 +199,7 @@ namespace CardIndexTests.WebApiTests
             var stringResponse = await httpResponse.Content.ReadAsStringAsync();
             var actual = JsonConvert.DeserializeObject<UserRoleInfoModel>(stringResponse);
 
-            Assert.That(actual, Is.EqualTo(expected[id - 1]).Using(new UserRoleComparer()));
+            Assert.That(actual, Is.EqualTo(expected[id - 1]).Using(new UserRoleInfoModelComparer()));
         }
 
         [Test]
@@ -223,7 +223,7 @@ namespace CardIndexTests.WebApiTests
             var added = actual.FirstOrDefault(r => r.Id == newRole.Id);
 
             Assert.That(actual.Count(), Is.EqualTo(expectedLength));
-            Assert.That(added, Is.EqualTo(newRole).Using(new UserRoleComparer()));
+            Assert.That(added, Is.EqualTo(newRole).Using(new UserRoleInfoModelComparer()));
         }
 
         [TestCase("Moderator", 2)]
