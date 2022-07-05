@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using card_index_DAL.Entities.DataShapingModels;
 
 namespace card_index_DAL.Repositories
 {
@@ -35,16 +36,20 @@ namespace card_index_DAL.Repositories
         }
         /// <summary>
         /// Takes all text cards, without connected instances,
-        /// filtered by paging parameters
+        /// filtered by several parameters and paged
         /// </summary>
-        /// <param name="parameters">Paging filter object</param>
+        /// <param name="parameters">Filtering object</param>
         /// <returns>Text cards collection</returns>
-        public async Task<IEnumerable<TextCard>> GetAllAsync(PagingParameters parameters)
+        public async Task<IEnumerable<TextCard>> GetAllAsync(CardFilter filter)
         {
             return await _db.TextCards
-                .OrderBy(tc => tc.Id)
-                .Skip((parameters.PageNumber - 1) * parameters.PageSize)
-                .Take(parameters.PageSize)
+                .Where(tc => filter.GenreId != 0 ? tc.GenreId == filter.GenreId : tc != null)
+                .Where(tc => filter.AuthorId != 0 ? tc.Authors.Any(a => a.Id == filter.AuthorId) : tc != null)
+                .Where(tc => tc.CardRating >= filter.Rating)
+                .Where(tc => filter.CardName != "" ? tc.Title.Contains(filter.CardName) : tc != null)
+                .OrderBy(tc=>tc.Id)
+                .Skip((filter.PageNumber - 1) * filter.PageSize)
+                .Take(filter.PageSize)
                 .ToListAsync();
         }
         /// <summary>
@@ -132,6 +137,21 @@ namespace card_index_DAL.Repositories
             return await _db.TextCards.CountAsync();
         }
         /// <summary>
+        /// Gets total number of cards matching given filter
+        /// </summary>
+        /// <param name="filter">Filtering object</param>
+        /// <returns>Number of cards</returns>
+        public async Task<int> GetTotalNumberByFilterAsync(CardFilter filter)
+        {
+            return await _db.TextCards
+                .Where(tc => filter.GenreId != 0 ? tc.GenreId == filter.GenreId : tc != null)
+                .Where(tc => filter.AuthorId != 0 ? tc.Authors.Any(a => a.Id == filter.AuthorId) : tc != null)
+                .Where(tc => tc.CardRating >= filter.Rating)
+                .Where(tc => filter.CardName != "" ? tc.Title.Contains(filter.CardName) : tc != null)
+                .CountAsync();
+        }
+
+        /// <summary>
         /// Takes all text cards, including other instances connected
         /// </summary>
         /// <returns>Text cards collection</returns>
@@ -146,16 +166,20 @@ namespace card_index_DAL.Repositories
         }
         /// <summary>
         /// Takes all text cards, including other instances connected,
-        /// filtered by paging parameters
+        /// filtered by several parameters
         /// </summary>
-        /// <param name="parameters">Paging filter parameters</param>
+        /// <param name="parameters">Filtering parameters</param>
         /// <returns>Text cards collection</returns>
-        public async Task<IEnumerable<TextCard>> GetAllWithDetailsAsync(PagingParameters parameters)
+        public async Task<IEnumerable<TextCard>> GetAllWithDetailsAsync(CardFilter filter)
         {
             return await _db.TextCards
-                .OrderBy(tc => tc.Id)
-                .Skip((parameters.PageNumber - 1) * parameters.PageSize)
-                .Take(parameters.PageSize)
+                .Where(tc => filter.GenreId != 0 ? tc.GenreId == filter.GenreId : tc != null)
+                .Where(tc => filter.AuthorId != 0 ? tc.Authors.Any(a => a.Id == filter.AuthorId) : tc != null)
+                .Where(tc => tc.CardRating >= filter.Rating)
+                .Where(tc => filter.CardName != "" ? tc.Title.Contains(filter.CardName) : tc != null)
+                .OrderBy(tc=>tc.Id)
+                .Skip((filter.PageNumber - 1) * filter.PageSize)
+                .Take(filter.PageSize)
                 .Include(tc => tc.RateDetails)
                 .ThenInclude(rd => rd.User)
                 .Include(tc => tc.Genre)

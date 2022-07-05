@@ -6,6 +6,7 @@
     public class PagingParametersModel
     {
         const int maxPageSize = 20;
+        private const int minPageSize = 2;
         private int _pageSize = 2;
 
         /// <summary>
@@ -14,7 +15,15 @@
         public int PageSize
         {
             get => _pageSize;
-            set => _pageSize = (value > maxPageSize) ? maxPageSize : value;
+            set
+            {
+                if (value < minPageSize)
+                    _pageSize = minPageSize;
+                else if (value > maxPageSize)
+                    _pageSize = maxPageSize;
+                else
+                    _pageSize = value;
+            }
         }
         /// <summary>
         /// Number of page

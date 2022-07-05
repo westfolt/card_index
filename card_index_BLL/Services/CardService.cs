@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using card_index_BLL.Exceptions;
 using card_index_BLL.Interfaces;
-using card_index_BLL.Models;
 using card_index_BLL.Models.DataShaping;
 using card_index_BLL.Models.Dto;
 using card_index_DAL.Entities;
@@ -11,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using card_index_DAL.Entities.DataShapingModels;
 
 namespace card_index_BLL.Services
 {
@@ -71,14 +71,15 @@ namespace card_index_BLL.Services
             }
         }
         /// <summary>
-        /// Overloaded version, takes parameters model with filtering data
+        /// Gets all cards with filtering and paging
         /// </summary>
-        /// <param name="parameters">Parameters model, filters result</param>
-        /// <returns>Filtered cards</returns>
+        /// <param name="cardFilterParameters">Filtering parameters model</param>
+        /// <returns>Cards list</returns>
         /// <exception cref="CardIndexException">Thrown if problems during DB operations</exception>
-        public async Task<IEnumerable<TextCardDto>> GetAllAsync(PagingParametersModel parameters)
+        public async Task<IEnumerable<TextCardDto>> GetAllAsync(CardFilterParametersModel cardFilterParameters)
         {
-            var filter = new PagingParameters { PageNumber = parameters.PageNumber, PageSize = parameters.PageSize };
+            var filter = _mapper.Map<CardFilterParametersModel, CardFilter>(cardFilterParameters);
+
             try
             {
                 var takenFromDb = await _unitOfWork.TextCardRepository.GetAllWithDetailsAsync(filter);
@@ -90,7 +91,6 @@ namespace card_index_BLL.Services
                 throw new CardIndexException("Cannot get text cards", ex);
             }
         }
-
         /// <summary>
         /// Gets card with given id from db
         /// </summary>
@@ -222,7 +222,23 @@ namespace card_index_BLL.Services
                 throw new CardIndexException($"Cannot get number of cards", ex);
             }
         }
-
+        /// <summary>
+        /// Gets total number of cards in storage matching filter
+        /// </summary>
+        /// <returns>Cards number</returns>
+        /// <exception cref="CardIndexException">Thrown if problems during DB operations</exception>
+        public async Task<int> GetTotalNumberByFilter(CardFilterParametersModel cardFilterParameters)
+        {
+            var filter = _mapper.Map<CardFilterParametersModel, CardFilter>(cardFilterParameters);
+            try
+            {
+                return await _unitOfWork.TextCardRepository.GetTotalNumberByFilterAsync(filter);
+            }
+            catch (Exception ex)
+            {
+                throw new CardIndexException($"Cannot get number of cards", ex);
+            }
+        }
         /// <summary>
         /// Calculates card rating, based on rateDetails array
         /// </summary>
@@ -262,32 +278,6 @@ namespace card_index_BLL.Services
                 throw new CardIndexException("Cannot get text cards for desired date range", ex);
             }
         }
-
-        /// <summary>
-        /// Gets cards, matching given filter
-        /// </summary>
-        /// <param name="filter">Filter model for card search</param>
-        /// <returns>Cards list, matching desired parameters</returns>
-        /// <exception cref="CardIndexException">Thrown if problems during DB operations</exception>
-        public async Task<IEnumerable<TextCardDto>> GetCardsByFilterAsync(FilterModel filter)
-        {
-            if (filter == null)
-                throw new CardIndexException("Search filter is null");
-
-            var takenFromDb = await _unitOfWork.TextCardRepository.GetAllWithDetailsAsync();
-            if (filter.AuthorId != null)
-                takenFromDb = takenFromDb.Where(tc => tc.Authors.Any(a => a.Id == filter.AuthorId));
-
-            if (filter.GenreId != null)
-                takenFromDb = takenFromDb.Where(tc => tc.GenreId == filter.GenreId);
-
-            if (filter.Rating != null)
-                takenFromDb = takenFromDb.Where(tc => tc.CardRating >= filter.Rating);
-
-            var mapped = _mapper.Map<IEnumerable<TextCard>, IEnumerable<TextCardDto>>(takenFromDb);
-            return mapped;
-        }
-
         /// <summary>
         /// Adds new rating to rate details and recalculates rate value for card,
         /// If rating with such card and user already exists - modifies it

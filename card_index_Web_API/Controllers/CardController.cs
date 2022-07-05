@@ -35,19 +35,20 @@ namespace card_index_Web_API.Controllers
         }
 
         /// <summary>
-        /// Returns all text cards from DB preselected by pagination filter
+        /// Returns all text cards from DB preselected by filter and with pagination
         /// </summary>
-        /// <returns>Response object, contains selected cards and total number in db</returns>
+        /// <returns>Response object, contains selected cards and total number in db
+        /// that matches given filter</returns>
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult<DataShapingResponse<TextCardDto>>> Get([FromQuery] PagingParametersModel pagingParametersModel)
+        public async Task<ActionResult<DataShapingResponse<TextCardDto>>> Get([FromQuery] CardFilterParametersModel cardFilterParameters)
         {
             DataShapingResponse<TextCardDto> response = new DataShapingResponse<TextCardDto>();
 
             try
             {
-                response.TotalNumber = await _cardService.GetTotalNumber();
-                response.Data = await _cardService.GetAllAsync(pagingParametersModel);
+                response.TotalNumber = await _cardService.GetTotalNumberByFilter(cardFilterParameters);
+                response.Data = await _cardService.GetAllAsync(cardFilterParameters);
             }
             catch (CardIndexException ex)
             {

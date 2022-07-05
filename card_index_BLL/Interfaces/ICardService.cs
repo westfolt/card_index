@@ -1,5 +1,4 @@
-﻿using card_index_BLL.Models;
-using card_index_BLL.Models.DataShaping;
+﻿using card_index_BLL.Models.DataShaping;
 using card_index_BLL.Models.Dto;
 using System;
 using System.Collections.Generic;
@@ -26,12 +25,6 @@ namespace card_index_BLL.Interfaces
         /// <returns>cards list, corresponding to given period</returns>
         Task<IEnumerable<TextCardDto>> GetCardsForPeriodAsync(DateTime startDate, DateTime endDate);
         /// <summary>
-        /// Gets cards, matching given filter
-        /// </summary>
-        /// <param name="filter">Filter model for card search</param>
-        /// <returns>Cards list, matching desired parameters</returns>
-        Task<IEnumerable<TextCardDto>> GetCardsByFilterAsync(FilterModel filter);
-        /// <summary>
         /// Adds new rating to rate details and recalculates rate value for card
         /// </summary>
         /// <param name="model">new rate detail, connecting card and user</param>
@@ -52,10 +45,16 @@ namespace card_index_BLL.Interfaces
        /// <returns>Rate detail matching criteria, if exists</returns>
         Task<RateDetailDto> GetRateDetailByUserIdCardId(int userId, int textCardId);
         /// <summary>
-        /// Gets all cards with paging
+        /// Gets all cards with filtering and paging
         /// </summary>
-        /// <param name="parameters">Paging parameters model</param>
+        /// <param name="cardFilterParameters">Filtering parameters model</param>
         /// <returns>Cards list</returns>
-        Task<IEnumerable<TextCardDto>> GetAllAsync(PagingParametersModel parameters);
+        Task<IEnumerable<TextCardDto>> GetAllAsync(CardFilterParametersModel cardFilterParameters);
+
+        /// <summary>
+        /// Gets total number of cards in storage matching filter
+        /// </summary>
+        /// <returns>Cards number</returns>
+        public Task<int> GetTotalNumberByFilter(CardFilterParametersModel cardFilterParameters);
     }
 }
