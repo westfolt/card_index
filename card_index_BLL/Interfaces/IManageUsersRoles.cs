@@ -67,6 +67,21 @@ namespace card_index_BLL.Interfaces
         /// <returns>Identity result</returns>
         Task<IdentityResult> DeleteUserAsync(User user);
         /// <summary>
+        /// Changes users password
+        /// </summary>
+        /// <param name="user">User, who's password you want to change</param>
+        /// <param name="currentPassword">current user's password</param>
+        /// <param name="newPassword">new user's password</param>
+        /// <returns></returns>
+        Task<IdentityResult> ChangeUserPasswordAsync(User user, string currentPassword, string newPassword);
+        /// <summary>
+        /// Checks, if given password is valid for given user
+        /// </summary>
+        /// <param name="user">The user whose password should be validated</param>
+        /// <param name="password">The password to validate</param>
+        /// <returns>True, if password valid for this user, false otherwise</returns>
+        Task<bool> CheckPasswordAsync(User user, string password);
+        /// <summary>
         /// Gets roles list from Rolemanager
         /// </summary>
         /// <returns>List containing user roles</returns>

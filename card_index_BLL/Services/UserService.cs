@@ -247,5 +247,48 @@ namespace card_index_BLL.Services
                 throw new CardIndexException($"Cannot delete role: {roleName}", ex);
             }
         }
+
+        /// <summary>
+        /// Changes users password
+        /// </summary>
+        /// <param name="user">User, who's password you want to change</param>
+        /// <param name="currentPassword">current user's password</param>
+        /// <param name="newPassword">new user's password</param>
+        /// <returns>Response info about operation</returns>
+        public async Task<Response> ChangeUserPasswordAsync(UserInfoModel user, string currentPassword, string newPassword)
+        {
+            try
+            {
+                var userInDb = await _usersRolesManager.FindByNameAsync(user.Email);
+                var result = await _usersRolesManager.ChangeUserPasswordAsync(userInDb, currentPassword, newPassword);
+                if(result.Succeeded)
+                    return new Response(true, $"Password for user {user.FirstName} {user.LastName} successfully changed!");
+
+                return new Response() { Errors = result.Errors.Select(e => e.Description).ToList() };
+            }
+            catch (Exception ex)
+            {
+                throw new CardIndexException($"Error while changing pass for user with id: {user.Id}", ex);
+            }
+        }
+
+        /// <summary>
+        /// Checks, if given password is valid for given user
+        /// </summary>
+        /// <param name="user">The user whose password should be validated</param>
+        /// <param name="password">The password to validate</param>
+        /// <returns>True, if password valid for this user, false otherwise</returns>
+        public async Task<bool> CheckPasswordAsync(UserInfoModel user, string password)
+        {
+            try
+            {
+                var userInDb = await _usersRolesManager.FindByNameAsync(user.Email);
+                return await _usersRolesManager.CheckPasswordAsync(userInDb, password);
+            }
+            catch (Exception ex)
+            {
+                throw new CardIndexException($"Cannot perform password check for userId: {user.Id}", ex);
+            }
+        }
     }
 }

@@ -232,7 +232,7 @@ namespace card_index_Web_API.Controllers
         /// <summary>
         /// Gets currently logged in user for displaying in user cabinet
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Http status code of operation with response object</returns>
         [HttpGet("cabinet")]
         public async Task<ActionResult<UserInfoModel>> GetUserCabinet()
         {
@@ -257,7 +257,7 @@ namespace card_index_Web_API.Controllers
         /// Modifies currently logged in user
         /// </summary>
         /// <param name="model">User model for update</param>
-        /// <returns></returns>
+        /// <returns>Http status code of operation with response object</returns>
         [HttpPut("cabinet/modify")]
         public async Task<ActionResult<Response>> ModifyUserCabinet([FromBody] UserInfoModel model)
         {
@@ -279,6 +279,40 @@ namespace card_index_Web_API.Controllers
             }
 
             return Ok(new Response(true, $"Successfully updated user: {model.FirstName} {model.LastName}"));
+        }
+        /// <summary>
+        /// Changes password for user, currently logged in
+        /// </summary>
+        /// <param name="changePassword">change pass model, contains current and new passwords</param>
+        /// <returns>Http status code of operation with response object</returns>
+        [HttpPost("cabinet/changepass")]
+        public async Task<ActionResult<Response>> ChangeUserPassword([FromBody] ChangePasswordModel changePassword)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(new Response()
+                { Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList() });
+            try
+            {
+                var loggedInUser = this.User.FindFirstValue(ClaimTypes.Name);
+                var user = await _userService.GetByEmailAsync(loggedInUser);
+                var passValid = await _userService.CheckPasswordAsync(user, changePassword.CurrentPassword);
+                if (!passValid)
+                    return BadRequest(new Response() { Errors = new List<string> { "Current password is wrong" } });
+
+                var result = await _userService.ChangeUserPasswordAsync(user, changePassword.CurrentPassword,
+                    changePassword.NewPassword);
+                if (!result.Succeeded)
+                    return BadRequest(new Response()
+                        { Errors = result.Errors, Message = "Error while trying to change password" });
+
+
+                return Ok(new Response(true,
+                    $"Successfully changed pass for user: {user.FirstName} {user.LastName}"));
+            }
+            catch (CardIndexException ex)
+            {
+                return BadRequest(new Response(false, ex.Message));
+            }
         }
     }
 }
