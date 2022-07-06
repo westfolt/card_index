@@ -1,5 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { changePasswordModel } from 'src/app/_interfaces/identity/changePasswordModel';
 import { userInfoModel } from 'src/app/_interfaces/identity/userInfoModel';
 import { userRoleInfoModel } from 'src/app/_interfaces/identity/userRoleInfoModel';
 import { response } from 'src/app/_interfaces/infrastructure/response';
@@ -37,6 +38,10 @@ export class UserService {
 
   public deleteUser = (route: string) => {
     return this.http.delete<response>(this.createCompleteRoute(route, this.envUrl.urlAddress));
+  }
+
+  public changeUserPassword = (route: string, changeInfo: changePasswordModel) => {
+    return this.http.post<response>(this.createCompleteRoute(route, this.envUrl.urlAddress), changeInfo, this.generateHeaders());
   }
 
   private createCompleteRoute = (route: string, envAddress: string) => {

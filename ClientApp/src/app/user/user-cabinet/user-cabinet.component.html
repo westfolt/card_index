@@ -64,6 +64,11 @@
           <em *ngIf="validateControl('phone') && hasError('phone', 'phone')">Please provide a valid phone</em>
         </div>
       </div>
+      <div class="mb-3 row">
+        <div class="offset-2 col-md-3">
+          <button type="button" class="btn btn-success" (click)="redirectToPassChange()">Change password</button>
+        </div>
+      </div>
       <br>
       <div class="mb-3 row">
         <div class="offset-2 col-md-2">

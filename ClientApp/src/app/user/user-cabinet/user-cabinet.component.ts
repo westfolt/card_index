@@ -105,5 +105,7 @@ export class UserCabinetComponent implements OnInit {
     redirectToHome = () => {
       this.router.navigate(['/home']);
     }
-
+    redirectToPassChange = () => {
+      this.router.navigate(['/user/cabinet/changepass']);
+    }
 }

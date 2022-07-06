@@ -12,6 +12,7 @@ import { UserDeleteComponent } from './user-delete/user-delete.component';
 import { UserUpdateComponent } from './user-update/user-update.component';
 import { UserDetailComponent } from './user-detail/user-detail.component';
 import { UserCabinetComponent } from './user-cabinet/user-cabinet.component';
+import { UserCabinetChangepassComponent } from './user-cabinet/user-cabinet-changepass/user-cabinet-changepass.component';
 
 
 @NgModule({
@@ -20,7 +21,8 @@ import { UserCabinetComponent } from './user-cabinet/user-cabinet.component';
     UserDeleteComponent,
     UserUpdateComponent,
     UserDetailComponent,
-    UserCabinetComponent
+    UserCabinetComponent,
+    UserCabinetChangepassComponent
   ],
   imports: [
     CommonModule,

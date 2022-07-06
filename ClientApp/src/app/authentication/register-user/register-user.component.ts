@@ -30,7 +30,8 @@ export class RegisterUserComponent implements OnInit {
       password: new FormControl('', [Validators.required]),
       confirm: new FormControl('', [Validators.required])
     })
-
+    this.registerForm.get('confirm').setValidators([Validators.required,
+      this.passConfirmBalidator.validateConfirmPassword(this.registerForm.get('password'))]);
   }
 
   public validateControl = (controlName: string)=>{
@@ -54,8 +55,6 @@ export class RegisterUserComponent implements OnInit {
     password: formValues.password,
     confirmPassword: formValues.confirm
   };
-  this.registerForm.get('confirm').setValidators([Validators.required,
-     this.passConfirmBalidator.validateConfirmPassword(this.registerForm.get('password'))]);
 
   this.authService.registerUser("api/authenticate/register", user)
   .subscribe({
