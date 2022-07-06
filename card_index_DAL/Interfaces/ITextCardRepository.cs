@@ -26,7 +26,7 @@ namespace card_index_DAL.Interfaces
         /// Takes all text cards, including other instances connected,
         /// filtered by several parameters
         /// </summary>
-        /// <param name="parameters">Filtering parameters</param>
+        /// <param name="filter">Filtering parameters</param>
         /// <returns>Text cards collection</returns>
         Task<IEnumerable<TextCard>> GetAllWithDetailsAsync(CardFilter filter);
         /// <summary>
@@ -40,7 +40,7 @@ namespace card_index_DAL.Interfaces
         /// Takes all text cards, without connected instances,
         /// filtered by several parameters and paged
         /// </summary>
-        /// <param name="parameters">Filtering object</param>
+        /// <param name="filter">Filtering object</param>
         /// <returns>Text cards collection</returns>
         Task<IEnumerable<TextCard>> GetAllAsync(CardFilter filter);
     }

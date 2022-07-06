@@ -5,6 +5,9 @@ using card_index_DAL.Entities.DataShaping;
 
 namespace card_index_DAL.Entities.DataShapingModels
 {
+    /// <summary>
+    /// Filtering model for card objects filtering
+    /// </summary>
     public class CardFilter:PagingParameters
     {
         /// <summary>

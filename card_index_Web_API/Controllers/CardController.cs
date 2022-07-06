@@ -56,7 +56,10 @@ namespace card_index_Web_API.Controllers
             }
 
             if (response.Data == null || !response.Data.Any())
-                return NotFound();
+            {
+                response.Data = new List<TextCardDto>();
+                return Ok(response);
+            }
 
             return Ok(response);
         }

@@ -1,7 +1,7 @@
 ﻿namespace card_index_BLL.Models.DataShaping
 {
     /// <summary>
-    /// Filtering model for card objects filter
+    /// Filtering model for card objects filtering
     /// </summary>
     public class CardFilterParametersModel:PagingParametersModel
     {

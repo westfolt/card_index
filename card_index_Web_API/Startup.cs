@@ -138,8 +138,8 @@ namespace card_index_Web_API
 
             using (var scope = app.ApplicationServices.CreateScope())
             {
-                var ctxt = scope.ServiceProvider.GetService<CardIndexDbContext>();
-                if (ctxt != null && !ctxt.Database.IsInMemory())
+                var context = scope.ServiceProvider.GetService<CardIndexDbContext>();
+                if (context != null && !context.Database.IsInMemory())
                 {
                     DataSeed.Seed(scope);
                 }

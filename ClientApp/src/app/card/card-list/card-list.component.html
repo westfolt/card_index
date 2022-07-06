@@ -2,6 +2,47 @@
   <div class="offset-10 col-md-2 mt-2"> <button type="button" id="create" class="btn btn-success" (click)="redirectToCreatePage()">Create new</button> </div>
 </div>
 <div class="card">
+  <form [formGroup]="cardFilterForm" novalidate autocomplete="off" (ngSubmit)="filterCardResults(cardFilterForm.value)">
+  <div class="mb-3 mt-3 row">
+    <div class="col">
+      <mat-form-field>
+        <input type="text" formControlName="nameFilter"  matInput placeholder="Name"/>
+      </mat-form-field>
+    </div>
+    <div class="ml-2 col">
+      <mat-form-field>
+        <mat-select placeholder="Genre" formControlName="genreFilter">
+          <mat-option [value]=0><strong>All</strong></mat-option>
+          <mat-option *ngFor="let genre of allGenres" [value]="genre.id">{{genre.title}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="col">
+      <mat-form-field>
+        <mat-select placeholder="Author" formControlName="authorFilter">
+          <mat-option [value]=0><strong>All</strong></mat-option>
+          <mat-option *ngFor="let author of allAuthors" [value]="author.id">{{author.firstName + " " + author.lastName}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="col">
+      <mat-form-field inputmode="number">
+        <mat-select placeholder="Min Rate" formControlName="rateFilter">
+          <mat-option [value]=0><strong>All</strong></mat-option>
+          <mat-option *ngFor="let givenRate of rateListOptions" [value]="givenRate">{{givenRate}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+  <div class="mb-3 no-wrap row">
+    <div class="offset-9 col">
+        <button type="submit" class="btn btn-info" >Filter</button>
+    </div>
+    <div class="col">
+        <button type="button" class="btn btn-danger" (click)="formReset()">Reset</button>
+    </div>
+  </div>
+  </form>
     <div class="table-responsive">
      <table class="table no-wrap user-table mb-0">
        <thead>
