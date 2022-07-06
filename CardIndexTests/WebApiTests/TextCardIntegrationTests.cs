@@ -55,7 +55,8 @@ namespace CardIndexTests.WebApiTests
         {
             var expected = TextCardDtos.ToList();
 
-            var httpResponse = await _client.GetAsync($"{RequestUri}?PageSize=30&PageNumber=1");
+            var httpResponse = await _client
+                .GetAsync($"{RequestUri}?PageSize=30&PageNumber=1");
 
             httpResponse.EnsureSuccessStatusCode();
             var stringResponse = await httpResponse.Content.ReadAsStringAsync();
@@ -191,11 +192,18 @@ namespace CardIndexTests.WebApiTests
         }
 
         [Test]
-        public async Task TextCardController_GetAll_FromEmptyTable_ReturnsNotFound()
+        public async Task TextCardController_GetAll_FromEmptyTable_ReturnsEmptyResponse()
         {
             var httpResponse = await _client.GetAsync(RequestUri);
+            httpResponse.EnsureSuccessStatusCode();
 
-            Assert.That(httpResponse.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+            var getAllResponse = await _client.GetAsync($"{RequestUri}?PageSize=30&PageNumber=1");
+            getAllResponse.EnsureSuccessStatusCode();
+            var stringResponse = await getAllResponse.Content.ReadAsStringAsync();
+            var actual = JsonConvert.DeserializeObject<DataShapingResponse<TextCardDto>>(stringResponse);
+
+            Assert.That(actual.TotalNumber, Is.EqualTo(0));
+            Assert.That(actual.Data.Count(), Is.EqualTo(0));
         }
 
         [TestCase(1234)]

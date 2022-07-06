@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using card_index_DAL.Data;
 using card_index_DAL.Entities;
 using card_index_DAL.Entities.DataShaping;
+using card_index_DAL.Entities.DataShapingModels;
 using card_index_DAL.Exceptions;
 using card_index_DAL.Repositories;
 using CardIndexTests.DalTests.Helpers;
@@ -50,9 +51,9 @@ namespace CardIndexTests.DalTests
         [Test]
         public async Task TextCardRepository_GetAllAsync_ReturnsAllTextCardsByPage()
         {
-            var pageParameters = new PagingParameters { PageSize = 2, PageNumber = 2 };
+            var filter = new CardFilter { PageSize = 2, PageNumber = 2 };
             var expected = _expectedTextCards.Skip(2).Take(2);
-            var actual = await _cardRepository.GetAllAsync(pageParameters);
+            var actual = await _cardRepository.GetAllAsync(filter);
 
             Assert.That(expected, Is.EqualTo(actual).Using(new TextCardComparer()));
         }
@@ -69,8 +70,8 @@ namespace CardIndexTests.DalTests
         [Test]
         public async Task TextCardRepository_AddAsync_AddsValueToDatabase()
         {
-            var cardToAdd = new TextCard() 
-            { 
+            var cardToAdd = new TextCard()
+            {
                 Title = "newTextCard",
                 ReleaseDate = new DateTime(1970, 1, 1),
                 CardRating = 5,
@@ -149,9 +150,9 @@ namespace CardIndexTests.DalTests
         [Test]
         public async Task TextCardRepository_Update_UpdatesEntity()
         {
-            var newTextCard = new TextCard 
-            { 
-                Id = 1, 
+            var newTextCard = new TextCard
+            {
+                Id = 1,
                 Title = "newTextCard",
                 ReleaseDate = new DateTime(1970, 1, 1),
                 CardRating = 5,
@@ -204,10 +205,10 @@ namespace CardIndexTests.DalTests
         [Test]
         public async Task TextCardRepository_GetAllWithDetailsAsync_ReturnsAllTextCardsWithDetailsByPage()
         {
-            var pageParameters = new PagingParameters { PageSize = 2, PageNumber = 2 };
+            var filter = new CardFilter { PageSize = 2, PageNumber = 2 };
             var expected = _expectedTextCardsWithDetails.Skip(2).Take(2);
 
-            var actual = await _cardRepository.GetAllWithDetailsAsync(pageParameters);
+            var actual = await _cardRepository.GetAllWithDetailsAsync(filter);
             Assert.That(actual, Is.EqualTo(expected).Using(new TextCardComparer()));
         }
 

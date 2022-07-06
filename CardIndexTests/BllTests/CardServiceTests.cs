@@ -12,6 +12,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace CardIndexTests.BllTests
@@ -279,37 +280,6 @@ namespace CardIndexTests.BllTests
             var cardService = new CardService(DbTestHelper.CreateMapperProfile(), mockUnitOfWork.Object);
 
             Assert.ThrowsAsync<CardIndexException>(async () => await cardService.GetCardsForPeriodAsync(new DateTime(1999, 9, 9), new DateTime(2000, 1, 1)));
-        }
-        [TestCase(1, 1, 4.0, new[] { 2 })]
-        public async Task CardService_GetCardsByFilter_ReturnsCards(int authorId, int genreId, double rating, int[] expectedCardIds)
-        {
-            var expected = _data.TextCardDtos.Where(x => expectedCardIds.Contains(x.Id));
-
-            var mockUnitOfWork = new Mock<IUnitOfWork>();
-
-            mockUnitOfWork
-                .Setup(x => x.TextCardRepository.GetAllWithDetailsAsync())
-                .ReturnsAsync(_data.TextCards.AsEnumerable());
-
-            var cardService = new CardService(DbTestHelper.CreateMapperProfile(), mockUnitOfWork.Object);
-
-            var actual =
-                await cardService.GetCardsByFilterAsync(new FilterModel
-                { AuthorId = null, GenreId = genreId, Rating = rating });
-
-            actual.Should().BeEquivalentTo(expected, options =>
-                options.Excluding(x => x.RateDetailsIds)
-                    .Excluding(x => x.AuthorIds)
-                    .Excluding(x => x.GenreName));
-        }
-        [Test]
-        public async Task CardService_GetCardsByFilter_ReturnsCardIndexException()
-        {
-            var mockUnitOfWork = new Mock<IUnitOfWork>();
-
-            var cardService = new CardService(DbTestHelper.CreateMapperProfile(), mockUnitOfWork.Object);
-
-            Assert.ThrowsAsync<CardIndexException>(async () => await cardService.GetCardsByFilterAsync(null));
         }
         [Test]
         public async Task CardService_AddRatingToCard_AddsRating()
