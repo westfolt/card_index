@@ -18,7 +18,7 @@ namespace card_index_BLL.Services
     /// </summary>
     public class AuthenticationService : IAuthenticationService
     {
-        private readonly SignInManager<User> _signInManager;
+        //private readonly SignInManager<User> _signInManager;
         private readonly IManageUsersRoles _usersRolesManager;
         private readonly JwtHandler _jwtHandler;
 
@@ -30,7 +30,7 @@ namespace card_index_BLL.Services
         public AuthenticationService(IManageUsersRoles usersRolesManager, JwtHandler jwtHandler)
         {
             _usersRolesManager = usersRolesManager;
-            _signInManager = usersRolesManager.GetSignInManager();
+            //_signInManager = usersRolesManager.GetSignInManager();
             _jwtHandler = jwtHandler;
         }
 
@@ -41,7 +41,7 @@ namespace card_index_BLL.Services
         /// <param name="model">user login model with email and pass</param>
         /// <returns>Login response, containing info, errors, token, operation result</returns>
         /// <exception cref="CardIndexException">Thrown if problems during login process</exception>
-        public async Task<LoginResponse> LoginUser(UserLoginModel model)
+        public async Task<LoginResponse> LoginUserAsync(UserLoginModel model)
         {
             try
             {
@@ -50,7 +50,7 @@ namespace card_index_BLL.Services
                 if (user == null)
                     return new LoginResponse { Errors = new List<string> { $"No user with email: {model.Email}" } };
 
-                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, true, false);
+                var result = await _usersRolesManager.PasswordSignInAsync(model.Email, model.Password, true, false);
 
                 if (!result.Succeeded)
                     return new LoginResponse { Errors = new List<string> { "Wrong login or password" } };
@@ -72,7 +72,7 @@ namespace card_index_BLL.Services
         /// <param name="model">registration model with info to create user</param>
         /// <returns>Operation result</returns>
         /// <exception cref="CardIndexException">Thrown if problems during registration process</exception>
-        public async Task<Response> RegisterUser(UserRegistrationModel model)
+        public async Task<Response> RegisterUserAsync(UserRegistrationModel model)
         {
             var alreadyExists = await _usersRolesManager.FindByEmailAsync(model.Email);
             if (alreadyExists != null)
@@ -107,9 +107,9 @@ namespace card_index_BLL.Services
         /// Logout user
         /// </summary>
         /// <returns>Async operation</returns>
-        public async Task LogOut()
+        public async Task LogOutAsync()
         {
-            await _signInManager.SignOutAsync();
+            await _usersRolesManager.SignOutAsync();
         }
     }
 }

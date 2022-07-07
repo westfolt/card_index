@@ -42,6 +42,6 @@ namespace card_index_BLL.Interfaces
         /// Gets total number of objects stored in db
         /// </summary>
         /// <returns>Number of objects</returns>
-        Task<int> GetTotalNumber();
+        Task<int> GetTotalNumberAsync();
     }
 }

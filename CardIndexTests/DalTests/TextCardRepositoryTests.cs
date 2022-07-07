@@ -194,6 +194,15 @@ namespace CardIndexTests.DalTests
         }
 
         [Test]
+        public async Task TextCardRepository_GetTotalNumberByFilterAsync_ReturnsTextCardsCount()
+        {
+            var filter = new CardFilter
+                { AuthorId = 0, GenreId = 0, CardName = "", PageNumber = 1, PageSize = 30, Rating = 0 };
+
+            Assert.That(await _cardRepository.GetTotalNumberByFilterAsync(filter), Is.EqualTo(_expectedTextCards.Count()));
+        }
+
+        [Test]
         public async Task TextCardRepository_GetAllWithDetailsAsync_ReturnsAllTextCardsWithDetails()
         {
             var expected = _expectedTextCardsWithDetails;

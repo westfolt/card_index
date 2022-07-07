@@ -44,7 +44,7 @@ namespace card_index_Web_API.Controllers
 
             try
             {
-                var result = await _authenticationService.LoginUser(model);
+                var result = await _authenticationService.LoginUserAsync(model);
                 if (result.Succeeded)
                 {
                     return Ok(result);
@@ -75,7 +75,7 @@ namespace card_index_Web_API.Controllers
 
             try
             {
-                var result = await _authenticationService.RegisterUser(model);
+                var result = await _authenticationService.RegisterUserAsync(model);
                 if (result.Succeeded)
                 {
                     return Ok(result);
@@ -97,7 +97,7 @@ namespace card_index_Web_API.Controllers
         [Route("logout")]
         public async Task LogOut()
         {
-            await _authenticationService.LogOut();
+            await _authenticationService.LogOutAsync();
         }
     }
 }

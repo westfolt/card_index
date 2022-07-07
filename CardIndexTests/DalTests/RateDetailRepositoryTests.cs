@@ -25,59 +25,7 @@ namespace CardIndexTests.DalTests
         [SetUp]
         public async Task Initialize()
         {
-            //RateDetail rate1 = new RateDetail
-            //{
-            //    UserId = 1,
-            //    TextCardId = 1,
-            //    RateValue = 3
-            //};
-            //RateDetail rate2 = new RateDetail
-            //{
-            //    UserId = 2,
-            //    TextCardId = 1,
-            //    RateValue = 5
-            //};
-            //RateDetail rate3 = new RateDetail
-            //{
-            //    UserId = 1,
-            //    TextCardId = 2,
-            //    RateValue = 3
-            //};
-            //var user1 = new User()
-            //{
-            //    FirstName = "Oleksandr",
-            //    LastName = "Shyman",
-            //    Email = "mymail@gmail.com",
-            //    City = "Rivne",
-            //    UserName = "mymail@gmail.com",
-            //    DateOfBirth = new DateTime(1988, 12, 12),
-            //    PhoneNumber = "+38(012)3456789"
-            //};
-            //var user2 = new User()
-            //{
-            //    FirstName = "Aleksey",
-            //    LastName = "Grishkov",
-            //    Email = "newmail@gmail.com",
-            //    City = "Rivne",
-            //    UserName = "newmail@gmail.com",
-            //    DateOfBirth = new DateTime(2001, 01, 12),
-            //    PhoneNumber = "+38(012)3456789"
-            //};
-            //var user3 = new User()
-            //{
-            //    FirstName = "Taras",
-            //    LastName = "Bobkin",
-            //    Email = "taras@gmail.com",
-            //    City = "Rivne",
-            //    UserName = "taras@gmail.com",
-            //    DateOfBirth = new DateTime(1976, 01, 12),
-            //    PhoneNumber = "+38(012)3456789"
-            //};
             _context = new CardIndexDbContext(DbTestHelper.GetTestDbOptions());
-            //await _context.RateDetails.AddRangeAsync(rate1, rate2, rate3);
-            //await _context.SaveChangesAsync();
-            //await _context.Users.AddRangeAsync(user1, user2, user3);
-            //await _context.SaveChangesAsync();
             _rateDetailRepository = new RateDetailRepository(_context);
             _data = new DalTestsData();
             _expectedRateDetails = _data.ExpectedRateDetails;
@@ -155,6 +103,25 @@ namespace CardIndexTests.DalTests
             var rateToDelete = new RateDetail() { Id = 999, RateValue = 3, TextCardId = 5, UserId = 5 };
 
             Assert.Throws<EntityNotFoundException>(() => _rateDetailRepository.Delete(rateToDelete));
+        }
+
+        [Test]
+        public async Task RateDetailRepository_DeleteById_DeletesValueFromDatabase()
+        {
+            var rateToDelete = _expectedRateDetails.Last();
+
+            await _rateDetailRepository.DeleteByIdAsync(rateToDelete.Id);
+            await _context.SaveChangesAsync();
+
+            Assert.That(_context.RateDetails.Count(), Is.EqualTo(_expectedRateDetails.Count() - 1));
+        }
+
+        [Test]
+        public async Task RateDetailRepository_DeleteById_ReturnsExceptionOnNotFound()
+        {
+            var rateToDelete = new RateDetail() { Id = 999, RateValue = 3, TextCardId = 5, UserId = 5 };
+
+            Assert.ThrowsAsync<EntityNotFoundException>(async () => await _rateDetailRepository.DeleteByIdAsync(rateToDelete.Id));
         }
 
         [Test]

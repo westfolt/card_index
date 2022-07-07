@@ -14,6 +14,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using card_index_BLL.Models.DataShaping;
+using card_index_DAL.Entities.DataShapingModels;
 
 namespace CardIndexTests.BllTests
 {
@@ -41,6 +43,7 @@ namespace CardIndexTests.BllTests
                     .Excluding(x => x.AuthorIds)
                     .Excluding(x => x.GenreName));
         }
+
         [Test]
         public async Task CardService_GetAll_ReturnsCardIndexException()
         {
@@ -54,6 +57,73 @@ namespace CardIndexTests.BllTests
 
             Assert.ThrowsAsync<CardIndexException>(async () => await cardService.GetAllAsync());
         }
+
+        [Test]
+        public async Task CardService_GetRateDetailByUserIdCardId_ReturnsRateDetail()
+        {
+            var expected = _data.RateDetailDtos.First();
+            var mockUnitOfWork = new Mock<IUnitOfWork>();
+            mockUnitOfWork
+                .Setup(x => x.RateDetailRepository.GetAllAsync())
+                .ReturnsAsync(_data.RateDetails.AsEnumerable);
+            var cardService = new CardService(DbTestHelper.CreateMapperProfile(), mockUnitOfWork.Object);
+
+            var actual = await cardService.GetRateDetailByUserIdCardId(1, 1);
+
+            actual.Should().BeEquivalentTo(expected, options =>
+                options.Excluding(x => x.CardName)
+                    .Excluding(x => x.FirstName)
+                    .Excluding(x => x.LastName));
+        }
+
+        [Test]
+        public async Task CardService_GetRateDetailByUserIdCardId_ReturnsCardIndexException()
+        {
+            var mockUnitOfWork = new Mock<IUnitOfWork>();
+
+            mockUnitOfWork
+                .Setup(x => x.RateDetailRepository.GetAllAsync())
+                .ThrowsAsync(new Exception());
+
+            var cardService = new CardService(DbTestHelper.CreateMapperProfile(), mockUnitOfWork.Object);
+
+            Assert.ThrowsAsync<CardIndexException>(async () => await cardService.GetRateDetailByUserIdCardId(It.IsAny<int>(), It.IsAny<int>()));
+        }
+
+        [Test]
+        public async Task CardService_GetAllWithFiltering_ReturnsAllCards()
+        {
+            var expected = _data.TextCardDtos;
+            var mockUnitOfWork = new Mock<IUnitOfWork>();
+
+            mockUnitOfWork
+                .Setup(x => x.TextCardRepository.GetAllWithDetailsAsync(It.IsAny<CardFilter>()))
+                .ReturnsAsync(_data.TextCards.AsEnumerable());
+
+            var cardService = new CardService(DbTestHelper.CreateMapperProfile(), mockUnitOfWork.Object);
+
+            var actual = await cardService.GetAllAsync(new CardFilterParametersModel());
+
+            actual.Should().BeEquivalentTo(expected, options =>
+                options.Excluding(x => x.RateDetailsIds)
+                    .Excluding(x => x.AuthorIds)
+                    .Excluding(x => x.GenreName));
+        }
+
+        [Test]
+        public async Task CardService_GetAllWithFiltering_ReturnsCardIndexException()
+        {
+            var mockUnitOfWork = new Mock<IUnitOfWork>();
+
+            mockUnitOfWork
+                .Setup(x => x.TextCardRepository.GetAllWithDetailsAsync(It.IsAny<CardFilter>()))
+                .Throws(new Exception());
+
+            var cardService = new CardService(DbTestHelper.CreateMapperProfile(), mockUnitOfWork.Object);
+
+            Assert.ThrowsAsync<CardIndexException>(async () => await cardService.GetAllAsync(new CardFilterParametersModel()));
+        }
+
         [TestCase(1)]
         [TestCase(2)]
         public async Task CardService_GetById_ReturnsTextCard(int id)
@@ -74,6 +144,7 @@ namespace CardIndexTests.BllTests
                     .Excluding(x => x.AuthorIds)
                     .Excluding(x => x.GenreName));
         }
+
         [TestCase(1)]
         [TestCase(2)]
         public async Task CardService_GetById_ReturnsCardIndexException(int id)
@@ -88,13 +159,14 @@ namespace CardIndexTests.BllTests
 
             Assert.ThrowsAsync<CardIndexException>(async () => await cardService.GetByIdAsync(id));
         }
+
         [Test]
         public async Task CardService_AddAsync_AddsTextCard()
         {
             var mockUnitOfWork = new Mock<IUnitOfWork>();
             mockUnitOfWork.Setup(x => x.TextCardRepository.AddAsync(It.IsAny<TextCard>()));
             mockUnitOfWork.Setup(x => x.GenreRepository.GetAllAsync())
-                .ReturnsAsync(new List<Genre>());
+                .ReturnsAsync(_data.Genres.ToList());
 
             var cardService = new CardService(DbTestHelper.CreateMapperProfile(), mockUnitOfWork.Object);
             var cardDto = _data.TextCardDtos.First();
@@ -106,9 +178,10 @@ namespace CardIndexTests.BllTests
                      c.Title == cardDto.Title &&
                      c.ReleaseDate == cardDto.ReleaseDate &&
                      Math.Abs(c.CardRating - cardDto.CardRating) < 10E-6)), Times.Once);
-
+            mockUnitOfWork.Verify(x=>x.GenreRepository.Update(It.IsAny<Genre>()), Times.Once);
             mockUnitOfWork.Verify(x => x.SaveChangesAsync(), Times.Once);
         }
+
         [Test]
         public async Task CardService_AddAsync_ReturnsCardIndexException()
         {
@@ -123,6 +196,7 @@ namespace CardIndexTests.BllTests
 
             Assert.ThrowsAsync<CardIndexException>(async () => await cardService.AddAsync(author));
         }
+
         [Test]
         public async Task CardService_UpdateAsync_UpdatesTextCard()
         {
@@ -174,6 +248,7 @@ namespace CardIndexTests.BllTests
                      c.Genre.Title == expectedGenre.Title)), Times.Once);
             mockUnitOfWork.Verify(x => x.SaveChangesAsync(), Times.Once);
         }
+
         [Test]
         public async Task CardService_UpdateAsync_ReturnsCardIndexException()
         {
@@ -188,6 +263,7 @@ namespace CardIndexTests.BllTests
 
             Assert.ThrowsAsync<CardIndexException>(async () => await cardService.UpdateAsync(author));
         }
+
         [TestCase(1)]
         [TestCase(2)]
         public async Task CardService_DeleteAsync_DeletesProduct(int id)
@@ -201,6 +277,7 @@ namespace CardIndexTests.BllTests
             mockUnitOfWork.Verify(x => x.TextCardRepository.DeleteByIdAsync(id), Times.Once);
             mockUnitOfWork.Verify(x => x.SaveChangesAsync(), Times.Once);
         }
+
         [TestCase(1)]
         [TestCase(2)]
         public async Task CardService_DeleteAsync_ReturnsCardIndexException(int id)
@@ -215,6 +292,7 @@ namespace CardIndexTests.BllTests
 
             Assert.ThrowsAsync<CardIndexException>(async () => await cardService.DeleteAsync(id));
         }
+
         [TestCase(1)]
         [TestCase(2)]
         public async Task CardService_CalculateCardRatingAsync_ReturnsCardRating(int cardIndex)
@@ -233,6 +311,7 @@ namespace CardIndexTests.BllTests
 
             Assert.That(actual, Is.EqualTo(expected));
         }
+
         [TestCase(1)]
         [TestCase(2)]
         public async Task CardService_CalculateCardRatingAsync_ReturnsCardIndexException(int cardIndex)
@@ -247,6 +326,7 @@ namespace CardIndexTests.BllTests
 
             Assert.ThrowsAsync<CardIndexException>(async () => await cardService.CalculateCardRatingAsync(cardIndex));
         }
+
         [TestCase(1990, 1991, new[] { 1, 2, 3, 4 })]
         public async Task CardService_GetCardsForPeriodAsync_ReturnsCards(int startYear, int endYear, int[] expectedCardIds)
         {
@@ -268,6 +348,7 @@ namespace CardIndexTests.BllTests
                         .Excluding(x => x.AuthorIds)
                         .Excluding(x => x.GenreName));
         }
+
         [Test]
         public async Task CardService_GetCardsForPeriodAsync_ReturnsCardIndexException()
         {
@@ -281,6 +362,7 @@ namespace CardIndexTests.BllTests
 
             Assert.ThrowsAsync<CardIndexException>(async () => await cardService.GetCardsForPeriodAsync(new DateTime(1999, 9, 9), new DateTime(2000, 1, 1)));
         }
+
         [Test]
         public async Task CardService_AddRatingToCard_AddsRating()
         {
@@ -311,6 +393,7 @@ namespace CardIndexTests.BllTests
             mockUnitOfWork.Verify(x => x.SaveChangesAsync(), Times.Exactly(2));
             Assert.That(cardToModify.CardRating, Is.Not.EqualTo(0));
         }
+
         [Test]
         public async Task CardService_AddRatingToCard_ReturnsCardIndexException()
         {
@@ -326,6 +409,7 @@ namespace CardIndexTests.BllTests
 
             Assert.ThrowsAsync<CardIndexException>(async () => await cardService.AddRatingToCard(modelWithError));
         }
+
         [Test()]
         public async Task CardService_DeleteRatingFromCard_DeletesRating()
         {
@@ -356,6 +440,7 @@ namespace CardIndexTests.BllTests
             mockUnitOfWork.Verify(x => x.SaveChangesAsync(), Times.Exactly(2));
             Assert.That(cardToModify.CardRating, Is.Not.EqualTo(0));
         }
+
         [Test]
         public async Task CardService_DeleteRatingFromCard_ReturnsCardIndexException()
         {
@@ -363,10 +448,86 @@ namespace CardIndexTests.BllTests
             mockUnitOfWork
                 .Setup(m => m.RateDetailRepository.GetAllAsync())
                 .ReturnsAsync(_data.RateDetails.AsEnumerable);
+            mockUnitOfWork
+                .Setup(m => m.RateDetailRepository.Delete(It.IsAny<RateDetail>()))
+                .Throws(new Exception());
 
             var cardService = new CardService(DbTestHelper.CreateMapperProfile(), mockUnitOfWork.Object);
 
             Assert.ThrowsAsync<CardIndexException>(async () => await cardService.DeleteRatingFromCard(1, 1));
+        }
+
+        [Test]
+        public async Task CardService_DeleteRatingFromCard_ReturnsCardIndexExceptionOnNull()
+        {
+            var mockUnitOfWork = new Mock<IUnitOfWork>();
+            mockUnitOfWork
+                .Setup(m => m.RateDetailRepository.GetAllAsync())
+                .ReturnsAsync(new List<RateDetail>());
+
+            var cardService = new CardService(DbTestHelper.CreateMapperProfile(), mockUnitOfWork.Object);
+
+            Assert.ThrowsAsync<CardIndexException>(async () => await cardService.DeleteRatingFromCard(1, 1));
+        }
+
+        [Test]
+        public async Task CardService_GetTotalNumberAsync_ReturnsCardsNumber()
+        {
+            var mockUnitOfWork = new Mock<IUnitOfWork>();
+
+            mockUnitOfWork
+                .Setup(x => x.TextCardRepository.GetTotalNumberAsync())
+                .ReturnsAsync(10);
+
+            var cardService = new CardService(DbTestHelper.CreateMapperProfile(), mockUnitOfWork.Object);
+            var result = await cardService.GetTotalNumberAsync();
+
+            mockUnitOfWork.Verify(x => x.TextCardRepository.GetTotalNumberAsync(), Times.Once);
+            Assert.That(result, Is.EqualTo(10));
+        }
+
+        [Test]
+        public async Task CardService_GetTotalNumberAsync_ReturnsCardIndexException()
+        {
+            var mockUnitOfWork = new Mock<IUnitOfWork>();
+
+            mockUnitOfWork
+                .Setup(x => x.TextCardRepository.GetTotalNumberAsync())
+                .ThrowsAsync(new Exception());
+            var cardService = new CardService(DbTestHelper.CreateMapperProfile(), mockUnitOfWork.Object);
+
+            Assert.ThrowsAsync<CardIndexException>(async () => await cardService.GetTotalNumberAsync());
+        }
+
+        [Test]
+        public async Task CardService_GetTotalNumberByFilterAsync_ReturnsCardsNumber()
+        {
+            var mockUnitOfWork = new Mock<IUnitOfWork>();
+
+            mockUnitOfWork
+                .Setup(x => x.TextCardRepository.GetTotalNumberByFilterAsync(It.IsAny<CardFilter>()))
+                .ReturnsAsync(10);
+
+            var cardService = new CardService(DbTestHelper.CreateMapperProfile(), mockUnitOfWork.Object);
+            var result = await cardService.GetTotalNumberByFilterAsync(new CardFilterParametersModel());
+
+            mockUnitOfWork.Verify(x => x.TextCardRepository.GetTotalNumberByFilterAsync(It.IsAny<CardFilter>()),
+                Times.Once);
+            Assert.That(result, Is.EqualTo(10));
+        }
+
+        [Test]
+        public async Task CardService_GetTotalNumberByFilterAsync_ReturnsCardIndexException()
+        {
+            var mockUnitOfWork = new Mock<IUnitOfWork>();
+
+            mockUnitOfWork
+                .Setup(x => x.TextCardRepository.GetTotalNumberByFilterAsync(It.IsAny<CardFilter>()))
+                .ThrowsAsync(new Exception());
+            var cardService = new CardService(DbTestHelper.CreateMapperProfile(), mockUnitOfWork.Object);
+
+            Assert.ThrowsAsync<CardIndexException>(async () =>
+                await cardService.GetTotalNumberByFilterAsync(It.IsAny<CardFilterParametersModel>()));
         }
     }
 }

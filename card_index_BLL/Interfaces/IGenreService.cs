@@ -43,7 +43,7 @@ namespace card_index_BLL.Interfaces
         /// Gets total number of genres stored
         /// </summary>
         /// <returns>Genre number</returns>
-        public Task<int> GetTotalNumber();
+        public Task<int> GetTotalNumberAsync();
         /// <summary>
         /// Gets all genres with paging
         /// </summary>

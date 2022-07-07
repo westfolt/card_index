@@ -55,6 +55,6 @@ namespace card_index_BLL.Interfaces
         /// Gets total number of cards in storage matching filter
         /// </summary>
         /// <returns>Cards number</returns>
-        public Task<int> GetTotalNumberByFilter(CardFilterParametersModel cardFilterParameters);
+        public Task<int> GetTotalNumberByFilterAsync(CardFilterParametersModel cardFilterParameters);
     }
 }

@@ -264,7 +264,8 @@ namespace card_index_BLL.Services
                 if(result.Succeeded)
                     return new Response(true, $"Password for user {user.FirstName} {user.LastName} successfully changed!");
 
-                return new Response() { Errors = result.Errors.Select(e => e.Description).ToList() };
+                return new Response(false, "Password has not been changed")
+                    { Errors = result.Errors.Select(e => e.Description).ToList() };
             }
             catch (Exception ex)
             {

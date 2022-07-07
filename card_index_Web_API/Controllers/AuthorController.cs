@@ -42,7 +42,7 @@ namespace card_index_Web_API.Controllers
 
             try
             {
-                response.TotalNumber = await _authorService.GetTotalNumber();
+                response.TotalNumber = await _authorService.GetTotalNumberAsync();
                 response.Data = await _authorService.GetAllAsync(pagingParametersModel);
             }
             catch (CardIndexException ex)

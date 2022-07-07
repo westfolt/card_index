@@ -18,7 +18,7 @@ namespace card_index_BLL.Security
     public class JwtHandler
     {
         private readonly IConfigurationSection _jwtConfiguration;
-        private readonly UserManager<User> _userManager;
+        private readonly IManageUsersRoles _usersRolesManager;
 
         /// <summary>
         /// Constructor, takes app config and object, wrapping userManager, roleManager and signInManager
@@ -28,7 +28,7 @@ namespace card_index_BLL.Security
         public JwtHandler(IConfiguration configuration, IManageUsersRoles usersRolesManager)
         {
             _jwtConfiguration = configuration.GetSection("JwtSettings");
-            _userManager = usersRolesManager.GetUserManager();
+            _usersRolesManager = usersRolesManager;
         }
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace card_index_BLL.Security
                 new Claim(ClaimTypes.Name, user.Email)
             };
 
-            var roles = await _userManager.GetRolesAsync(user);
+            var roles = await _usersRolesManager.GetRolesFromUserManagerAsync(user);
             foreach (var role in roles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));

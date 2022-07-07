@@ -47,7 +47,7 @@ namespace card_index_Web_API.Controllers
 
             try
             {
-                response.TotalNumber = await _cardService.GetTotalNumberByFilter(cardFilterParameters);
+                response.TotalNumber = await _cardService.GetTotalNumberByFilterAsync(cardFilterParameters);
                 response.Data = await _cardService.GetAllAsync(cardFilterParameters);
             }
             catch (CardIndexException ex)

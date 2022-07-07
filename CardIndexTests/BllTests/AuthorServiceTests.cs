@@ -10,6 +10,8 @@ using NUnit.Framework;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using card_index_BLL.Models.DataShaping;
+using card_index_DAL.Entities.DataShaping;
 
 namespace CardIndexTests.BllTests
 {
@@ -35,6 +37,7 @@ namespace CardIndexTests.BllTests
             actual.Should().BeEquivalentTo(expected, options =>
                 options.Excluding(x => x.TextCardIds));
         }
+
         [Test]
         public async Task AuthorService_GetAll_ReturnsCardIndexException()
         {
@@ -48,6 +51,39 @@ namespace CardIndexTests.BllTests
 
             Assert.ThrowsAsync<CardIndexException>(async () => await authorService.GetAllAsync());
         }
+
+        [Test]
+        public async Task AuthorService_GetAllWithPaging_ReturnsAllAuthors()
+        {
+            var expected = _data.AuthorDtos;
+            var mockUnitOfWork = new Mock<IUnitOfWork>();
+
+            mockUnitOfWork
+                .Setup(x => x.AuthorRepository.GetAllWithDetailsAsync(It.IsAny<PagingParameters>()))
+                .ReturnsAsync(_data.Authors.AsEnumerable());
+
+            var authorService = new AuthorService(DbTestHelper.CreateMapperProfile(), mockUnitOfWork.Object);
+
+            var actual = await authorService.GetAllAsync(new PagingParametersModel());
+
+            actual.Should().BeEquivalentTo(expected, options =>
+                options.Excluding(x => x.TextCardIds));
+        }
+
+        [Test]
+        public async Task AuthorService_GetAllWithPaging_ReturnsCardIndexException()
+        {
+            var mockUnitOfWork = new Mock<IUnitOfWork>();
+
+            mockUnitOfWork
+                .Setup(x => x.AuthorRepository.GetAllWithDetailsAsync(It.IsAny<PagingParameters>()))
+                .Throws(new Exception());
+
+            var authorService = new AuthorService(DbTestHelper.CreateMapperProfile(), mockUnitOfWork.Object);
+
+            Assert.ThrowsAsync<CardIndexException>(async () => await authorService.GetAllAsync(new PagingParametersModel()));
+        }
+
         [TestCase(1)]
         [TestCase(2)]
         public async Task AuthorService_GetById_ReturnsAuthor(int id)
@@ -66,6 +102,7 @@ namespace CardIndexTests.BllTests
             actual.Should().BeEquivalentTo(expected, options =>
                 options.Excluding(x => x.TextCardIds));
         }
+
         [TestCase(1)]
         [TestCase(2)]
         public async Task AuthorService_GetById_ReturnsCardIndexException(int id)
@@ -80,6 +117,7 @@ namespace CardIndexTests.BllTests
 
             Assert.ThrowsAsync<CardIndexException>(async () => await authorService.GetByIdAsync(id));
         }
+
         [Test]
         public async Task AuthorService_AddAsync_AddsAuthor()
         {
@@ -99,6 +137,7 @@ namespace CardIndexTests.BllTests
 
             mockUnitOfWork.Verify(x => x.SaveChangesAsync(), Times.Once);
         }
+
         [Test]
         public async Task AuthorService_AddAsync_ReturnsCardIndexException()
         {
@@ -113,6 +152,7 @@ namespace CardIndexTests.BllTests
 
             Assert.ThrowsAsync<CardIndexException>(async () => await authorService.AddAsync(author));
         }
+
         [Test]
         public async Task AuthorService_UpdateAsync_UpdatesAuthor()
         {
@@ -131,6 +171,7 @@ namespace CardIndexTests.BllTests
                      c.YearOfBirth == author.YearOfBirth)), Times.Once);
             mockUnitOfWork.Verify(x => x.SaveChangesAsync(), Times.Once);
         }
+
         [Test]
         public async Task AuthorService_UpdateAsync_ReturnsCardIndexException()
         {
@@ -145,6 +186,7 @@ namespace CardIndexTests.BllTests
 
             Assert.ThrowsAsync<CardIndexException>(async () => await authorService.UpdateAsync(author));
         }
+
         [TestCase(1)]
         [TestCase(2)]
         public async Task AuthorService_DeleteAsync_DeletesProduct(int id)
@@ -158,6 +200,7 @@ namespace CardIndexTests.BllTests
             mockUnitOfWork.Verify(x => x.AuthorRepository.DeleteByIdAsync(id), Times.Once);
             mockUnitOfWork.Verify(x => x.SaveChangesAsync(), Times.Once);
         }
+
         [TestCase(1)]
         [TestCase(2)]
         public async Task AuthorService_DeleteAsync_ReturnsCardIndexException(int id)
@@ -172,6 +215,7 @@ namespace CardIndexTests.BllTests
 
             Assert.ThrowsAsync<CardIndexException>(async () => await authorService.DeleteAsync(id));
         }
+
         [TestCase(1981, 1983, new[] { 1, 2, 3 })]
         [TestCase(1983, 1985, new[] { 3, 4, 5 })]
         [TestCase(1982, 1983, new[] { 2, 3 })]
@@ -196,6 +240,7 @@ namespace CardIndexTests.BllTests
                 options.Excluding(x => x.TextCardIds)
             );
         }
+
         [TestCase(1981, 1983)]
         [TestCase(1983, 1985)]
         [TestCase(1982, 1983)]
@@ -210,6 +255,35 @@ namespace CardIndexTests.BllTests
             var authorService = new AuthorService(DbTestHelper.CreateMapperProfile(), mockUnitOfWork.Object);
 
             Assert.ThrowsAsync<CardIndexException>(async () => await authorService.GetAuthorsForPeriodAsync(startYear, endYear));
+        }
+
+        [Test]
+        public async Task AuthorService_GetTotalNumberAsync_ReturnsAuthorsNumber()
+        {
+            var mockUnitOfWork = new Mock<IUnitOfWork>();
+
+            mockUnitOfWork
+                .Setup(x => x.AuthorRepository.GetTotalNumberAsync())
+                .ReturnsAsync(10);
+
+            var authorService = new AuthorService(DbTestHelper.CreateMapperProfile(), mockUnitOfWork.Object);
+            var result = await authorService.GetTotalNumberAsync();
+
+            mockUnitOfWork.Verify(x=>x.AuthorRepository.GetTotalNumberAsync(), Times.Once);
+            Assert.That(result, Is.EqualTo(10));
+        }
+
+        [Test]
+        public async Task AuthorService_GetTotalNumberAsync_ReturnsCardIndexException()
+        {
+            var mockUnitOfWork = new Mock<IUnitOfWork>();
+
+            mockUnitOfWork
+                .Setup(x => x.AuthorRepository.GetTotalNumberAsync())
+                .ThrowsAsync(new Exception());
+            var authorService = new AuthorService(DbTestHelper.CreateMapperProfile(), mockUnitOfWork.Object);
+
+            Assert.ThrowsAsync<CardIndexException>(async () => await authorService.GetTotalNumberAsync());
         }
     }
 }

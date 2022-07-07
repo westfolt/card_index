@@ -10,11 +10,13 @@ using NUnit.Framework;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using card_index_BLL.Models.DataShaping;
+using card_index_DAL.Entities.DataShaping;
 
 namespace CardIndexTests.BllTests
 {
     [TestFixture]
-    public class genreServiceTests
+    public class GenreServiceTests
     {
         private readonly DataForEntityTests _data = DataForEntityTests.GetTestData();
 
@@ -35,6 +37,7 @@ namespace CardIndexTests.BllTests
             actual.Should().BeEquivalentTo(expected, options =>
                 options.Excluding(x => x.TextCardIds));
         }
+
         [Test]
         public async Task GenreService_GetAll_ReturnsCardIndexException()
         {
@@ -47,6 +50,38 @@ namespace CardIndexTests.BllTests
             var genreService = new GenreService(DbTestHelper.CreateMapperProfile(), mockUnitOfWork.Object);
 
             Assert.ThrowsAsync<CardIndexException>(async () => await genreService.GetAllAsync());
+        }
+
+        [Test]
+        public async Task GenreService_GetAllWithPaging_ReturnsAllGenres()
+        {
+            var expected = _data.GenreDtos;
+            var mockUnitOfWork = new Mock<IUnitOfWork>();
+
+            mockUnitOfWork
+                .Setup(x => x.GenreRepository.GetAllWithDetailsAsync(It.IsAny<PagingParameters>()))
+                .ReturnsAsync(_data.Genres.AsEnumerable());
+
+            var genreService = new GenreService(DbTestHelper.CreateMapperProfile(), mockUnitOfWork.Object);
+
+            var actual = await genreService.GetAllAsync(new PagingParametersModel());
+
+            actual.Should().BeEquivalentTo(expected, options =>
+                options.Excluding(x => x.TextCardIds));
+        }
+
+        [Test]
+        public async Task GenreService_GetAllWithPaging_ReturnsCardIndexException()
+        {
+            var mockUnitOfWork = new Mock<IUnitOfWork>();
+
+            mockUnitOfWork
+                .Setup(x => x.GenreRepository.GetAllWithDetailsAsync(It.IsAny<PagingParameters>()))
+                .Throws(new Exception());
+
+            var genreService = new GenreService(DbTestHelper.CreateMapperProfile(), mockUnitOfWork.Object);
+
+            Assert.ThrowsAsync<CardIndexException>(async () => await genreService.GetAllAsync(new PagingParametersModel()));
         }
         [TestCase("GenreOne", 1)]
         [TestCase("GenreTwo", 2)]
@@ -67,6 +102,7 @@ namespace CardIndexTests.BllTests
             actual.Should().BeEquivalentTo(expected, options =>
                 options.Excluding(x => x.TextCardIds));
         }
+
         [TestCase("GenreOne", 1)]
         [TestCase("GenreTwo", 2)]
         public async Task GenreService_GetByName_ReturnsCardIndexException(string name, int id)
@@ -81,6 +117,7 @@ namespace CardIndexTests.BllTests
 
             Assert.ThrowsAsync<CardIndexException>(async () => await genreService.GetByNameAsync(name));
         }
+
         [Test]
         public async Task GenreService_AddAsync_AddsGenre()
         {
@@ -98,6 +135,7 @@ namespace CardIndexTests.BllTests
 
             mockUnitOfWork.Verify(x => x.SaveChangesAsync(), Times.Once);
         }
+
         [Test]
         public async Task GenreService_AddAsync_ReturnsCardIndexException()
         {
@@ -112,6 +150,7 @@ namespace CardIndexTests.BllTests
 
             Assert.ThrowsAsync<CardIndexException>(async () => await genreService.AddAsync(Genre));
         }
+
         [Test]
         public async Task GenreService_UpdateAsync_UpdatesGenre()
         {
@@ -127,6 +166,7 @@ namespace CardIndexTests.BllTests
                 c => c.Id == genre.Id)), Times.Once);
             mockUnitOfWork.Verify(x => x.SaveChangesAsync(), Times.Once);
         }
+
         [Test]
         public async Task GenreService_UpdateAsync_ReturnsCardIndexException()
         {
@@ -141,6 +181,7 @@ namespace CardIndexTests.BllTests
 
             Assert.ThrowsAsync<CardIndexException>(async () => await genreService.UpdateAsync(genre));
         }
+
         [TestCase(1)]
         [TestCase(2)]
         public async Task GenreService_DeleteAsync_DeletesProduct(int id)
@@ -154,6 +195,7 @@ namespace CardIndexTests.BllTests
             mockUnitOfWork.Verify(x => x.GenreRepository.DeleteByIdAsync(id), Times.Once);
             mockUnitOfWork.Verify(x => x.SaveChangesAsync(), Times.Once);
         }
+
         [TestCase(1)]
         [TestCase(2)]
         public async Task GenreService_DeleteAsync_ReturnsCardIndexException(int id)
@@ -167,6 +209,35 @@ namespace CardIndexTests.BllTests
             var genreService = new GenreService(DbTestHelper.CreateMapperProfile(), mockUnitOfWork.Object);
 
             Assert.ThrowsAsync<CardIndexException>(async () => await genreService.DeleteAsync(id));
+        }
+
+        [Test]
+        public async Task GenreService_GetTotalNumberAsync_ReturnsGenresNumber()
+        {
+            var mockUnitOfWork = new Mock<IUnitOfWork>();
+
+            mockUnitOfWork
+                .Setup(x => x.GenreRepository.GetTotalNumberAsync())
+                .ReturnsAsync(10);
+
+            var genreService = new GenreService(DbTestHelper.CreateMapperProfile(), mockUnitOfWork.Object);
+            var result = await genreService.GetTotalNumberAsync();
+
+            mockUnitOfWork.Verify(x => x.GenreRepository.GetTotalNumberAsync(), Times.Once);
+            Assert.That(result, Is.EqualTo(10));
+        }
+
+        [Test]
+        public async Task GenreService_GetTotalNumberAsync_ReturnsCardIndexException()
+        {
+            var mockUnitOfWork = new Mock<IUnitOfWork>();
+
+            mockUnitOfWork
+                .Setup(x => x.GenreRepository.GetTotalNumberAsync())
+                .ThrowsAsync(new Exception());
+            var genreService = new GenreService(DbTestHelper.CreateMapperProfile(), mockUnitOfWork.Object);
+
+            Assert.ThrowsAsync<CardIndexException>(async () => await genreService.GetTotalNumberAsync());
         }
     }
 }

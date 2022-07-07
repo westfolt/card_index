@@ -175,7 +175,7 @@ namespace card_index_BLL.Services
         /// </summary>
         /// <returns>Author number</returns>
         /// <exception cref="CardIndexException">Thrown if problems during DB operations</exception>
-        public async Task<int> GetTotalNumber()
+        public async Task<int> GetTotalNumberAsync()
         {
             try
             {

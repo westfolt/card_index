@@ -211,7 +211,7 @@ namespace card_index_BLL.Services
         /// </summary>
         /// <returns>Cards number</returns>
         /// <exception cref="CardIndexException">Thrown if problems during DB operations</exception>
-        public async Task<int> GetTotalNumber()
+        public async Task<int> GetTotalNumberAsync()
         {
             try
             {
@@ -227,7 +227,7 @@ namespace card_index_BLL.Services
         /// </summary>
         /// <returns>Cards number</returns>
         /// <exception cref="CardIndexException">Thrown if problems during DB operations</exception>
-        public async Task<int> GetTotalNumberByFilter(CardFilterParametersModel cardFilterParameters)
+        public async Task<int> GetTotalNumberByFilterAsync(CardFilterParametersModel cardFilterParameters)
         {
             var filter = _mapper.Map<CardFilterParametersModel, CardFilter>(cardFilterParameters);
             try
