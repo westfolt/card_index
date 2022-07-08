@@ -46,7 +46,7 @@ namespace card_index_Web_API.Controllers
             }
             catch (CardIndexException ex)
             {
-                BadRequest(ex.Message);
+                return BadRequest(ex.Message);
             }
 
             if (users == null || !users.Any())
@@ -72,7 +72,7 @@ namespace card_index_Web_API.Controllers
             }
             catch (CardIndexException ex)
             {
-                BadRequest(ex.Message);
+                return BadRequest(ex.Message);
             }
 
             if (user == null)
@@ -145,7 +145,7 @@ namespace card_index_Web_API.Controllers
             }
             catch (CardIndexException ex)
             {
-                BadRequest(ex.Message);
+                return BadRequest(ex.Message);
             }
 
             if (roles == null || !roles.Any())
@@ -171,7 +171,7 @@ namespace card_index_Web_API.Controllers
             }
             catch (CardIndexException ex)
             {
-                BadRequest(ex.Message);
+                return BadRequest(ex.Message);
             }
 
             if (role == null)

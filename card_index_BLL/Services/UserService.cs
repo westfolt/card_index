@@ -67,7 +67,9 @@ namespace card_index_BLL.Services
             {
                 var takenFromDb = (await _usersRolesManager.GetUsersUMAsync()).FirstOrDefault(u => u.Id == id);
                 var mapped = _mapper.Map<User, UserInfoModel>(takenFromDb);
-                mapped.UserRoles = await _usersRolesManager.GetRolesFromUserManagerAsync(takenFromDb);
+                if(mapped != null)
+                    mapped.UserRoles = await _usersRolesManager.GetRolesFromUserManagerAsync(takenFromDb);
+
                 return mapped;
             }
             catch (Exception ex)

@@ -14,8 +14,11 @@ namespace CardIndexTests.WebApiTests.Helpers
             var principal = new ClaimsPrincipal();
             principal.AddIdentity(new ClaimsIdentity(new[] {
                 new Claim(ClaimTypes.Role, "Admin"),
-                new Claim(ClaimTypes.NameIdentifier, "1")
+                new Claim(ClaimTypes.NameIdentifier, "1"),
+                new Claim(ClaimTypes.Name, "mymail@gmail.com"),
+                new Claim(ClaimTypes.Email, "mymail@gmail.com")
             }, "FakeScheme"));
+            context.User = principal;
             return await Task.FromResult(AuthenticateResult.Success(new AuthenticationTicket(principal,
                 new AuthenticationProperties(), "FakeScheme")));
         }

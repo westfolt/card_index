@@ -47,7 +47,7 @@ namespace card_index_Web_API.Controllers
             }
             catch (CardIndexException ex)
             {
-                BadRequest(ex.Message);
+                return BadRequest(ex.Message);
             }
 
             if (response.Data == null || !response.Data.Any())
@@ -70,7 +70,7 @@ namespace card_index_Web_API.Controllers
             }
             catch (CardIndexException ex)
             {
-                BadRequest(ex.Message);
+                return BadRequest(ex.Message);
             }
 
             if (authors == null || !authors.Any())
@@ -95,7 +95,7 @@ namespace card_index_Web_API.Controllers
             }
             catch (CardIndexException ex)
             {
-                BadRequest(ex.Message);
+                return BadRequest(ex.Message);
             }
 
             if (author == null)

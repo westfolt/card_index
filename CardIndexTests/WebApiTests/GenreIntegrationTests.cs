@@ -12,17 +12,25 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using card_index_BLL.Interfaces;
 using card_index_BLL.Models.DataShaping;
+using card_index_BLL.Models.Identity.Infrastructure;
+using card_index_DAL.Entities;
+using card_index_Web_API.Controllers;
+using FluentAssertions;
+using Microsoft.AspNetCore.Mvc;
+using Moq;
 
 namespace CardIndexTests.WebApiTests
 {
-    public abstract class GenreIntegrationTests
+    [TestFixture]
+    public class GenreIntegrationTests
     {
-        protected CardIndexWebAppFactory _factory;
-        protected HttpClient _client;
-        protected const string RequestUri = "api/genre/";
+        private CardIndexWebAppFactory _factory;
+        private HttpClient _client;
+        private const string RequestUri = "api/genre";
 
-        protected IEnumerable<GenreDto> GenreDtos = new List<GenreDto>
+        private IEnumerable<GenreDto> GenreDtos = new List<GenreDto>
         {
             new GenreDto { Id = 1, Title = "Genre1", TextCardIds = new List<int>{1} },
             new GenreDto { Id = 2, Title = "Genre2", TextCardIds = new List<int>{2} },
@@ -30,17 +38,6 @@ namespace CardIndexTests.WebApiTests
             new GenreDto { Id = 4, Title = "Genre4", TextCardIds = new List<int>{4} },
             new GenreDto { Id = 5, Title = "Genre5", TextCardIds = new List<int>{5} }
         };
-    }
-
-    [TestFixture]
-    public class GenreIntegrationSuccessTests : GenreIntegrationTests
-    {
-        [SetUp]
-        public void Initialize()
-        {
-            _factory = new CardIndexWebAppFactory(true);
-            _client = _factory.CreateClient();
-        }
 
         [TearDown]
         public void TearDown()
@@ -49,9 +46,14 @@ namespace CardIndexTests.WebApiTests
             _client.Dispose();
         }
 
+        #region GetAllWithPagingTests
+
         [Test]
-        public async Task GenreController_GetAll_ReturnsAllGenres()
+        public async Task GenreController_GetAllWithPaging_ReturnsAllGenres()
         {
+            _factory = new CardIndexWebAppFactory(true);
+            _client = _factory.CreateClient();
+
             var expected = GenreDtos.ToList();
 
             var httpResponse = await _client.GetAsync($"{RequestUri}?PageSize=30&PageNumber=1");
@@ -63,27 +65,40 @@ namespace CardIndexTests.WebApiTests
             Assert.That(actual.Data, Is.EqualTo(expected).Using(new GenreDtoComparer()));
         }
 
-        [TestCase("Genre1", 1)]
-        [TestCase("Genre2", 2)]
-        public async Task GenreController_GetByName_ReturnsGenre(string name, int id)
+        [Test]
+        public async Task GenreController_GetAllWithPaging_FromEmptyTable_ReturnsNotFound()
         {
-            var expected = GenreDtos.ToList();
+            _factory = new CardIndexWebAppFactory(false);
+            _client = _factory.CreateClient();
 
-            var httpResponse = await _client.GetAsync($"{RequestUri}{name}");
+            var httpResponse = await _client.GetAsync(RequestUri);
 
-            httpResponse.EnsureSuccessStatusCode();
-            var stringResponse = await httpResponse.Content.ReadAsStringAsync();
-            var actual = JsonConvert.DeserializeObject<GenreDto>(stringResponse);
-
-            Assert.That(actual, Is.EqualTo(expected[id - 1]).Using(new GenreDtoComparer()));
+            Assert.That(httpResponse.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
         }
-    }
 
-    [TestFixture]
-    public class GenreIntegrationSuccessTestsWithAuthentication : GenreIntegrationTests
-    {
-        [SetUp]
-        public void Initialize()
+        [Test]
+        public async Task GenreController_GetAllWithPaging_ThrowsException()
+        {
+            _factory = new CardIndexWebAppFactory(false);
+            _client = _factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureTestServices(services =>
+                {
+                    services.AddTransient<IGenreService, FakeGenreService>();
+                });
+            }).CreateClient();
+
+            var httpResponse = await _client.GetAsync($"{RequestUri}?PageSize=30&PageNumber=1");
+
+            Assert.That(httpResponse.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+        }
+
+        #endregion
+
+        #region GetAllTests
+
+        [Test]
+        public async Task GenreController_GetAll_ReturnsAllGenres()
         {
             _factory = new CardIndexWebAppFactory(true);
             _client = _factory.WithWebHostBuilder(builder =>
@@ -93,19 +108,122 @@ namespace CardIndexTests.WebApiTests
                     services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
                 });
             }).CreateClient();
+
+            var expected = GenreDtos.ToList();
+
+            var httpResponse = await _client.GetAsync($"{RequestUri}/all");
+
+            httpResponse.EnsureSuccessStatusCode();
+            var stringResponse = await httpResponse.Content.ReadAsStringAsync();
+            var actual = JsonConvert.DeserializeObject<IEnumerable<GenreDto>>(stringResponse);
+
+            actual.Should().BeEquivalentTo(expected, options => options.Excluding(x => x.TextCardIds));
+            //Assert.That(actual, Is.EqualTo(expected).Using(new GenreDtoComparer()));
         }
 
-        [TearDown]
-        public void TearDown()
+        [Test]
+        public async Task GenreController_GetAll_FromEmptyTable_ReturnsNotFound()
         {
-            _factory.Dispose();
-            _client.Dispose();
+            _factory = new CardIndexWebAppFactory(false);
+            _client = _factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureTestServices(services =>
+                {
+                    services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
+                });
+            }).CreateClient();
 
+            var httpResponse = await _client.GetAsync($"{RequestUri}/all");
+
+            Assert.That(httpResponse.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
         }
+
+        [Test]
+        public async Task GenreController_GetAll_ThrowsException()
+        {
+            _factory = new CardIndexWebAppFactory(false);
+            _client = _factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureTestServices(services =>
+                {
+                    services.AddTransient<IGenreService, FakeGenreService>();
+                    services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
+                });
+            }).CreateClient();
+
+            var httpResponse = await _client.GetAsync($"{RequestUri}/all");
+
+            Assert.That(httpResponse.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+        }
+
+        #endregion
+
+        #region GetByNameTests
+
+        [TestCase("Genre1", 1)]
+        [TestCase("Genre2", 2)]
+        public async Task GenreController_GetByName_ReturnsGenre(string name, int id)
+        {
+            _factory = new CardIndexWebAppFactory(true);
+            _client = _factory.CreateClient();
+
+            var expected = GenreDtos.ToList();
+
+            var httpResponse = await _client.GetAsync($"{RequestUri}/{name}");
+
+            httpResponse.EnsureSuccessStatusCode();
+            var stringResponse = await httpResponse.Content.ReadAsStringAsync();
+            var actual = JsonConvert.DeserializeObject<GenreDto>(stringResponse);
+
+            Assert.That(actual, Is.EqualTo(expected[id - 1]).Using(new GenreDtoComparer()));
+        }
+
+        [TestCase("1234")]
+        [TestCase("Fict")]
+        [TestCase("asd")]
+        public async Task GenreController_GetByName_ReturnsNotFound(string name)
+        {
+            _factory = new CardIndexWebAppFactory(false);
+            _client = _factory.CreateClient();
+
+            var httpResponse = await _client.GetAsync($"{RequestUri}/{name}");
+
+            Assert.That(httpResponse.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+        }
+
+        [Test]
+        public async Task GenreController_GetByName_ThrowsException()
+        {
+            _factory = new CardIndexWebAppFactory(false);
+            _client = _factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureTestServices(services =>
+                {
+                    services.AddTransient<IGenreService, FakeGenreService>();
+                });
+            }).CreateClient();
+
+            var httpResponse = await _client.GetAsync($"{RequestUri}/name");
+
+            Assert.That(httpResponse.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+        }
+
+        #endregion
+
+        #region AddTests
 
         [Test]
         public async Task GenreController_AddNew_Success()
         {
+            _factory = new CardIndexWebAppFactory(true);
+            _client = _factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureTestServices(services =>
+                {
+                    services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
+                });
+            }).CreateClient();
+
             var genre6 = new GenreDto { Id = 6, Title = "Genre6", TextCardIds = new List<int>() };
             var expectedLength = GenreDtos.Count() + 1;
 
@@ -124,15 +242,101 @@ namespace CardIndexTests.WebApiTests
         }
 
         [Test]
-        public async Task GenreController_UpdateExisting_Success()
+        public async Task GenreController_AddNew_UnAuthorized()
         {
-            var genre6 = new GenreDto { Id = 5, Title = "Genre6", TextCardIds = new List<int>{5} };
+            _factory = new CardIndexWebAppFactory(false);
+            _client = _factory.CreateClient();
+
+            var genre6 = new GenreDto { Id = 6, Title = "Genre6", TextCardIds = new List<int>() };
+            var content = new StringContent(JsonConvert.SerializeObject(genre6), Encoding.UTF8, "application/json");
+            var httpResponse = await _client.PostAsync($"{RequestUri}", content);
+
+            Assert.That(httpResponse.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
+        }
+
+        [Test]
+        public async Task GenreController_AddNew_ThrowsException()
+        {
+            _factory = new CardIndexWebAppFactory(false);
+            _client = _factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureTestServices(services =>
+                {
+                    services.AddTransient<IGenreService, FakeGenreService>();
+                    services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
+                });
+            }).CreateClient();
+
+            var genre6 = new GenreDto { Id = 6, Title = "Genre6", TextCardIds = new List<int>() };
+            
+            var content = new StringContent(JsonConvert.SerializeObject(genre6), Encoding.UTF8, "application/json");
+            var httpResponse = await _client.PostAsync($"{RequestUri}", content);
+
+            Assert.That(httpResponse.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+        }
+
+        [Test]
+        public async Task GenreController_AddNew_NullModelError()
+        {
+            _factory = new CardIndexWebAppFactory(false);
+            _client = _factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureTestServices(services =>
+                {
+                    services.AddTransient<IGenreService, FakeGenreService>();
+                    services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
+                    services.AddControllers(x => x.AllowEmptyInputInBodyModelBinding = true);
+                });
+            }).CreateClient();
+
+            GenreDto genre6 = null as GenreDto;
 
             var content = new StringContent(JsonConvert.SerializeObject(genre6), Encoding.UTF8, "application/json");
-            var httpResponse = await _client.PutAsync($"{RequestUri}{genre6.Id}", content);
+            var httpResponse = await _client.PostAsync($"{RequestUri}", content);
+
+            Assert.That(httpResponse.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+        }
+
+        [Test]
+        public async Task GenreController_AddNew_WrongModelError()
+        {
+            _factory = new CardIndexWebAppFactory(false);
+            _client = _factory.CreateClient();
+            var genreToAdd = new GenreDto { Id = 6, Title = "", TextCardIds = new List<int>() };
+            var mockService = new Mock<IGenreService>();
+            var genreController = new GenreController(mockService.Object);
+            genreController.ModelState.AddModelError("Title", "Title is empty");
+
+            var result = await genreController.Add(genreToAdd);
+            var objectResult = (BadRequestObjectResult)result.Result;
+            var responseObject = objectResult.Value as Response;
+            
+            Assert.That(responseObject?.Succeeded, Is.False);
+        }
+
+        #endregion
+
+        #region UpdateTests
+
+        [Test]
+        public async Task GenreController_UpdateExisting_Success()
+        {
+            _factory = new CardIndexWebAppFactory(true);
+            _client = _factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureTestServices(services =>
+                {
+                    services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
+                });
+            }).CreateClient();
+
+            var genre6 = new GenreDto { Id = 5, Title = "Genre6", TextCardIds = new List<int> { 5 } };
+
+            var content = new StringContent(JsonConvert.SerializeObject(genre6), Encoding.UTF8, "application/json");
+            var httpResponse = await _client.PutAsync($"{RequestUri}/{genre6.Id}", content);
             httpResponse.EnsureSuccessStatusCode();
 
-            var getResponse = await _client.GetAsync($"{RequestUri}{genre6.Title}");
+            var getResponse = await _client.GetAsync($"{RequestUri}/{genre6.Title}");
             getResponse.EnsureSuccessStatusCode();
             var stringResponse = await getResponse.Content.ReadAsStringAsync();
             var actual = JsonConvert.DeserializeObject<GenreDto>(stringResponse);
@@ -140,10 +344,74 @@ namespace CardIndexTests.WebApiTests
             Assert.That(actual, Is.EqualTo(genre6).Using(new GenreDtoComparer()));
         }
 
+        [Test]
+        public async Task GenreController_Update_UnAuthorized()
+        {
+            _factory = new CardIndexWebAppFactory(false);
+            _client = _factory.CreateClient();
+
+            var genre6 = new GenreDto { Id = 5, Title = "Genre6", TextCardIds = new List<int>() };
+            var content = new StringContent(JsonConvert.SerializeObject(genre6), Encoding.UTF8, "application/json");
+            var httpResponse = await _client.PutAsync($"{RequestUri}/{genre6.Id}", content);
+
+            Assert.That(httpResponse.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
+        }
+
+        [Test]
+        public async Task GenreController_UpdateExisting_ThrowsException()
+        {
+            _factory = new CardIndexWebAppFactory(false);
+            _client = _factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureTestServices(services =>
+                {
+                    services.AddTransient<IGenreService, FakeGenreService>();
+                    services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
+                });
+            }).CreateClient();
+
+            var genre6 = new GenreDto { Id = 5, Title = "Genre6", TextCardIds = new List<int> { 5 } };
+
+            var content = new StringContent(JsonConvert.SerializeObject(genre6), Encoding.UTF8, "application/json");
+            var httpResponse = await _client.PutAsync($"{RequestUri}/{genre6.Id}", content);
+
+            Assert.That(httpResponse.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+        }
+
+        [Test]
+        public async Task GenreController_Update_WrongModelError()
+        {
+            _factory = new CardIndexWebAppFactory(false);
+            _client = _factory.CreateClient();
+            var genreToAdd = new GenreDto { Id = 6, Title = "", TextCardIds = new List<int>() };
+            var mockService = new Mock<IGenreService>();
+            var genreController = new GenreController(mockService.Object);
+            genreController.ModelState.AddModelError("Title", "Title is empty");
+
+            var result = await genreController.Update(6, genreToAdd);
+            var objectResult = (BadRequestObjectResult)result.Result;
+            var responseObject = objectResult.Value as Response;
+
+            Assert.That(responseObject?.Succeeded, Is.False);
+        }
+
+        #endregion
+
+        #region DeleteTests
+
         [TestCase(1, 4)]
         public async Task GenreController_DeleteExisting_Success(int id, int newLength)
         {
-            var httpResponse = await _client.DeleteAsync($"{RequestUri}{id}");
+            _factory = new CardIndexWebAppFactory(true);
+            _client = _factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureTestServices(services =>
+                {
+                    services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
+                });
+            }).CreateClient();
+
+            var httpResponse = await _client.DeleteAsync($"{RequestUri}/{id}");
             httpResponse.EnsureSuccessStatusCode();
 
             var getAllResponse = await _client.GetAsync($"{RequestUri}?PageSize=30&PageNumber=1");
@@ -153,70 +421,37 @@ namespace CardIndexTests.WebApiTests
 
             Assert.That(actual.Data.Count(), Is.EqualTo(newLength));
         }
-    }
-
-    [TestFixture]
-    public class GenreIntegrationErrorTests : GenreIntegrationTests
-    {
-        [SetUp]
-        public void Initialize()
-        {
-            _factory = new CardIndexWebAppFactory(false);
-            _client = _factory.CreateClient();
-        }
-
-        [TearDown]
-        public void TearDown()
-        {
-            _factory.Dispose();
-            _client.Dispose();
-        }
-
-        [Test]
-        public async Task GenreController_GetAll_FromEmptyTable_ReturnsNotFound()
-        {
-            var httpResponse = await _client.GetAsync(RequestUri);
-
-            Assert.That(httpResponse.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
-        }
-
-        [TestCase("1234")]
-        [TestCase("Fict")]
-        [TestCase("asd")]
-        public async Task GenreController_GetByName_ReturnsGenre(string name)
-        {
-            var httpResponse = await _client.GetAsync($"{RequestUri}{name}");
-
-            Assert.That(httpResponse.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
-        }
-
-        [Test]
-        public async Task GenreController_AddNew_UnAuthorized()
-        {
-            var genre6 = new GenreDto { Id = 6, Title = "Genre6", TextCardIds = new List<int>() };
-            var content = new StringContent(JsonConvert.SerializeObject(genre6), Encoding.UTF8, "application/json");
-            var httpResponse = await _client.PostAsync($"{RequestUri}", content);
-
-            Assert.That(httpResponse.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
-        }
-
-        [Test]
-        public async Task GenreController_Update_UnAuthorized()
-        {
-            var genre6 = new GenreDto { Id = 5, Title = "Genre6", TextCardIds = new List<int>() };
-            var content = new StringContent(JsonConvert.SerializeObject(genre6), Encoding.UTF8, "application/json");
-            var httpResponse = await _client.PutAsync($"{RequestUri}{genre6.Id}", content);
-
-            Assert.That(httpResponse.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
-        }
 
         [Test]
         public async Task GenreController_Delete_UnAuthorized()
         {
+            _factory = new CardIndexWebAppFactory(false);
+            _client = _factory.CreateClient();
+
             var genre6 = new GenreDto { Id = 5, Title = "Genre6", TextCardIds = new List<int>() };
-            var httpResponse = await _client.DeleteAsync($"{RequestUri}{genre6.Id}");
+            var httpResponse = await _client.DeleteAsync($"{RequestUri}/{genre6.Id}");
 
             Assert.That(httpResponse.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
         }
+
+        [Test]
+        public async Task GenreController_DeleteExisting_ThrowsException()
+        {
+            _factory = new CardIndexWebAppFactory(false);
+            _client = _factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureTestServices(services =>
+                {
+                    services.AddTransient<IGenreService, FakeGenreService>();
+                    services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
+                });
+            }).CreateClient();
+
+            var httpResponse = await _client.DeleteAsync($"{RequestUri}/1");
+
+            Assert.That(httpResponse.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+        }
+
+        #endregion
     }
 }
