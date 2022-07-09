@@ -34,12 +34,12 @@ namespace card_index_Web_API.Controllers
         /// <returns>Http status code of operation with response object</returns>
         [HttpPost]
         [Route("login")]
-        public async Task<ActionResult> Login([FromBody] UserLoginModel model)
+        public async Task<ActionResult<LoginResponse>> Login([FromBody] UserLoginModel model)
         {
             if (model == null)
-                return BadRequest(new Response(false, "No model passed"));
+                return Unauthorized(new LoginResponse() { Message = "No model passed" });
             if (!ModelState.IsValid)
-                return Unauthorized(new Response()
+                return Unauthorized(new LoginResponse()
                 { Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList() });
 
             try
@@ -54,7 +54,7 @@ namespace card_index_Web_API.Controllers
             }
             catch (CardIndexException ex)
             {
-                return BadRequest(new Response(false, ex.Message));
+                return BadRequest(new LoginResponse() { Message = ex.Message });
             }
         }
 
@@ -65,10 +65,10 @@ namespace card_index_Web_API.Controllers
         /// <returns>Http status code of operation with response object</returns>
         [HttpPost]
         [Route("register")]
-        public async Task<ActionResult> Register([FromBody] UserRegistrationModel model)
+        public async Task<ActionResult<Response>> Register([FromBody] UserRegistrationModel model)
         {
             if (model == null)
-                return Unauthorized(new LoginResponse { Errors = new List<string> { "No model passed" } });
+                return BadRequest(new Response { Errors = new List<string> { "No model passed" } });
             if (!ModelState.IsValid)
                 return BadRequest(new Response()
                 { Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList() });
