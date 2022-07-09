@@ -1,9 +1,16 @@
-﻿using card_index_BLL.Models.Dto;
+﻿using card_index_BLL.Interfaces;
+using card_index_BLL.Models.DataShaping;
+using card_index_BLL.Models.Dto;
+using card_index_BLL.Models.Identity.Infrastructure;
+using card_index_Web_API.Controllers;
 using CardIndexTests.Helpers;
 using CardIndexTests.WebApiTests.Helpers;
+using FluentAssertions;
 using Microsoft.AspNetCore.Authorization.Policy;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using System.Collections.Generic;
@@ -12,14 +19,6 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using card_index_BLL.Interfaces;
-using card_index_BLL.Models.DataShaping;
-using card_index_BLL.Models.Identity.Infrastructure;
-using card_index_DAL.Entities;
-using card_index_Web_API.Controllers;
-using FluentAssertions;
-using Microsoft.AspNetCore.Mvc;
-using Moq;
 
 namespace CardIndexTests.WebApiTests
 {
@@ -268,7 +267,7 @@ namespace CardIndexTests.WebApiTests
             }).CreateClient();
 
             var genre6 = new GenreDto { Id = 6, Title = "Genre6", TextCardIds = new List<int>() };
-            
+
             var content = new StringContent(JsonConvert.SerializeObject(genre6), Encoding.UTF8, "application/json");
             var httpResponse = await _client.PostAsync($"{RequestUri}", content);
 
@@ -310,7 +309,7 @@ namespace CardIndexTests.WebApiTests
             var result = await genreController.Add(genreToAdd);
             var objectResult = (BadRequestObjectResult)result.Result;
             var responseObject = objectResult.Value as Response;
-            
+
             Assert.That(responseObject?.Succeeded, Is.False);
         }
 

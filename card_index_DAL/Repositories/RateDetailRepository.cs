@@ -30,7 +30,7 @@ namespace card_index_DAL.Repositories
         /// <returns>Rate details collection</returns>
         public async Task<IEnumerable<RateDetail>> GetAllAsync()
         {
-            return await _db.RateDetails.OrderBy(rd=>rd.Id).ToListAsync();
+            return await _db.RateDetails.OrderBy(rd => rd.Id).ToListAsync();
         }
         /// <summary>
         /// Gets rate detail with given id from DB

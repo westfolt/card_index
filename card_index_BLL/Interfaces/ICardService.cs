@@ -37,12 +37,12 @@ namespace card_index_BLL.Interfaces
         /// <param name="userId">user id, who gave rating</param>
         /// <returns>Async operation</returns>
         Task DeleteRatingFromCard(int cardId, int userId);
-       /// <summary>
-       /// Gets rate detail for given card and user
-       /// </summary>
-       /// <param name="userId">id of user, who has given rating</param>
-       /// <param name="textCardId">id of text card</param>
-       /// <returns>Rate detail matching criteria, if exists</returns>
+        /// <summary>
+        /// Gets rate detail for given card and user
+        /// </summary>
+        /// <param name="userId">id of user, who has given rating</param>
+        /// <param name="textCardId">id of text card</param>
+        /// <returns>Rate detail matching criteria, if exists</returns>
         Task<RateDetailDto> GetRateDetailByUserIdCardId(int userId, int textCardId);
         /// <summary>
         /// Gets all cards with filtering and paging

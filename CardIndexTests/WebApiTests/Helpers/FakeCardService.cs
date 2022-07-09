@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using card_index_BLL.Exceptions;
+﻿using card_index_BLL.Exceptions;
 using card_index_BLL.Interfaces;
 using card_index_BLL.Models.DataShaping;
 using card_index_BLL.Models.Dto;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CardIndexTests.WebApiTests.Helpers
 {
-    public class FakeCardService:ICardService
+    public class FakeCardService : ICardService
     {
         public Task<IEnumerable<TextCardDto>> GetAllAsync()
         {

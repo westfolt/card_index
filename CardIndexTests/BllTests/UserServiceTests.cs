@@ -12,7 +12,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using card_index_BLL.Models.Identity.Models;
 
 namespace CardIndexTests.BllTests
 {
@@ -215,12 +214,12 @@ namespace CardIndexTests.BllTests
                 .Setup(x => x.AddUserToRoleAsync(It.IsAny<User>(), It.IsAny<string>()));
             mockUsersRolesManager
                 .Setup(x => x.UpdateUserAsync(It.IsAny<User>()))
-                .ReturnsAsync(IdentityResult.Failed(new []{new IdentityError()}));
+                .ReturnsAsync(IdentityResult.Failed(new[] { new IdentityError() }));
             var userService = new UserService(DbTestHelper.CreateMapperProfile(), mockUsersRolesManager.Object);
 
             var result = await userService.ModifyUserAsync(givenModel);
 
-            Assert.That(result.Succeeded,Is.False);
+            Assert.That(result.Succeeded, Is.False);
         }
 
         [TestCase(1)]
@@ -287,7 +286,7 @@ namespace CardIndexTests.BllTests
                 .ReturnsAsync(_data.Users.ToList());
             mockUsersRolesManager
                 .Setup(x => x.DeleteUserAsync(It.IsAny<User>()))
-                .ReturnsAsync(IdentityResult.Failed(new []{new IdentityError()}));
+                .ReturnsAsync(IdentityResult.Failed(new[] { new IdentityError() }));
 
             var userService = new UserService(DbTestHelper.CreateMapperProfile(), mockUsersRolesManager.Object);
 
@@ -466,7 +465,7 @@ namespace CardIndexTests.BllTests
                 .ReturnsAsync(_data.Users.First());
             mockUserRolesManager
                 .Setup(x => x.ChangeUserPasswordAsync(It.IsAny<User>(), It.IsAny<string>(), It.IsAny<string>()))
-                .ReturnsAsync(IdentityResult.Failed(new []{new IdentityError()}));
+                .ReturnsAsync(IdentityResult.Failed(new[] { new IdentityError() }));
 
             var userService = new UserService(DbTestHelper.CreateMapperProfile(), mockUserRolesManager.Object);
             var actual = await userService.ChangeUserPasswordAsync(_data.UserInfoModels.First(), "oldPass", "newPass");
@@ -485,7 +484,7 @@ namespace CardIndexTests.BllTests
                 .ThrowsAsync(new Exception());
 
             var userService = new UserService(DbTestHelper.CreateMapperProfile(), mockUserRolesManager.Object);
-            
+
             Assert.ThrowsAsync<CardIndexException>(async () =>
                 await userService.ChangeUserPasswordAsync(_data.UserInfoModels.First(), "oldPass", "newPass"));
         }

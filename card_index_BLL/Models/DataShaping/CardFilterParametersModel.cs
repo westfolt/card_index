@@ -3,7 +3,7 @@
     /// <summary>
     /// Filtering model for card objects filtering
     /// </summary>
-    public class CardFilterParametersModel:PagingParametersModel
+    public class CardFilterParametersModel : PagingParametersModel
     {
         private const int maxRate = 5;
         private const int minRate = 0;

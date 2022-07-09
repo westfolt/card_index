@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
+using card_index_BLL.Models.DataShaping;
 using card_index_BLL.Models.Dto;
 using card_index_BLL.Models.Identity.Models;
 using card_index_DAL.Entities;
-using System.Linq;
-using card_index_BLL.Models.DataShaping;
 using card_index_DAL.Entities.DataShapingModels;
+using System.Linq;
 
 namespace card_index_BLL.Infrastructure
 {

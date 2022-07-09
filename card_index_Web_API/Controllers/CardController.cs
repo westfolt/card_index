@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
-using card_index_BLL.Exceptions;
+﻿using card_index_BLL.Exceptions;
 using card_index_BLL.Interfaces;
 using card_index_BLL.Models.DataShaping;
 using card_index_BLL.Models.Dto;
 using card_index_BLL.Models.Identity.Infrastructure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -174,7 +174,7 @@ namespace card_index_Web_API.Controllers
         public async Task<ActionResult<RateDetailDto>> GetRatingForCardUser([FromQuery] int cardId)
         {
             RateDetailDto rate = null;
-            
+
             try
             {
                 var loggedInId = (await _userService.GetByEmailAsync(User.FindFirstValue(ClaimTypes.Name))).Id;
@@ -184,7 +184,7 @@ namespace card_index_Web_API.Controllers
             {
                 return BadRequest(new Response(false, ex.Message));
             }
-            
+
             return Ok(rate);
         }
         /// <summary>
@@ -197,7 +197,7 @@ namespace card_index_Web_API.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest(new Response()
-                    { Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList() });
+                { Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList() });
             try
             {
                 //user can modify only marks, given by himself

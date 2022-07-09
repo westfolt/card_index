@@ -4,13 +4,12 @@ using card_index_BLL.Interfaces;
 using card_index_BLL.Models.DataShaping;
 using card_index_BLL.Models.Dto;
 using card_index_DAL.Entities;
-using card_index_DAL.Entities.DataShaping;
+using card_index_DAL.Entities.DataShapingModels;
 using card_index_DAL.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using card_index_DAL.Entities.DataShapingModels;
 
 namespace card_index_BLL.Services
 {
@@ -299,7 +298,7 @@ namespace card_index_BLL.Services
                 }
                 else
                 {
-                    var mapped = _mapper.Map<RateDetailDto,RateDetail>(model);
+                    var mapped = _mapper.Map<RateDetailDto, RateDetail>(model);
                     mapped.Id = 0;
                     mapped.TextCard = null;
                     mapped.User = null;

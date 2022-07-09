@@ -303,7 +303,7 @@ namespace card_index_Web_API.Controllers
                     changePassword.NewPassword);
                 if (!result.Succeeded)
                     return BadRequest(new Response()
-                        { Errors = result.Errors, Message = "Error while trying to change password" });
+                    { Errors = result.Errors, Message = "Error while trying to change password" });
 
 
                 return Ok(new Response(true,

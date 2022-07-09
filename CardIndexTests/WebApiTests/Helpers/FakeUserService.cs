@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using card_index_BLL.Exceptions;
+﻿using card_index_BLL.Exceptions;
 using card_index_BLL.Interfaces;
 using card_index_BLL.Models.Identity.Infrastructure;
 using card_index_BLL.Models.Identity.Models;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CardIndexTests.WebApiTests.Helpers
 {
-    public class FakeUserService:IUserService
+    public class FakeUserService : IUserService
     {
         public Task<IEnumerable<UserInfoModel>> GetAllAsync()
         {

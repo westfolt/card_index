@@ -1,9 +1,14 @@
-﻿using card_index_BLL.Models.Identity.Models;
+﻿using card_index_BLL.Interfaces;
+using card_index_BLL.Models.Identity.Infrastructure;
+using card_index_BLL.Models.Identity.Models;
+using card_index_Web_API.Controllers;
 using CardIndexTests.Helpers;
 using CardIndexTests.WebApiTests.Helpers;
 using Microsoft.AspNetCore.Authorization.Policy;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using System;
@@ -13,11 +18,6 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using card_index_BLL.Interfaces;
-using card_index_BLL.Models.Identity.Infrastructure;
-using card_index_Web_API.Controllers;
-using Microsoft.AspNetCore.Mvc;
-using Moq;
 
 namespace CardIndexTests.WebApiTests
 {
@@ -84,7 +84,7 @@ namespace CardIndexTests.WebApiTests
                 RoleName = "Moderator"
             },
         };
-    
+
         [TearDown]
         public void TearDown()
         {
@@ -370,7 +370,7 @@ namespace CardIndexTests.WebApiTests
         {
             _factory = new CardIndexWebAppFactory(false);
             _client = _factory.CreateClient();
-            
+
             var httpResponse = await _client.DeleteAsync($"{RequestUri}/1");
 
             Assert.That(httpResponse.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));

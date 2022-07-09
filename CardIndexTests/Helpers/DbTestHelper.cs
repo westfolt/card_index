@@ -39,7 +39,7 @@ namespace CardIndexTests.Helpers
             Author author3 = new Author { FirstName = "Veronika", LastName = "Donald", YearOfBirth = 1990 };
             Author author4 = new Author { FirstName = "Jack", LastName = "Wieser", YearOfBirth = 2000 };
             Author author5 = new Author { FirstName = "Arnold", LastName = "Clark", YearOfBirth = 2001 };
-            
+
             context.Authors.AddRange(author1, author2, author3, author4, author5);
             context.SaveChanges();
 
@@ -54,31 +54,46 @@ namespace CardIndexTests.Helpers
 
             TextCard card1 = new TextCard
             {
-                Title = "Card1", ReleaseDate = new DateTime(1980, 3, 3), CardRating = 0, GenreId = 1,
+                Title = "Card1",
+                ReleaseDate = new DateTime(1980, 3, 3),
+                CardRating = 0,
+                GenreId = 1,
                 Authors = new List<Author> { author1 }
             };
             TextCard card2 = new TextCard
             {
-                Title = "Card2", ReleaseDate = new DateTime(1980, 3, 3), CardRating = 0, GenreId = 2,
+                Title = "Card2",
+                ReleaseDate = new DateTime(1980, 3, 3),
+                CardRating = 0,
+                GenreId = 2,
                 Authors = new List<Author> { author2 }
             };
             TextCard card3 = new TextCard
             {
-                Title = "Card3", ReleaseDate = new DateTime(1980, 3, 3), CardRating = 0, GenreId = 3,
+                Title = "Card3",
+                ReleaseDate = new DateTime(1980, 3, 3),
+                CardRating = 0,
+                GenreId = 3,
                 Authors = new List<Author> { author3 }
             };
             TextCard card4 = new TextCard
             {
-                Title = "Card4", ReleaseDate = new DateTime(1980, 3, 3), CardRating = 0, GenreId = 4,
+                Title = "Card4",
+                ReleaseDate = new DateTime(1980, 3, 3),
+                CardRating = 0,
+                GenreId = 4,
                 Authors = new List<Author> { author4 }
             };
             TextCard card5 = new TextCard
             {
-                Title = "Card5", ReleaseDate = new DateTime(1980, 3, 3), CardRating = 0, GenreId = 5,
+                Title = "Card5",
+                ReleaseDate = new DateTime(1980, 3, 3),
+                CardRating = 0,
+                GenreId = 5,
                 Authors = new List<Author> { author5 }
             };
 
-            context.TextCards.AddRange(card1,card2,card3, card4, card5);
+            context.TextCards.AddRange(card1, card2, card3, card4, card5);
             context.SaveChanges();
 
             RateDetail rate1 = new RateDetail
@@ -102,7 +117,7 @@ namespace CardIndexTests.Helpers
 
             context.RateDetails.AddRange(rate1, rate2, rate3);
             context.SaveChanges();
-            
+
             if (initUsers)
             {
                 var user1 = new User()

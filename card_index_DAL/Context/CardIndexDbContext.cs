@@ -55,9 +55,9 @@ namespace card_index_DAL.Data
             });
 
             builder.Entity<RateDetail>()
-                .HasOne(rd=>rd.User)
-                .WithMany(u=>u.RateDetails)
-                .HasForeignKey(rd=>rd.UserId);
+                .HasOne(rd => rd.User)
+                .WithMany(u => u.RateDetails)
+                .HasForeignKey(rd => rd.UserId);
 
             builder.Entity<RateDetail>()
                 .HasOne(rd => rd.TextCard)

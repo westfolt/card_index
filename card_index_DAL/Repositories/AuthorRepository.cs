@@ -31,7 +31,7 @@ namespace card_index_DAL.Repositories
         /// <returns>Authors collection of given type</returns>
         public async Task<IEnumerable<Author>> GetAllAsync()
         {
-            return await _db.Authors.OrderBy(a=>a.Id).ToListAsync();
+            return await _db.Authors.OrderBy(a => a.Id).ToListAsync();
         }
         /// <summary>
         /// Gets author with given id from DB

@@ -1,6 +1,5 @@
 ﻿using card_index_BLL.Interfaces;
 using card_index_DAL.Entities;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;

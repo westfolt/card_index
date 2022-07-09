@@ -1,8 +1,9 @@
 ﻿using card_index_BLL.Exceptions;
-using card_index_BLL.Models;
+using card_index_BLL.Models.DataShaping;
 using card_index_BLL.Models.Dto;
 using card_index_BLL.Services;
 using card_index_DAL.Entities;
+using card_index_DAL.Entities.DataShapingModels;
 using card_index_DAL.Interfaces;
 using CardIndexTests.BllTests.Helpers;
 using CardIndexTests.Helpers;
@@ -12,10 +13,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using card_index_BLL.Models.DataShaping;
-using card_index_DAL.Entities.DataShapingModels;
 
 namespace CardIndexTests.BllTests
 {
@@ -178,7 +176,7 @@ namespace CardIndexTests.BllTests
                      c.Title == cardDto.Title &&
                      c.ReleaseDate == cardDto.ReleaseDate &&
                      Math.Abs(c.CardRating - cardDto.CardRating) < 10E-6)), Times.Once);
-            mockUnitOfWork.Verify(x=>x.GenreRepository.Update(It.IsAny<Genre>()), Times.Once);
+            mockUnitOfWork.Verify(x => x.GenreRepository.Update(It.IsAny<Genre>()), Times.Once);
             mockUnitOfWork.Verify(x => x.SaveChangesAsync(), Times.Once);
         }
 
@@ -202,7 +200,7 @@ namespace CardIndexTests.BllTests
         {
             var expected = _data.TextCardDtos.First();
             var expectedGenre = _data.Genres.First();
-            
+
             var entityToUpdate = new TextCard
             {
                 Id = expected.Id,
@@ -233,7 +231,7 @@ namespace CardIndexTests.BllTests
                 .ReturnsAsync(_data.Authors.First());
 
             var cardService = new CardService(DbTestHelper.CreateMapperProfile(), mockUnitOfWork.Object);
-            
+
             await cardService.UpdateAsync(expected);
 
             mockUnitOfWork.Verify(x => x.RateDetailRepository.GetByIdWithDetailsAsync(It.IsAny<int>()),

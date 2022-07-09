@@ -67,7 +67,7 @@ namespace card_index_BLL.Services
             {
                 var takenFromDb = (await _usersRolesManager.GetUsersUMAsync()).FirstOrDefault(u => u.Id == id);
                 var mapped = _mapper.Map<User, UserInfoModel>(takenFromDb);
-                if(mapped != null)
+                if (mapped != null)
                     mapped.UserRoles = await _usersRolesManager.GetRolesFromUserManagerAsync(takenFromDb);
 
                 return mapped;
@@ -90,7 +90,7 @@ namespace card_index_BLL.Services
             {
                 var takenFromDb = await _usersRolesManager.FindByEmailAsync(email);
                 var mapped = _mapper.Map<User, UserInfoModel>(takenFromDb);
-                if(mapped != null)
+                if (mapped != null)
                     mapped.UserRoles = await _usersRolesManager.GetRolesFromUserManagerAsync(takenFromDb);
 
                 return mapped;
@@ -265,11 +265,11 @@ namespace card_index_BLL.Services
             {
                 var userInDb = await _usersRolesManager.FindByNameAsync(user.Email);
                 var result = await _usersRolesManager.ChangeUserPasswordAsync(userInDb, currentPassword, newPassword);
-                if(result.Succeeded)
+                if (result.Succeeded)
                     return new Response(true, $"Password for user {user.FirstName} {user.LastName} successfully changed!");
 
                 return new Response(false, "Password has not been changed")
-                    { Errors = result.Errors.Select(e => e.Description).ToList() };
+                { Errors = result.Errors.Select(e => e.Description).ToList() };
             }
             catch (Exception ex)
             {

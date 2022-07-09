@@ -1,9 +1,16 @@
-﻿using card_index_BLL.Models.Dto;
+﻿using card_index_BLL.Interfaces;
+using card_index_BLL.Models.DataShaping;
+using card_index_BLL.Models.Dto;
+using card_index_BLL.Models.Identity.Infrastructure;
+using card_index_Web_API.Controllers;
 using CardIndexTests.Helpers;
 using CardIndexTests.WebApiTests.Helpers;
+using FluentAssertions;
 using Microsoft.AspNetCore.Authorization.Policy;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using System.Collections.Generic;
@@ -12,13 +19,6 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using card_index_BLL.Interfaces;
-using card_index_BLL.Models.DataShaping;
-using card_index_BLL.Models.Identity.Infrastructure;
-using card_index_Web_API.Controllers;
-using FluentAssertions;
-using Microsoft.AspNetCore.Mvc;
-using Moq;
 
 namespace CardIndexTests.WebApiTests
 {
@@ -37,7 +37,7 @@ namespace CardIndexTests.WebApiTests
                 new AuthorDto { Id = 4, FirstName = "Jack", LastName = "Wieser", YearOfBirth = 2000, TextCardIds = new List<int>{4} },
                 new AuthorDto { Id = 5, FirstName = "Arnold", LastName = "Clark", YearOfBirth = 2001, TextCardIds = new List<int>{5} }
             };
-    
+
         [TearDown]
         public void TearDown()
         {
@@ -289,7 +289,7 @@ namespace CardIndexTests.WebApiTests
                 YearOfBirth = 2001,
                 TextCardIds = new List<int>()
             };
-            
+
             var content = new StringContent(JsonConvert.SerializeObject(author6), Encoding.UTF8, "application/json");
             var httpResponse = await _client.PostAsync($"{RequestUri}", content);
 

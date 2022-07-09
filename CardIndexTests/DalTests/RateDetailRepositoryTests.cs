@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using card_index_DAL.Data;
+﻿using card_index_DAL.Data;
 using card_index_DAL.Entities;
 using card_index_DAL.Exceptions;
 using card_index_DAL.Repositories;
 using CardIndexTests.DalTests.Helpers;
 using CardIndexTests.Helpers;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace CardIndexTests.DalTests
 {

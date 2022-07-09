@@ -1,7 +1,6 @@
-﻿using System;
+﻿using card_index_DAL.Entities;
+using System;
 using System.Collections.Generic;
-using System.Text;
-using card_index_DAL.Entities;
 
 namespace CardIndexTests.DalTests.Helpers
 {

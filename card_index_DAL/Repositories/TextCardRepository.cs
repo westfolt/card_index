@@ -1,6 +1,6 @@
 ﻿using card_index_DAL.Data;
 using card_index_DAL.Entities;
-using card_index_DAL.Entities.DataShaping;
+using card_index_DAL.Entities.DataShapingModels;
 using card_index_DAL.Exceptions;
 using card_index_DAL.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using card_index_DAL.Entities.DataShapingModels;
 
 namespace card_index_DAL.Repositories
 {
@@ -32,7 +31,7 @@ namespace card_index_DAL.Repositories
         /// <returns>Text cards collection</returns>
         public async Task<IEnumerable<TextCard>> GetAllAsync()
         {
-            return await _db.TextCards.OrderBy(tc=>tc.Id).ToListAsync();
+            return await _db.TextCards.OrderBy(tc => tc.Id).ToListAsync();
         }
         /// <summary>
         /// Takes all text cards, without connected instances,
@@ -47,7 +46,7 @@ namespace card_index_DAL.Repositories
                 .Where(tc => filter.AuthorId != 0 ? tc.Authors.Any(a => a.Id == filter.AuthorId) : tc != null)
                 .Where(tc => tc.CardRating >= filter.Rating)
                 .Where(tc => filter.CardName != "" ? tc.Title.Contains(filter.CardName) : tc != null)
-                .OrderBy(tc=>tc.Id)
+                .OrderBy(tc => tc.Id)
                 .Skip((filter.PageNumber - 1) * filter.PageSize)
                 .Take(filter.PageSize)
                 .ToListAsync();

@@ -1,9 +1,16 @@
-﻿using card_index_BLL.Models.Dto;
+﻿using card_index_BLL.Interfaces;
+using card_index_BLL.Models.DataShaping;
+using card_index_BLL.Models.Dto;
+using card_index_BLL.Models.Identity.Infrastructure;
+using card_index_Web_API.Controllers;
 using CardIndexTests.Helpers;
 using CardIndexTests.WebApiTests.Helpers;
+using FluentAssertions;
 using Microsoft.AspNetCore.Authorization.Policy;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using System;
@@ -12,18 +19,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using card_index_BLL.Interfaces;
-using card_index_BLL.Models.DataShaping;
-using card_index_BLL.Models.Identity.Infrastructure;
-using card_index_BLL.Models.Identity.Models;
-using card_index_DAL.Entities;
-using card_index_Web_API.Controllers;
-using FluentAssertions;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Moq;
 
 namespace CardIndexTests.WebApiTests
 {
@@ -511,7 +507,7 @@ namespace CardIndexTests.WebApiTests
             var httpResponse = await _client.GetAsync($"{RequestUri}/rate?cardId=1");
             var stringResponse = await httpResponse.Content.ReadAsStringAsync();
             var actual = JsonConvert.DeserializeObject<RateDetailDto>(stringResponse);
-            
+
             Assert.That(actual, Is.EqualTo(expected).Using(new RateDetailDtoComparer()));
         }
 
@@ -565,11 +561,11 @@ namespace CardIndexTests.WebApiTests
             var stringResponse = await httpGet.Content.ReadAsStringAsync();
             var actual = JsonConvert.DeserializeObject<RateDetailDto>(stringResponse);
 
-            actual.Should().BeEquivalentTo(rateToAdd, options => 
-                options.Excluding(rd=>rd.Id)
-                    .Excluding(rd=>rd.FirstName)
-                    .Excluding(rd=>rd.LastName)
-                    .Excluding(rd=>rd.CardName));
+            actual.Should().BeEquivalentTo(rateToAdd, options =>
+                options.Excluding(rd => rd.Id)
+                    .Excluding(rd => rd.FirstName)
+                    .Excluding(rd => rd.LastName)
+                    .Excluding(rd => rd.CardName));
         }
 
         [Test]

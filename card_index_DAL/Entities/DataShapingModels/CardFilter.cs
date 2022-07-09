@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using card_index_DAL.Entities.DataShaping;
+﻿using card_index_DAL.Entities.DataShaping;
 
 namespace card_index_DAL.Entities.DataShapingModels
 {
     /// <summary>
     /// Filtering model for card objects filtering
     /// </summary>
-    public class CardFilter:PagingParameters
+    public class CardFilter : PagingParameters
     {
         /// <summary>
         /// Name of text card

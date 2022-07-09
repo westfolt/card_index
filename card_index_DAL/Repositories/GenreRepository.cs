@@ -31,7 +31,7 @@ namespace card_index_DAL.Repositories
         /// <returns>Genres collection</returns>
         public async Task<IEnumerable<Genre>> GetAllAsync()
         {
-            return await _db.Genres.OrderBy(g=>g.Id).ToListAsync();
+            return await _db.Genres.OrderBy(g => g.Id).ToListAsync();
         }
         /// <summary>
         /// Gets genre with given id from DB
@@ -126,7 +126,7 @@ namespace card_index_DAL.Repositories
         public async Task<IEnumerable<Genre>> GetAllAsync(PagingParameters parameters)
         {
             return await _db.Genres
-                .OrderBy(g=>g.Id)
+                .OrderBy(g => g.Id)
                 .Skip((parameters.PageNumber - 1) * parameters.PageSize)
                 .Take(parameters.PageSize)
                 .ToListAsync();
@@ -173,11 +173,11 @@ namespace card_index_DAL.Repositories
                 .OrderBy(g => g.Id)
                 .Skip((parameters.PageNumber - 1) * parameters.PageSize)
                 .Take(parameters.PageSize)
-                .Include(g=>g.TextCards)
-                .ThenInclude(tc=>tc.RateDetails)
-                .ThenInclude(rd=>rd.User)
-                .Include(tc=>tc.TextCards)
-                .ThenInclude(tc=>tc.Authors)
+                .Include(g => g.TextCards)
+                .ThenInclude(tc => tc.RateDetails)
+                .ThenInclude(rd => rd.User)
+                .Include(tc => tc.TextCards)
+                .ThenInclude(tc => tc.Authors)
                 .ToListAsync();
         }
     }

@@ -1,6 +1,8 @@
 ﻿using card_index_BLL.Exceptions;
+using card_index_BLL.Models.DataShaping;
 using card_index_BLL.Services;
 using card_index_DAL.Entities;
+using card_index_DAL.Entities.DataShaping;
 using card_index_DAL.Interfaces;
 using CardIndexTests.BllTests.Helpers;
 using CardIndexTests.Helpers;
@@ -10,8 +12,6 @@ using NUnit.Framework;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using card_index_BLL.Models.DataShaping;
-using card_index_DAL.Entities.DataShaping;
 
 namespace CardIndexTests.BllTests
 {
@@ -269,7 +269,7 @@ namespace CardIndexTests.BllTests
             var authorService = new AuthorService(DbTestHelper.CreateMapperProfile(), mockUnitOfWork.Object);
             var result = await authorService.GetTotalNumberAsync();
 
-            mockUnitOfWork.Verify(x=>x.AuthorRepository.GetTotalNumberAsync(), Times.Once);
+            mockUnitOfWork.Verify(x => x.AuthorRepository.GetTotalNumberAsync(), Times.Once);
             Assert.That(result, Is.EqualTo(10));
         }
 

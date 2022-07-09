@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using card_index_BLL.Exceptions;
+﻿using card_index_BLL.Exceptions;
 using card_index_BLL.Interfaces;
 using card_index_BLL.Models.Identity.Models;
 using card_index_BLL.Security;
@@ -14,6 +9,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Moq;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace CardIndexTests.BllTests
 {
@@ -24,7 +23,7 @@ namespace CardIndexTests.BllTests
         private JwtHandler _jwtHandler;
         private Mock<IManageUsersRoles> _usersRolesManager;
 
-            [SetUp]
+        [SetUp]
         public void Initialize()
         {
             _usersRolesManager = new Mock<IManageUsersRoles>();
@@ -37,13 +36,13 @@ namespace CardIndexTests.BllTests
                 .Setup(x => x.GetSection("validIssuer").Value)
                 .Returns("https://localhost:5001");
             jwtSection
-                .Setup(x=>x.GetSection("validAudience").Value)
+                .Setup(x => x.GetSection("validAudience").Value)
                 .Returns("https://localhost:5001");
             jwtSection
                 .Setup(x => x.GetSection("expiryInMinutes").Value)
                 .Returns("35");
 
-            Mock <IConfiguration> mockConfig = new Mock<IConfiguration>();
+            Mock<IConfiguration> mockConfig = new Mock<IConfiguration>();
             mockConfig
                 .Setup(x => x.GetSection("JwtSettings"))
                 .Returns(jwtSection.Object);
@@ -99,7 +98,7 @@ namespace CardIndexTests.BllTests
             var authenticationService = new AuthenticationService(_usersRolesManager.Object, _jwtHandler);
 
             var result = await authenticationService.LoginUserAsync(new UserLoginModel
-                { Email = "mymail@gmail.com", Password = "mypass123" });
+            { Email = "mymail@gmail.com", Password = "mypass123" });
 
             Assert.That(result.Succeeded, Is.False);
         }
@@ -114,7 +113,7 @@ namespace CardIndexTests.BllTests
             var authenticationService = new AuthenticationService(_usersRolesManager.Object, _jwtHandler);
 
             var result = await authenticationService.LoginUserAsync(new UserLoginModel
-                { Email = "mymail@gmail.com", Password = "mypass123" });
+            { Email = "mymail@gmail.com", Password = "mypass123" });
 
             Assert.That(result.Succeeded, Is.False);
         }
@@ -129,7 +128,7 @@ namespace CardIndexTests.BllTests
             var authenticationService = new AuthenticationService(_usersRolesManager.Object, _jwtHandler);
 
             Assert.ThrowsAsync<CardIndexException>(async () => await authenticationService.LoginUserAsync(new UserLoginModel
-                { Email = "mymail@gmail.com", Password = "mypass123" }));
+            { Email = "mymail@gmail.com", Password = "mypass123" }));
         }
 
         [Test]
@@ -156,17 +155,17 @@ namespace CardIndexTests.BllTests
             var authenticationService = new AuthenticationService(_usersRolesManager.Object, _jwtHandler);
             var result = await authenticationService.RegisterUserAsync(registerModel);
 
-            _usersRolesManager.Verify(x=>x.CreateUserAsync(It.Is<User>(u => 
+            _usersRolesManager.Verify(x => x.CreateUserAsync(It.Is<User>(u =>
                 u.FirstName == registerModel.FirstName &&
                 u.LastName == registerModel.LastName &&
                 u.Email == registerModel.Email &&
                 u.UserName == registerModel.Email &&
-                u.PhoneNumber == registerModel.Phone), It.Is<string>(p=>
+                u.PhoneNumber == registerModel.Phone), It.Is<string>(p =>
                 p == registerModel.Password &&
                 p == registerModel.ConfirmPassword)), Times.Once);
 
             Assert.That(result.Succeeded, Is.True);
-            
+
         }
 
         [Test]
@@ -177,7 +176,7 @@ namespace CardIndexTests.BllTests
                 .ReturnsAsync(_data.Users.First());
 
             var authenticationService = new AuthenticationService(_usersRolesManager.Object, _jwtHandler);
-            var result = await authenticationService.RegisterUserAsync(new UserRegistrationModel{Email = "newmail@mail.com"});
+            var result = await authenticationService.RegisterUserAsync(new UserRegistrationModel { Email = "newmail@mail.com" });
 
             Assert.That(result.Succeeded, Is.False);
         }
@@ -241,7 +240,7 @@ namespace CardIndexTests.BllTests
             var authenticationService = new AuthenticationService(_usersRolesManager.Object, _jwtHandler);
             await authenticationService.LogOutAsync();
 
-            _usersRolesManager.Verify(x=>x.SignOutAsync(), Times.Once);
+            _usersRolesManager.Verify(x => x.SignOutAsync(), Times.Once);
         }
     }
 }

@@ -1,18 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using card_index_DAL.Data;
+﻿using card_index_DAL.Data;
 using card_index_DAL.Entities;
 using card_index_DAL.Entities.DataShaping;
 using card_index_DAL.Exceptions;
 using card_index_DAL.Repositories;
 using CardIndexTests.DalTests.Helpers;
 using CardIndexTests.Helpers;
-using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace CardIndexTests.DalTests
 {
@@ -55,7 +52,7 @@ namespace CardIndexTests.DalTests
         {
             var genre = await _genreRepository.GetByIdAsync(id);
 
-            Assert.That(genre, Is.EqualTo(_expectedGenres.ToList()[id-1]).Using(new GenreComparer()));
+            Assert.That(genre, Is.EqualTo(_expectedGenres.ToList()[id - 1]).Using(new GenreComparer()));
         }
 
         [Test]
@@ -165,7 +162,7 @@ namespace CardIndexTests.DalTests
 
             var actual = await _genreRepository.GetAllAsync(pageParameters);
 
-            Assert.That(actual.OrderBy(g=>g.Id), Is.EqualTo(expected).Using(new GenreComparer()));
+            Assert.That(actual.OrderBy(g => g.Id), Is.EqualTo(expected).Using(new GenreComparer()));
         }
 
         [Test]
@@ -174,8 +171,8 @@ namespace CardIndexTests.DalTests
             var expected = _expectedGenres.First();
             expected.TextCards = new List<TextCard>
             {
-                new TextCard 
-                { 
+                new TextCard
+                {
                     Title = "Card1",
                     ReleaseDate = new DateTime(1980, 3, 3),
                     CardRating = 0,

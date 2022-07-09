@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using card_index_DAL.Data;
+﻿using card_index_DAL.Data;
 using card_index_DAL.Entities;
-using card_index_DAL.Entities.DataShaping;
 using card_index_DAL.Entities.DataShapingModels;
 using card_index_DAL.Exceptions;
 using card_index_DAL.Repositories;
 using CardIndexTests.DalTests.Helpers;
 using CardIndexTests.Helpers;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace CardIndexTests.DalTests
 {
@@ -197,7 +195,7 @@ namespace CardIndexTests.DalTests
         public async Task TextCardRepository_GetTotalNumberByFilterAsync_ReturnsTextCardsCount()
         {
             var filter = new CardFilter
-                { AuthorId = 0, GenreId = 0, CardName = "", PageNumber = 1, PageSize = 30, Rating = 0 };
+            { AuthorId = 0, GenreId = 0, CardName = "", PageNumber = 1, PageSize = 30, Rating = 0 };
 
             Assert.That(await _cardRepository.GetTotalNumberByFilterAsync(filter), Is.EqualTo(_expectedTextCards.Count()));
         }

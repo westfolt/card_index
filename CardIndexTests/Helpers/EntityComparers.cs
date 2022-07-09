@@ -1,10 +1,10 @@
 ﻿using card_index_BLL.Models.Dto;
 using card_index_BLL.Models.Identity.Models;
+using card_index_DAL.Entities;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using card_index_DAL.Entities;
 
 namespace CardIndexTests.Helpers
 {

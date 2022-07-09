@@ -1,15 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using card_index_BLL.Interfaces;
+﻿using card_index_BLL.Interfaces;
 using card_index_BLL.Models.Identity.Infrastructure;
 using card_index_BLL.Models.Identity.Models;
 using card_index_Web_API.Controllers;
-using CardIndexTests.Helpers;
 using CardIndexTests.WebApiTests.Helpers;
 using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.AspNetCore.Mvc;
@@ -18,6 +10,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace CardIndexTests.WebApiTests
 {
@@ -351,7 +350,7 @@ namespace CardIndexTests.WebApiTests
 
             await authenticateController.LogOut();
 
-            mockService.Verify(x=>x.LogOutAsync(), Times.Once);
+            mockService.Verify(x => x.LogOutAsync(), Times.Once);
         }
 
         #endregion
