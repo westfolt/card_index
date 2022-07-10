@@ -65,7 +65,7 @@
                <h5 class="font-medium mb-0">{{card.genreName}}</h5>
              </td>
              <td>
-              <h5 class="font-medium mb-0">{{card.cardRating}}</h5>
+              <h5 class="font-medium mb-0">{{card.cardRating | number: '1.0-2'}}</h5>
             </td>
              <td><button type="button" id="details" class="btn btn-info" (click)="redirectToDetailsPage(card.id)">Details</button></td>
              <td><button type="button" id="rate" class="btn btn-info" (click)="redirectToRatePage(card.id)">Rate</button></td>
