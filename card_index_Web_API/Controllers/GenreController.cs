@@ -58,10 +58,11 @@ namespace card_index_Web_API.Controllers
             return Ok(response);
         }
         /// <summary>
-        /// Returns all genres from DB without filters, authenticated only allowed
+        /// Returns all genres from DB without filters
         /// </summary>
         /// <returns>All genres collection</returns>
         [HttpGet("all")]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<GenreDto>>> Get()
         {
             IEnumerable<GenreDto> genres = null;

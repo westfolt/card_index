@@ -56,10 +56,11 @@ namespace card_index_Web_API.Controllers
             return Ok(response);
         }
         /// <summary>
-        /// Returns all authors from DB without filters, authenticated only allowed
+        /// Returns all authors from DB without filters
         /// </summary>
         /// <returns>All authors collection</returns>
         [HttpGet("all")]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<AuthorDto>>> Get()
         {
             IEnumerable<AuthorDto> authors = null;
