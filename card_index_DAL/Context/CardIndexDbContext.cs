@@ -1,4 +1,5 @@
-﻿using card_index_DAL.Entities;
+﻿using card_index_DAL.Context.Configuration;
+using card_index_DAL.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -25,53 +26,18 @@ namespace card_index_DAL.Data
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<User>(entity =>
-            {
-                entity.ToTable("Users");
-            });
-            builder.Entity<UserRole>(entity =>
-            {
-                entity.ToTable("Roles");
-            });
-            builder.Entity<IdentityUserRole<int>>(entity =>
-            {
-                entity.ToTable("UserRoles");
-            });
-            builder.Entity<IdentityRoleClaim<int>>(entity =>
-            {
-                entity.ToTable("RoleClaims");
-            });
-            builder.Entity<IdentityUserClaim<int>>(entity =>
-            {
-                entity.ToTable("UserClaims");
-            });
-            builder.Entity<IdentityUserLogin<int>>(entity =>
-            {
-                entity.ToTable("UserLogins");
-            });
-            builder.Entity<IdentityUserToken<int>>(entity =>
-            {
-                entity.ToTable("UserTokens");
-            });
+            //applying configs to set proper names for identity tables
+            builder.ApplyConfiguration(new UserConfiguration());
+            builder.ApplyConfiguration(new UserRoleConfiguration());
+            builder.ApplyConfiguration(new IdentityUserRoleConfiguration());
+            builder.ApplyConfiguration(new IdentityRoleClaimConfiguration());
+            builder.ApplyConfiguration(new IdentityUserClaimConfiguration());
+            builder.ApplyConfiguration(new IdentityUserLoginConfiguration());
+            builder.ApplyConfiguration(new IdentityUserTokenConfiguration());
 
-            builder.Entity<RateDetail>()
-                .HasOne(rd => rd.User)
-                .WithMany(u => u.RateDetails)
-                .HasForeignKey(rd => rd.UserId);
-
-            builder.Entity<RateDetail>()
-                .HasOne(rd => rd.TextCard)
-                .WithMany(tc => tc.RateDetails)
-                .HasForeignKey(rd => rd.TextCardId);
-
-            builder.Entity<TextCard>()
-                .HasOne(c => c.Genre)
-                .WithMany(g => g.TextCards)
-                .HasForeignKey(c => c.GenreId);
-
-            builder.Entity<TextCard>()
-                .HasMany(c => c.Authors)
-                .WithMany(a => a.TextCards);
+            //applying app tables configs
+            builder.ApplyConfiguration(new RateDetailConfiguration());
+            builder.ApplyConfiguration(new TextCardConfiguration());
         }
         /// <summary>
         /// Set of text cards, stored in DB
