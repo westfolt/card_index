@@ -5,7 +5,7 @@ namespace card_index_BLL.Models.Identity.Infrastructure
     /// <summary>
     /// Object to send when user logs in
     /// </summary>
-    public class LoginResponse
+    public class LoginResponse:Response
     {
         /// <summary>
         /// Constructor without parameters, when unsuccessful login
@@ -28,20 +28,8 @@ namespace card_index_BLL.Models.Identity.Infrastructure
             Token = token;
         }
         /// <summary>
-        /// Login result
-        /// </summary>
-        public bool Succeeded { get; set; }
-        /// <summary>
-        /// Info message
-        /// </summary>
-        public string Message { get; set; }
-        /// <summary>
         /// JSON Web Token
         /// </summary>
         public string Token { get; set; }
-        /// <summary>
-        /// Errors list
-        /// </summary>
-        public List<string> Errors { get; set; }
     }
 }

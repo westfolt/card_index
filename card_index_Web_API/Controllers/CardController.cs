@@ -45,15 +45,8 @@ namespace card_index_Web_API.Controllers
         {
             DataShapingResponse<TextCardDto> response = new DataShapingResponse<TextCardDto>();
 
-            try
-            {
-                response.TotalNumber = await _cardService.GetTotalNumberByFilterAsync(cardFilterParameters);
-                response.Data = await _cardService.GetAllAsync(cardFilterParameters);
-            }
-            catch (CardIndexException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            response.TotalNumber = await _cardService.GetTotalNumberByFilterAsync(cardFilterParameters);
+            response.Data = await _cardService.GetAllAsync(cardFilterParameters);
 
             if (response.Data == null || !response.Data.Any())
             {
@@ -75,14 +68,7 @@ namespace card_index_Web_API.Controllers
         {
             TextCardDto card = null;
 
-            try
-            {
-                card = await _cardService.GetByIdAsync(id);
-            }
-            catch (CardIndexException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            card = await _cardService.GetByIdAsync(id);
 
             if (card == null)
                 return NotFound();
@@ -105,14 +91,7 @@ namespace card_index_Web_API.Controllers
                 return BadRequest(new Response()
                 { Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList() });
 
-            try
-            {
-                insertId = await _cardService.AddAsync(model);
-            }
-            catch (CardIndexException ex)
-            {
-                return BadRequest(new Response(false, ex.Message));
-            }
+            insertId = await _cardService.AddAsync(model);
 
             return Ok(new Response(true, $"Successfully added card with id: {insertId}"));
         }
@@ -132,14 +111,7 @@ namespace card_index_Web_API.Controllers
                 return BadRequest(new Response()
                 { Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList() });
 
-            try
-            {
-                await _cardService.UpdateAsync(model);
-            }
-            catch (CardIndexException ex)
-            {
-                return BadRequest(new Response(false, ex.Message));
-            }
+            await _cardService.UpdateAsync(model);
 
             return Ok(new Response(true, $"Successfully updated card with id: {id}"));
         }
@@ -153,15 +125,7 @@ namespace card_index_Web_API.Controllers
         [Authorize(Roles = "Admin,Moderator")]
         public async Task<ActionResult<Response>> Delete(int id)
         {
-            try
-            {
-                await _cardService.DeleteAsync(id);
-            }
-            catch (CardIndexException ex)
-            {
-                return BadRequest(new Response(false, ex.Message));
-            }
-
+            await _cardService.DeleteAsync(id);
             return Ok(new Response(true, $"Successfully deleted card with id: {id}"));
         }
         /// <summary>
@@ -175,15 +139,8 @@ namespace card_index_Web_API.Controllers
         {
             RateDetailDto rate = null;
 
-            try
-            {
-                var loggedInId = (await _userService.GetByEmailAsync(User.FindFirstValue(ClaimTypes.Name))).Id;
-                rate = await _cardService.GetRateDetailByUserIdCardId(loggedInId, cardId);
-            }
-            catch (CardIndexException ex)
-            {
-                return BadRequest(new Response(false, ex.Message));
-            }
+            var loggedInId = (await _userService.GetByEmailAsync(User.FindFirstValue(ClaimTypes.Name))).Id;
+            rate = await _cardService.GetRateDetailByUserIdCardId(loggedInId, cardId);
 
             return Ok(rate);
         }
@@ -198,17 +155,11 @@ namespace card_index_Web_API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(new Response()
                 { Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList() });
-            try
-            {
-                //user can modify only marks, given by himself
-                var loggedInId = (await _userService.GetByEmailAsync(User.FindFirstValue(ClaimTypes.Name))).Id;
-                newDetails.UserId = loggedInId;
-                await _cardService.AddRatingToCard(newDetails);
-            }
-            catch (CardIndexException ex)
-            {
-                return BadRequest(new Response(false, ex.Message));
-            }
+
+            //user can modify only marks, given by himself
+            var loggedInId = (await _userService.GetByEmailAsync(User.FindFirstValue(ClaimTypes.Name))).Id;
+            newDetails.UserId = loggedInId;
+            await _cardService.AddRatingToCard(newDetails);
 
             return Ok(new Response(true,
                 $"Successfully added rating: {newDetails.RateValue} to card id: {newDetails.TextCardId}"));

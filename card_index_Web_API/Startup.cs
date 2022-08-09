@@ -2,6 +2,7 @@ using card_index_BLL.Infrastructure;
 using card_index_BLL.Models.Data;
 using card_index_DAL.Data;
 using card_index_Web_API.Extensions;
+using card_index_Web_API.Filters;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -26,7 +27,10 @@ namespace card_index_Web_API
         {
             var connectionString = Configuration.GetConnectionString("CardIndexConnectionString");
             BllDependencyConfigurator.ConfigureServices(services, connectionString);
-            services.AddControllers();
+            services.AddControllers(options =>
+            {
+                options.Filters.Add<CardIndexExceptionFilter>();
+            });
             services.ConfigureSwagger();
             services.ConfigureCors();
             services.ConfigureAuthentication(Configuration, 2);

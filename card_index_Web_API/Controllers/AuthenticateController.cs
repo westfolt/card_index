@@ -34,28 +34,21 @@ namespace card_index_Web_API.Controllers
         /// <returns>Http status code of operation with response object</returns>
         [HttpPost]
         [Route("login")]
-        public async Task<ActionResult<LoginResponse>> Login([FromBody] UserLoginModel model)
+        public async Task<ActionResult<Response>> Login([FromBody] UserLoginModel model)
         {
             if (model == null)
                 return Unauthorized(new LoginResponse() { Message = "No model passed" });
             if (!ModelState.IsValid)
                 return Unauthorized(new LoginResponse()
                 { Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList() });
-
-            try
+            
+            var result = await _authenticationService.LoginUserAsync(model);
+            if (result.Succeeded)
             {
-                var result = await _authenticationService.LoginUserAsync(model);
-                if (result.Succeeded)
-                {
-                    return Ok(result);
-                }
+                return Ok(result);
+            }
 
-                return Unauthorized(result);
-            }
-            catch (CardIndexException ex)
-            {
-                return BadRequest(new LoginResponse() { Message = ex.Message });
-            }
+            return Unauthorized(result);
         }
 
         /// <summary>
@@ -73,20 +66,13 @@ namespace card_index_Web_API.Controllers
                 return BadRequest(new Response()
                 { Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList() });
 
-            try
+            var result = await _authenticationService.RegisterUserAsync(model);
+            if (result.Succeeded)
             {
-                var result = await _authenticationService.RegisterUserAsync(model);
-                if (result.Succeeded)
-                {
-                    return Ok(result);
-                }
+                return Ok(result);
+            }
 
-                return Conflict(result);
-            }
-            catch (CardIndexException ex)
-            {
-                return BadRequest(new Response(false, ex.Message));
-            }
+            return Conflict(result);
         }
 
         /// <summary>

@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using card_index_Web_API.Filters;
+using Microsoft.Extensions.Logging;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -22,14 +24,16 @@ namespace card_index_Web_API.Controllers
     public class GenreController : ControllerBase
     {
         private readonly IGenreService _genreService;
+        private readonly ILogger<GenreController> _logger;
 
         /// <summary>
         /// Constructor, inject genre service here
         /// </summary>
         /// <param name="genreService">Genre service object</param>
-        public GenreController(IGenreService genreService)
+        public GenreController(IGenreService genreService, ILogger<GenreController> logger)
         {
             _genreService = genreService;
+            _logger = logger;
         }
 
         /// <summary>
@@ -66,15 +70,7 @@ namespace card_index_Web_API.Controllers
         public async Task<ActionResult<IEnumerable<GenreDto>>> Get()
         {
             IEnumerable<GenreDto> genres = null;
-
-            try
-            {
-                genres = await _genreService.GetAllAsync();
-            }
-            catch (CardIndexException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            genres = await _genreService.GetAllAsync();
 
             if (genres == null || !genres.Any())
                 return NotFound();
@@ -93,14 +89,7 @@ namespace card_index_Web_API.Controllers
         {
             GenreDto genre = null;
 
-            try
-            {
-                genre = await _genreService.GetByNameAsync(name);
-            }
-            catch (CardIndexException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            genre = await _genreService.GetByNameAsync(name);
 
             if (genre == null)
                 return NotFound();
@@ -123,16 +112,8 @@ namespace card_index_Web_API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(new Response()
                 { Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList() });
-
-            try
-            {
-                insertId = await _genreService.AddAsync(model);
-            }
-            catch (CardIndexException ex)
-            {
-                return BadRequest(new Response(false, ex.Message));
-            }
-
+            
+            insertId = await _genreService.AddAsync(model);
             return Ok(new Response(true, $"Successfully added genre with id: {insertId}"));
         }
 
@@ -150,16 +131,8 @@ namespace card_index_Web_API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(new Response()
                 { Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList() });
-
-            try
-            {
-                await _genreService.UpdateAsync(model);
-            }
-            catch (CardIndexException ex)
-            {
-                return BadRequest(new Response(false, ex.Message));
-            }
-
+            
+            await _genreService.UpdateAsync(model);
             return Ok(new Response(true, $"Successfully updated genre with id: {id}"));
         }
 
@@ -172,15 +145,7 @@ namespace card_index_Web_API.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<Response>> Delete(int id)
         {
-            try
-            {
-                await _genreService.DeleteAsync(id);
-            }
-            catch (CardIndexException ex)
-            {
-                return BadRequest(new Response(false, ex.Message));
-            }
-
+            await _genreService.DeleteAsync(id);
             return Ok(new Response(true, $"Successfully deleted genre with id: {id}"));
         }
     }

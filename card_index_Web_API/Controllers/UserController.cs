@@ -40,14 +40,7 @@ namespace card_index_Web_API.Controllers
         {
             IEnumerable<UserInfoModel> users = null;
 
-            try
-            {
-                users = await _userService.GetAllAsync();
-            }
-            catch (CardIndexException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            users = await _userService.GetAllAsync();
 
             if (users == null || !users.Any())
                 return NotFound();
@@ -66,14 +59,7 @@ namespace card_index_Web_API.Controllers
         {
             UserInfoModel user = null;
 
-            try
-            {
-                user = await _userService.GetByIdAsync(id);
-            }
-            catch (CardIndexException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            user = await _userService.GetByIdAsync(id);
 
             if (user == null)
                 return NotFound();
@@ -96,14 +82,7 @@ namespace card_index_Web_API.Controllers
                 return BadRequest(new Response()
                 { Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList() });
 
-            try
-            {
-                await _userService.ModifyUserAsync(model);
-            }
-            catch (CardIndexException ex)
-            {
-                return BadRequest(new Response(false, ex.Message));
-            }
+            await _userService.ModifyUserAsync(model);
 
             return Ok(new Response(true, $"Successfully updated user with id: {id}"));
         }
@@ -117,15 +96,7 @@ namespace card_index_Web_API.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<Response>> Delete(int id)
         {
-            try
-            {
-                await _userService.DeleteUserAsync(id);
-            }
-            catch (CardIndexException ex)
-            {
-                return BadRequest(new Response(false, ex.Message));
-            }
-
+            await _userService.DeleteUserAsync(id);
             return Ok(new Response(true, $"Successfully deleted user with id: {id}"));
         }
 
@@ -139,14 +110,7 @@ namespace card_index_Web_API.Controllers
         {
             IEnumerable<UserRoleInfoModel> roles = null;
 
-            try
-            {
-                roles = await _userService.GetAllRolesAsync();
-            }
-            catch (CardIndexException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            roles = await _userService.GetAllRolesAsync();
 
             if (roles == null || !roles.Any())
                 return NotFound();
@@ -165,14 +129,7 @@ namespace card_index_Web_API.Controllers
         {
             UserRoleInfoModel role = null;
 
-            try
-            {
-                role = await _userService.GetRoleByNameAsync(roleName);
-            }
-            catch (CardIndexException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            role = await _userService.GetRoleByNameAsync(roleName);
 
             if (role == null)
                 return NotFound();
@@ -196,14 +153,7 @@ namespace card_index_Web_API.Controllers
                 return BadRequest(new Response()
                 { Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList() });
 
-            try
-            {
-                insertId = await _userService.AddRoleAsync(model);
-            }
-            catch (CardIndexException ex)
-            {
-                return BadRequest(new Response(false, ex.Message));
-            }
+            insertId = await _userService.AddRoleAsync(model);
 
             return Ok(new Response(true, $"Successfully added role with id: {insertId}"));
         }
@@ -217,15 +167,7 @@ namespace card_index_Web_API.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<Response>> Delete(string roleName)
         {
-            try
-            {
-                await _userService.DeleteRoleAsync(roleName);
-            }
-            catch (CardIndexException ex)
-            {
-                return BadRequest(new Response(false, ex.Message));
-            }
-
+            await _userService.DeleteRoleAsync(roleName);
             return Ok(new Response(true, $"Successfully deleted role {roleName}"));
         }
 
@@ -238,14 +180,8 @@ namespace card_index_Web_API.Controllers
         {
             UserInfoModel user = null;
             var loggedInUser = this.User.FindFirstValue(ClaimTypes.Name);
-            try
-            {
-                user = await _userService.GetByEmailAsync(loggedInUser);
-            }
-            catch (CardIndexException ex)
-            {
-                return BadRequest(new Response(false, ex.Message));
-            }
+
+            user = await _userService.GetByEmailAsync(loggedInUser);
 
             if (user == null)
                 return NotFound();
@@ -265,18 +201,11 @@ namespace card_index_Web_API.Controllers
                 return BadRequest(new Response()
                 { Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList() });
 
-            try
-            {
-                var loggedInUser = this.User.FindFirstValue(ClaimTypes.Name);
-                var user = await _userService.GetByEmailAsync(loggedInUser);
-                model.UserRoles = user.UserRoles;
-                model.Id = user.Id;
-                await _userService.ModifyUserAsync(model);
-            }
-            catch (CardIndexException ex)
-            {
-                return BadRequest(new Response(false, ex.Message));
-            }
+            var loggedInUser = this.User.FindFirstValue(ClaimTypes.Name);
+            var user = await _userService.GetByEmailAsync(loggedInUser);
+            model.UserRoles = user.UserRoles;
+            model.Id = user.Id;
+            await _userService.ModifyUserAsync(model);
 
             return Ok(new Response(true, $"Successfully updated user: {model.FirstName} {model.LastName}"));
         }
@@ -291,28 +220,22 @@ namespace card_index_Web_API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(new Response()
                 { Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList() });
-            try
-            {
-                var loggedInUser = this.User.FindFirstValue(ClaimTypes.Name);
-                var user = await _userService.GetByEmailAsync(loggedInUser);
-                var passValid = await _userService.CheckPasswordAsync(user, changePassword.CurrentPassword);
-                if (!passValid)
-                    return BadRequest(new Response() { Errors = new List<string> { "Current password is wrong" } });
 
-                var result = await _userService.ChangeUserPasswordAsync(user, changePassword.CurrentPassword,
-                    changePassword.NewPassword);
-                if (!result.Succeeded)
-                    return BadRequest(new Response()
-                    { Errors = result.Errors, Message = "Error while trying to change password" });
+            var loggedInUser = this.User.FindFirstValue(ClaimTypes.Name);
+            var user = await _userService.GetByEmailAsync(loggedInUser);
+            var passValid = await _userService.CheckPasswordAsync(user, changePassword.CurrentPassword);
+            if (!passValid)
+                return BadRequest(new Response() { Errors = new List<string> { "Current password is wrong" } });
+
+            var result = await _userService.ChangeUserPasswordAsync(user, changePassword.CurrentPassword,
+                changePassword.NewPassword);
+            if (!result.Succeeded)
+                return BadRequest(new Response()
+                { Errors = result.Errors, Message = "Error while trying to change password" });
 
 
-                return Ok(new Response(true,
-                    $"Successfully changed pass for user: {user.FirstName} {user.LastName}"));
-            }
-            catch (CardIndexException ex)
-            {
-                return BadRequest(new Response(false, ex.Message));
-            }
+            return Ok(new Response(true,
+                $"Successfully changed pass for user: {user.FirstName} {user.LastName}"));
         }
     }
 }

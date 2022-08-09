@@ -107,12 +107,13 @@ export class ErrorHandlerService {
 
   private compileErrors = (res: response): string => {
     let message = res.message ? (res.message + '<br>') : "";
+    if(res.errors != null && res.errors != undefined){
       const values = Object.values(res.errors);
-
       values.map((m: string) => {
          message += m + '<br>';
       })
+    }
 
-      return message.slice(0, -4);
+    return message.slice(0, -4);
   }
 }

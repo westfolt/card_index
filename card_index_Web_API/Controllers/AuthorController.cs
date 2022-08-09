@@ -40,15 +40,9 @@ namespace card_index_Web_API.Controllers
         {
             DataShapingResponse<AuthorDto> response = new DataShapingResponse<AuthorDto>();
 
-            try
-            {
-                response.TotalNumber = await _authorService.GetTotalNumberAsync();
-                response.Data = await _authorService.GetAllAsync(pagingParametersModel);
-            }
-            catch (CardIndexException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            response.TotalNumber = await _authorService.GetTotalNumberAsync();
+            response.Data = await _authorService.GetAllAsync(pagingParametersModel);
+
 
             if (response.Data == null || !response.Data.Any())
                 return NotFound();
@@ -64,16 +58,9 @@ namespace card_index_Web_API.Controllers
         public async Task<ActionResult<IEnumerable<AuthorDto>>> Get()
         {
             IEnumerable<AuthorDto> authors = null;
-
-            try
-            {
-                authors = await _authorService.GetAllAsync();
-            }
-            catch (CardIndexException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-
+            
+            authors = await _authorService.GetAllAsync();
+            
             if (authors == null || !authors.Any())
                 return NotFound();
 
@@ -90,15 +77,8 @@ namespace card_index_Web_API.Controllers
         {
             AuthorDto author = null;
 
-            try
-            {
-                author = await _authorService.GetByIdAsync(id);
-            }
-            catch (CardIndexException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-
+            author = await _authorService.GetByIdAsync(id);
+           
             if (author == null)
                 return NotFound();
             return Ok(author);
@@ -120,15 +100,8 @@ namespace card_index_Web_API.Controllers
                 return BadRequest(new Response()
                 { Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList() });
 
-            try
-            {
-                insertId = await _authorService.AddAsync(model);
-            }
-            catch (CardIndexException ex)
-            {
-                return BadRequest(new Response(false, ex.Message));
-            }
-
+            insertId = await _authorService.AddAsync(model);
+            
             return Ok(new Response(true, $"Successfully added author with id: {insertId}"));
         }
 
@@ -147,15 +120,8 @@ namespace card_index_Web_API.Controllers
                 return BadRequest(new Response()
                 { Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList() });
 
-            try
-            {
-                await _authorService.UpdateAsync(model);
-            }
-            catch (CardIndexException ex)
-            {
-                return BadRequest(new Response(false, ex.Message));
-            }
-
+            await _authorService.UpdateAsync(model);
+            
             return Ok(new Response(true, $"Successfully updated author with id: {id}"));
         }
 
@@ -168,15 +134,7 @@ namespace card_index_Web_API.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<Response>> Delete(int id)
         {
-            try
-            {
-                await _authorService.DeleteAsync(id);
-            }
-            catch (CardIndexException ex)
-            {
-                return BadRequest(new Response(false, ex.Message));
-            }
-
+            await _authorService.DeleteAsync(id);
             return Ok(new Response(true, $"Successfully deleted author with id: {id}"));
         }
     }
