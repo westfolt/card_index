@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using card_index_Web_API.Filters;
 
 namespace card_index_Web_API.Controllers
 {
@@ -43,11 +44,13 @@ namespace card_index_Web_API.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<DataShapingResponse<TextCardDto>>> Get([FromQuery] CardFilterParametersModel cardFilterParameters)
         {
-            DataShapingResponse<TextCardDto> response = new DataShapingResponse<TextCardDto>();
+            DataShapingResponse<TextCardDto> response = new DataShapingResponse<TextCardDto>
+            {
+                TotalNumber = await _cardService.GetTotalNumberByFilterAsync(cardFilterParameters),
+                Data = await _cardService.GetAllAsync(cardFilterParameters)
+            };
 
-            response.TotalNumber = await _cardService.GetTotalNumberByFilterAsync(cardFilterParameters);
-            response.Data = await _cardService.GetAllAsync(cardFilterParameters);
-
+            //adding new collection instead of empty data to avoid null collection
             if (response.Data == null || !response.Data.Any())
             {
                 response.Data = new List<TextCardDto>();
@@ -66,12 +69,12 @@ namespace card_index_Web_API.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<TextCardDto>> GetById(int id)
         {
-            TextCardDto card = null;
-
-            card = await _cardService.GetByIdAsync(id);
-
+            var card = await _cardService.GetByIdAsync(id);
             if (card == null)
+            {
                 return NotFound();
+            }
+
             return Ok(card);
         }
 
@@ -82,17 +85,10 @@ namespace card_index_Web_API.Controllers
         /// <returns>Http status code of operation with response object</returns>
         [HttpPost]
         [Authorize(Roles = "Admin,Moderator")]
+        [ServiceFilter(typeof(ValidationFilter))]
         public async Task<ActionResult<Response>> Add([FromBody] TextCardDto model)
         {
-            int insertId;
-            if (model == null)
-                return BadRequest(new Response(false, "No model passed"));
-            if (!ModelState.IsValid)
-                return BadRequest(new Response()
-                { Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList() });
-
-            insertId = await _cardService.AddAsync(model);
-
+            var insertId = await _cardService.AddAsync(model);
             return Ok(new Response(true, $"Successfully added card with id: {insertId}"));
         }
 
@@ -104,15 +100,11 @@ namespace card_index_Web_API.Controllers
         /// <returns>Http status code of operation with response object</returns>
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin,Moderator")]
+        [ServiceFilter(typeof(ValidationFilter))]
         public async Task<ActionResult<Response>> Update(int id, [FromBody] TextCardDto model)
         {
             model.Id = id;
-            if (!ModelState.IsValid)
-                return BadRequest(new Response()
-                { Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList() });
-
             await _cardService.UpdateAsync(model);
-
             return Ok(new Response(true, $"Successfully updated card with id: {id}"));
         }
 
@@ -137,11 +129,8 @@ namespace card_index_Web_API.Controllers
         [HttpGet("rate")]
         public async Task<ActionResult<RateDetailDto>> GetRatingForCardUser([FromQuery] int cardId)
         {
-            RateDetailDto rate = null;
-
             var loggedInId = (await _userService.GetByEmailAsync(User.FindFirstValue(ClaimTypes.Name))).Id;
-            rate = await _cardService.GetRateDetailByUserIdCardId(loggedInId, cardId);
-
+            var rate = await _cardService.GetRateDetailByUserIdCardId(loggedInId, cardId);
             return Ok(rate);
         }
         /// <summary>
@@ -150,17 +139,13 @@ namespace card_index_Web_API.Controllers
         /// <param name="newDetails"></param>
         /// <returns></returns>
         [HttpPost("rate")]
+        [ServiceFilter(typeof(ValidationFilter))]
         public async Task<ActionResult<Response>> GiveRatingToCard([FromBody] RateDetailDto newDetails)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(new Response()
-                { Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList() });
-
             //user can modify only marks, given by himself
             var loggedInId = (await _userService.GetByEmailAsync(User.FindFirstValue(ClaimTypes.Name))).Id;
             newDetails.UserId = loggedInId;
             await _cardService.AddRatingToCard(newDetails);
-
             return Ok(new Response(true,
                 $"Successfully added rating: {newDetails.RateValue} to card id: {newDetails.TextCardId}"));
         }

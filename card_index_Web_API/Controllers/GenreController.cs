@@ -44,17 +44,11 @@ namespace card_index_Web_API.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<DataShapingResponse<GenreDto>>> Get([FromQuery] PagingParametersModel pagingParametersModel)
         {
-            DataShapingResponse<GenreDto> response = new DataShapingResponse<GenreDto>();
-
-            try
+            DataShapingResponse<GenreDto> response = new DataShapingResponse<GenreDto>
             {
-                response.TotalNumber = await _genreService.GetTotalNumberAsync();
-                response.Data = await _genreService.GetAllAsync(pagingParametersModel);
-            }
-            catch (CardIndexException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+                TotalNumber = await _genreService.GetTotalNumberAsync(),
+                Data = await _genreService.GetAllAsync(pagingParametersModel)
+            };
 
             if (response.Data == null || !response.Data.Any())
                 return NotFound();
@@ -71,9 +65,10 @@ namespace card_index_Web_API.Controllers
         {
             IEnumerable<GenreDto> genres = null;
             genres = await _genreService.GetAllAsync();
-
             if (genres == null || !genres.Any())
+            {
                 return NotFound();
+            }
 
             return Ok(genres);
         }
@@ -87,12 +82,11 @@ namespace card_index_Web_API.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<GenreDto>> GetByName(string name)
         {
-            GenreDto genre = null;
-
-            genre = await _genreService.GetByNameAsync(name);
-
+            var genre = await _genreService.GetByNameAsync(name);
             if (genre == null)
+            {
                 return NotFound();
+            }
 
             return Ok(genre);
         }
@@ -104,16 +98,10 @@ namespace card_index_Web_API.Controllers
         /// <returns>Http status code of operation with response object</returns>
         [HttpPost]
         [Authorize(Roles = "Admin")]
+        [ServiceFilter(typeof(ValidationFilter))]
         public async Task<ActionResult<Response>> Add([FromBody] GenreDto model)
         {
-            int insertId;
-            if (model == null)
-                return BadRequest(new Response(false, "No model passed"));
-            if (!ModelState.IsValid)
-                return BadRequest(new Response()
-                { Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList() });
-            
-            insertId = await _genreService.AddAsync(model);
+            var insertId = await _genreService.AddAsync(model);
             return Ok(new Response(true, $"Successfully added genre with id: {insertId}"));
         }
 
@@ -125,13 +113,10 @@ namespace card_index_Web_API.Controllers
         /// <returns>Http status code of operation with response object</returns>
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
+        [ServiceFilter(typeof(ValidationFilter))]
         public async Task<ActionResult<Response>> Update(int id, [FromBody] GenreDto model)
         {
             model.Id = id;
-            if (!ModelState.IsValid)
-                return BadRequest(new Response()
-                { Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList() });
-            
             await _genreService.UpdateAsync(model);
             return Ok(new Response(true, $"Successfully updated genre with id: {id}"));
         }

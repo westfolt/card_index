@@ -5,6 +5,7 @@ using card_index_Web_API.Extensions;
 using card_index_Web_API.Filters;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,9 +28,16 @@ namespace card_index_Web_API
         {
             var connectionString = Configuration.GetConnectionString("CardIndexConnectionString");
             BllDependencyConfigurator.ConfigureServices(services, connectionString);
+            services.AddScoped<ValidationFilter>();
+            services.AddScoped<AuthValidationFilter>();
+            services.AddScoped<UserValidationFilter>();
             services.AddControllers(options =>
             {
                 options.Filters.Add<CardIndexExceptionFilter>();
+            });
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
             });
             services.ConfigureSwagger();
             services.ConfigureCors();

@@ -6,12 +6,8 @@ namespace card_index_BLL.Models.Dto
     /// <summary>
     /// Describes rating details, connects user and text card
     /// </summary>
-    public class RateDetailDto
+    public class RateDetailDto:BaseDto
     {
-        /// <summary>
-        /// Unique identifier
-        /// </summary>
-        public int Id { get; set; }
         /// <summary>
         /// User identifier
         /// </summary>

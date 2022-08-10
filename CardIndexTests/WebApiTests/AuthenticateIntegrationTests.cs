@@ -186,15 +186,10 @@ namespace CardIndexTests.WebApiTests
                 ConfirmPassword = "_Aq12345678"
             };
 
-            var mockService = new Mock<IAuthenticationService>();
-            var authenticateController = new AuthenticateController(mockService.Object);
-            authenticateController.ModelState.AddModelError("FirstName", "FirstName is empty");
+            var content = new StringContent(JsonConvert.SerializeObject(newUser), Encoding.UTF8, "application/json");
+            var httpResponse = await _client.PostAsync($"{RequestUri}/register", content);
 
-            var result = await authenticateController.Register(newUser);
-            var objectResult = (BadRequestObjectResult)result.Result;
-            var responseObject = objectResult.Value as Response;
-
-            Assert.That(responseObject?.Succeeded, Is.False);
+            Assert.That(httpResponse.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
         }
 
         [Test]
@@ -285,7 +280,7 @@ namespace CardIndexTests.WebApiTests
             var content = new StringContent(JsonConvert.SerializeObject(user), Encoding.UTF8, "application/json");
             var httpResponse = await _client.PostAsync($"{RequestUri}/login", content);
 
-            Assert.That(httpResponse.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
+            Assert.That(httpResponse.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
         }
 
         [Test]
@@ -300,15 +295,10 @@ namespace CardIndexTests.WebApiTests
                 Password = "_Aq12345678"
             };
 
-            var mockService = new Mock<IAuthenticationService>();
-            var authenticateController = new AuthenticateController(mockService.Object);
-            authenticateController.ModelState.AddModelError("Email", "Email is empty");
+            var content = new StringContent(JsonConvert.SerializeObject(user), Encoding.UTF8, "application/json");
+            var httpResponse = await _client.PostAsync($"{RequestUri}/login", content);
 
-            var result = await authenticateController.Login(user);
-            var objectResult = (UnauthorizedObjectResult)result.Result;
-            var responseObject = objectResult.Value as LoginResponse;
-
-            Assert.That(responseObject?.Succeeded, Is.False);
+            Assert.That(httpResponse.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
         }
 
         [Test]

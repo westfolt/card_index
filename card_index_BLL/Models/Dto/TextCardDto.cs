@@ -8,12 +8,8 @@ namespace card_index_BLL.Models.Dto
     /// <summary>
     /// Describes text card
     /// </summary>
-    public class TextCardDto
+    public class TextCardDto:BaseDto
     {
-        /// <summary>
-        /// Unique identifier
-        /// </summary>
-        public int Id { get; set; }
         /// <summary>
         /// Card name, required, should have 6+ characters, cannot contain numbers
         /// </summary>

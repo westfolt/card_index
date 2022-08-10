@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using card_index_Web_API.Filters;
 
 namespace card_index_Web_API.Controllers
 {
@@ -34,14 +35,9 @@ namespace card_index_Web_API.Controllers
         /// <returns>Http status code of operation with response object</returns>
         [HttpPost]
         [Route("login")]
+        [ServiceFilter(typeof(AuthValidationFilter))]
         public async Task<ActionResult<Response>> Login([FromBody] UserLoginModel model)
         {
-            if (model == null)
-                return Unauthorized(new LoginResponse() { Message = "No model passed" });
-            if (!ModelState.IsValid)
-                return Unauthorized(new LoginResponse()
-                { Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList() });
-            
             var result = await _authenticationService.LoginUserAsync(model);
             if (result.Succeeded)
             {
@@ -58,14 +54,9 @@ namespace card_index_Web_API.Controllers
         /// <returns>Http status code of operation with response object</returns>
         [HttpPost]
         [Route("register")]
+        [ServiceFilter(typeof(AuthValidationFilter))]
         public async Task<ActionResult<Response>> Register([FromBody] UserRegistrationModel model)
         {
-            if (model == null)
-                return BadRequest(new Response { Errors = new List<string> { "No model passed" } });
-            if (!ModelState.IsValid)
-                return BadRequest(new Response()
-                { Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList() });
-
             var result = await _authenticationService.RegisterUserAsync(model);
             if (result.Succeeded)
             {

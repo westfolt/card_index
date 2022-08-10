@@ -280,7 +280,14 @@ namespace CardIndexTests.WebApiTests
         public async Task TextCardController_AddNew_WrongModelError()
         {
             _factory = new CardIndexWebAppFactory(false);
-            _client = _factory.CreateClient();
+            _client = _factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureTestServices(services =>
+                {
+                    services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
+                });
+            }).CreateClient();
+
             var cardToAdd = new TextCardDto
             {
                 Id = 6,
@@ -291,16 +298,11 @@ namespace CardIndexTests.WebApiTests
                 RateDetailsIds = new List<int>(),
                 AuthorIds = new List<int>()
             };
-            var mockService = new Mock<ICardService>();
-            var mockUserService = new Mock<IUserService>();
-            var cardController = new CardController(mockService.Object, mockUserService.Object);
-            cardController.ModelState.AddModelError("Title", "Title is empty");
 
-            var result = await cardController.Add(cardToAdd);
-            var objectResult = (BadRequestObjectResult)result.Result;
-            var responseObject = objectResult.Value as Response;
+            var content = new StringContent(JsonConvert.SerializeObject(cardToAdd), Encoding.UTF8, "application/json");
+            var httpResponse = await _client.PostAsync($"{RequestUri}", content);
 
-            Assert.That(responseObject?.Succeeded, Is.False);
+            Assert.That(httpResponse.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
         }
 
         #endregion
@@ -397,11 +399,18 @@ namespace CardIndexTests.WebApiTests
         [Test]
         public async Task TextCardController_Update_WrongModelError()
         {
-            _factory = new CardIndexWebAppFactory(false);
-            _client = _factory.CreateClient();
+            _factory = new CardIndexWebAppFactory(true);
+            _client = _factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureTestServices(services =>
+                {
+                    services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
+                });
+            }).CreateClient();
+
             var card6 = new TextCardDto
             {
-                Id = 5,
+                Id = 3,
                 Title = "Card6",
                 ReleaseDate = new DateTime(1980, 3, 3),
                 CardRating = 0,
@@ -409,16 +418,11 @@ namespace CardIndexTests.WebApiTests
                 RateDetailsIds = new List<int>(),
                 AuthorIds = new List<int>()
             };
-            var mockService = new Mock<ICardService>();
-            var mockUserService = new Mock<IUserService>();
-            var cardController = new CardController(mockService.Object, mockUserService.Object);
-            cardController.ModelState.AddModelError("Title", "Title is empty");
 
-            var result = await cardController.Update(6, card6);
-            var objectResult = (BadRequestObjectResult)result.Result;
-            var responseObject = objectResult.Value as Response;
+            var content = new StringContent(JsonConvert.SerializeObject(card6), Encoding.UTF8, "application/json");
+            var httpResponse = await _client.PutAsync($"{RequestUri}/{card6.Id}", content);
 
-            Assert.That(responseObject?.Succeeded, Is.False);
+            Assert.That(httpResponse.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
         }
 
         #endregion
@@ -572,24 +576,26 @@ namespace CardIndexTests.WebApiTests
         public async Task TextCardController_GiveRating_WrongModelError()
         {
             _factory = new CardIndexWebAppFactory(false);
-            _client = _factory.CreateClient();
+            _client = _factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureTestServices(services =>
+                {
+                    services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
+                });
+            }).CreateClient();
+
             var rateToAdd = new RateDetailDto()
             {
                 Id = 4,
                 TextCardId = 1,
                 UserId = 1,
-                RateValue = 2
+                RateValue = 19
             };
-            var mockService = new Mock<ICardService>();
-            var mockUserService = new Mock<IUserService>();
-            var cardController = new CardController(mockService.Object, mockUserService.Object);
-            cardController.ModelState.AddModelError("RateValue", "RateValue not correct");
 
-            var result = await cardController.GiveRatingToCard(rateToAdd);
-            var objectResult = (BadRequestObjectResult)result.Result;
-            var responseObject = objectResult.Value as Response;
+            var content = new StringContent(JsonConvert.SerializeObject(rateToAdd), Encoding.UTF8, "application/json");
+            var httpResponse = await _client.PutAsync($"{RequestUri}/{rateToAdd.Id}", content);
 
-            Assert.That(responseObject?.Succeeded, Is.False);
+            Assert.That(httpResponse.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
         }
 
         [Test]

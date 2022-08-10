@@ -19,6 +19,8 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Castle.Core.Logging;
+using Microsoft.Extensions.Logging;
 
 namespace CardIndexTests.WebApiTests
 {
@@ -300,17 +302,20 @@ namespace CardIndexTests.WebApiTests
         public async Task GenreController_AddNew_WrongModelError()
         {
             _factory = new CardIndexWebAppFactory(false);
-            _client = _factory.CreateClient();
+            _client = _factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureTestServices(services =>
+                {
+                    services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
+                });
+            }).CreateClient();
+
             var genreToAdd = new GenreDto { Id = 6, Title = "", TextCardIds = new List<int>() };
-            var mockService = new Mock<IGenreService>();
-            var genreController = new GenreController(mockService.Object);
-            genreController.ModelState.AddModelError("Title", "Title is empty");
 
-            var result = await genreController.Add(genreToAdd);
-            var objectResult = (BadRequestObjectResult)result.Result;
-            var responseObject = objectResult.Value as Response;
+            var content = new StringContent(JsonConvert.SerializeObject(genreToAdd), Encoding.UTF8, "application/json");
+            var httpResponse = await _client.PostAsync($"{RequestUri}", content);
 
-            Assert.That(responseObject?.Succeeded, Is.False);
+            Assert.That(httpResponse.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
         }
 
         #endregion
@@ -380,20 +385,22 @@ namespace CardIndexTests.WebApiTests
         [Test]
         public async Task GenreController_Update_WrongModelError()
         {
-            _factory = new CardIndexWebAppFactory(false);
-            _client = _factory.CreateClient();
-            var genreToAdd = new GenreDto { Id = 6, Title = "", TextCardIds = new List<int>() };
-            var mockService = new Mock<IGenreService>();
-            var genreController = new GenreController(mockService.Object);
-            genreController.ModelState.AddModelError("Title", "Title is empty");
+            _factory = new CardIndexWebAppFactory(true);
+            _client = _factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureTestServices(services =>
+                {
+                    services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
+                });
+            }).CreateClient();
 
-            var result = await genreController.Update(6, genreToAdd);
-            var objectResult = (BadRequestObjectResult)result.Result;
-            var responseObject = objectResult.Value as Response;
+            var genreToAdd = new GenreDto { Id = 3, Title = "", TextCardIds = new List<int>() };
 
-            Assert.That(responseObject?.Succeeded, Is.False);
+            var content = new StringContent(JsonConvert.SerializeObject(genreToAdd), Encoding.UTF8, "application/json");
+            var httpResponse = await _client.PutAsync($"{RequestUri}/{genreToAdd.Id}", content);
+
+            Assert.That(httpResponse.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
         }
-
         #endregion
 
         #region DeleteTests

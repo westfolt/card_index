@@ -322,7 +322,14 @@ namespace CardIndexTests.WebApiTests
         public async Task AuthorController_AddNew_WrongModelError()
         {
             _factory = new CardIndexWebAppFactory(false);
-            _client = _factory.CreateClient();
+            _client = _factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureTestServices(services =>
+                {
+                    services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
+                });
+            }).CreateClient();
+
             var authorToAdd = new AuthorDto
             {
                 Id = 5,
@@ -331,15 +338,11 @@ namespace CardIndexTests.WebApiTests
                 YearOfBirth = 2001,
                 TextCardIds = new List<int>()
             };
-            var mockService = new Mock<IAuthorService>();
-            var genreController = new AuthorController(mockService.Object);
-            genreController.ModelState.AddModelError("FirstName", "FirstName is empty");
 
-            var result = await genreController.Add(authorToAdd);
-            var objectResult = (BadRequestObjectResult)result.Result;
-            var responseObject = objectResult.Value as Response;
+            var content = new StringContent(JsonConvert.SerializeObject(authorToAdd), Encoding.UTF8, "application/json");
+            var httpResponse = await _client.PostAsync($"{RequestUri}", content);
 
-            Assert.That(responseObject?.Succeeded, Is.False);
+            Assert.That(httpResponse.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
         }
 
         #endregion
@@ -430,25 +433,28 @@ namespace CardIndexTests.WebApiTests
         [Test]
         public async Task AuthorController_Update_WrongModelError()
         {
-            _factory = new CardIndexWebAppFactory(false);
-            _client = _factory.CreateClient();
+            _factory = new CardIndexWebAppFactory(true);
+            _client = _factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureTestServices(services =>
+                {
+                    services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
+                });
+            }).CreateClient();
+
             var authorToAdd = new AuthorDto
             {
-                Id = 5,
-                FirstName = "Author6",
+                Id = 3,
+                FirstName = "",
                 LastName = "Author6",
                 YearOfBirth = 2001,
                 TextCardIds = new List<int>()
             };
-            var mockService = new Mock<IAuthorService>();
-            var genreController = new AuthorController(mockService.Object);
-            genreController.ModelState.AddModelError("Title", "Title is empty");
 
-            var result = await genreController.Update(5, authorToAdd);
-            var objectResult = (BadRequestObjectResult)result.Result;
-            var responseObject = objectResult.Value as Response;
+            var content = new StringContent(JsonConvert.SerializeObject(authorToAdd), Encoding.UTF8, "application/json");
+            var httpResponse = await _client.PutAsync($"{RequestUri}/{authorToAdd.Id}", content);
 
-            Assert.That(responseObject?.Succeeded, Is.False);
+            Assert.That(httpResponse.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
         }
 
         #endregion

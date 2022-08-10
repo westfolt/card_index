@@ -315,7 +315,14 @@ namespace CardIndexTests.WebApiTests
         public async Task UserController_Update_WrongModelError()
         {
             _factory = new CardIndexWebAppFactory(false);
-            _client = _factory.CreateClient();
+            _client = _factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureTestServices(services =>
+                {
+                    services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
+                });
+            }).CreateClient();
+
             UserInfoModel user4 = new UserInfoModel()
             {
                 Id = 5,
@@ -327,15 +334,11 @@ namespace CardIndexTests.WebApiTests
                 Phone = "+38(012)3456789",
                 UserRoles = new List<string> { "Registered" }
             };
-            var mockService = new Mock<IUserService>();
-            var userController = new UserController(mockService.Object);
-            userController.ModelState.AddModelError("FirstName", "FirstName is empty");
 
-            var result = await userController.Update(5, user4);
-            var objectResult = (BadRequestObjectResult)result.Result;
-            var responseObject = objectResult.Value as Response;
+            var content = new StringContent(JsonConvert.SerializeObject(user4), Encoding.UTF8, "application/json");
+            var httpResponse = await _client.PutAsync($"{RequestUri}/{user4.Id}", content);
 
-            Assert.That(responseObject?.Succeeded, Is.False);
+            Assert.That(httpResponse.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
         }
 
         #endregion
@@ -579,24 +582,27 @@ namespace CardIndexTests.WebApiTests
         }
 
         [Test]
-        public async Task UserController_AddNew_WrongModelError()
+        public async Task UserController_AddNewRole_WrongModelError()
         {
             _factory = new CardIndexWebAppFactory(false);
-            _client = _factory.CreateClient();
+            _client = _factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureTestServices(services =>
+                {
+                    services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
+                });
+            }).CreateClient();
+
             var newRole = new UserRoleInfoModel
             {
                 Id = 4,
                 RoleName = ""
             };
-            var mockService = new Mock<IUserService>();
-            var userController = new UserController(mockService.Object);
-            userController.ModelState.AddModelError("RoleName", "RoleName is empty");
 
-            var result = await userController.AddRole(newRole);
-            var objectResult = (BadRequestObjectResult)result.Result;
-            var responseObject = objectResult.Value as Response;
+            var content = new StringContent(JsonConvert.SerializeObject(newRole), Encoding.UTF8, "application/json");
+            var httpResponse = await _client.PostAsync($"{RequestUri}/{roleUri}", content);
 
-            Assert.That(responseObject?.Succeeded, Is.False);
+            Assert.That(httpResponse.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
         }
 
         [Test]
@@ -651,7 +657,7 @@ namespace CardIndexTests.WebApiTests
             Assert.That(actual.Count(), Is.EqualTo(newLength));
         }
 
-        [TestCase("##")]
+        [TestCase("nonexistantrole")]
         public async Task UserController_DeleteExistingRole_BadRequest(string name)
         {
             _factory = new CardIndexWebAppFactory(false);
@@ -663,7 +669,6 @@ namespace CardIndexTests.WebApiTests
                 });
             }).CreateClient();
 
-            var expectedLength = UserRoleInfoModels.Count();
             var httpResponse = await _client.DeleteAsync($"{RequestUri}/{roleUri}/{name}");
 
             Assert.That(httpResponse.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
@@ -848,7 +853,14 @@ namespace CardIndexTests.WebApiTests
         public async Task UserController_ModifyUserCabinet_WrongModelError()
         {
             _factory = new CardIndexWebAppFactory(false);
-            _client = _factory.CreateClient();
+            _client = _factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureTestServices(services =>
+                {
+                    services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
+                });
+            }).CreateClient();
+
             UserInfoModel user4 = new UserInfoModel()
             {
                 Id = 1,
@@ -860,15 +872,11 @@ namespace CardIndexTests.WebApiTests
                 Phone = "+38(012)3456789",
                 UserRoles = new List<string> { "Registered" }
             };
-            var mockService = new Mock<IUserService>();
-            var userController = new UserController(mockService.Object);
-            userController.ModelState.AddModelError("FirstName", "FirstName is empty");
 
-            var result = await userController.ModifyUserCabinet(user4);
-            var objectResult = (BadRequestObjectResult)result.Result;
-            var responseObject = objectResult.Value as Response;
+            var content = new StringContent(JsonConvert.SerializeObject(user4), Encoding.UTF8, "application/json");
+            var httpResponse = await _client.PutAsync($"{RequestUri}/cabinet/modify", content);
 
-            Assert.That(responseObject?.Succeeded, Is.False);
+            Assert.That(httpResponse.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
         }
 
         #endregion
@@ -984,22 +992,25 @@ namespace CardIndexTests.WebApiTests
         public async Task UserController_ChangeUserPassword_WrongModelError()
         {
             _factory = new CardIndexWebAppFactory(false);
-            _client = _factory.CreateClient();
+            _client = _factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureTestServices(services =>
+                {
+                    services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
+                });
+            }).CreateClient();
+
             ChangePasswordModel changePass = new ChangePasswordModel()
             {
                 CurrentPassword = "12345678",
                 NewPassword = "12345678",
                 ConfirmNewPassword = "notConfirmed"
             };
-            var mockService = new Mock<IUserService>();
-            var userController = new UserController(mockService.Object);
-            userController.ModelState.AddModelError("ConfirmNewPassword", "Passwords do not match");
 
-            var result = await userController.ChangeUserPassword(changePass);
-            var objectResult = (BadRequestObjectResult)result.Result;
-            var responseObject = objectResult.Value as Response;
+            var content = new StringContent(JsonConvert.SerializeObject(changePass), Encoding.UTF8, "application/json");
+            var httpResponse = await _client.PostAsync($"{RequestUri}/cabinet/changepass", content);
 
-            Assert.That(responseObject?.Succeeded, Is.False);
+            Assert.That(httpResponse.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
         }
 
         #endregion

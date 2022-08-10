@@ -6,12 +6,8 @@ namespace card_index_BLL.Models.Dto
     /// <summary>
     /// Describes author
     /// </summary>
-    public class AuthorDto
+    public class AuthorDto:BaseDto
     {
-        /// <summary>
-        /// Unique identifier
-        /// </summary>
-        public int Id { get; set; }
         /// <summary>
         /// Author first name, required, should have 3+ characters, cannot contain numbers
         /// </summary>

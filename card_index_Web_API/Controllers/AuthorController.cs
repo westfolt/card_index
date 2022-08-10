@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using card_index_Web_API.Filters;
 
 namespace card_index_Web_API.Controllers
 {
@@ -38,14 +39,17 @@ namespace card_index_Web_API.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<DataShapingResponse<AuthorDto>>> Get([FromQuery] PagingParametersModel pagingParametersModel)
         {
-            DataShapingResponse<AuthorDto> response = new DataShapingResponse<AuthorDto>();
-
-            response.TotalNumber = await _authorService.GetTotalNumberAsync();
-            response.Data = await _authorService.GetAllAsync(pagingParametersModel);
+            DataShapingResponse<AuthorDto> response = new DataShapingResponse<AuthorDto>
+            {
+                TotalNumber = await _authorService.GetTotalNumberAsync(),
+                Data = await _authorService.GetAllAsync(pagingParametersModel)
+            };
 
 
             if (response.Data == null || !response.Data.Any())
+            {
                 return NotFound();
+            }
 
             return Ok(response);
         }
@@ -57,12 +61,11 @@ namespace card_index_Web_API.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<AuthorDto>>> Get()
         {
-            IEnumerable<AuthorDto> authors = null;
-            
-            authors = await _authorService.GetAllAsync();
-            
+            var authors = await _authorService.GetAllAsync();
             if (authors == null || !authors.Any())
+            {
                 return NotFound();
+            }
 
             return Ok(authors);
         }
@@ -75,12 +78,12 @@ namespace card_index_Web_API.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<AuthorDto>> GetById(int id)
         {
-            AuthorDto author = null;
-
-            author = await _authorService.GetByIdAsync(id);
-           
+            var author = await _authorService.GetByIdAsync(id);
             if (author == null)
+            {
                 return NotFound();
+            }
+
             return Ok(author);
         }
 
@@ -91,17 +94,10 @@ namespace card_index_Web_API.Controllers
         /// <returns>Http status code of operation with response object</returns>
         [HttpPost]
         [Authorize(Roles = "Admin")]
+        [ServiceFilter(typeof(ValidationFilter))]
         public async Task<ActionResult<Response>> Add([FromBody] AuthorDto model)
         {
-            int insertId;
-            if (model == null)
-                return BadRequest(new Response(false, "No model passed"));
-            if (!ModelState.IsValid)
-                return BadRequest(new Response()
-                { Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList() });
-
-            insertId = await _authorService.AddAsync(model);
-            
+            var insertId = await _authorService.AddAsync(model);
             return Ok(new Response(true, $"Successfully added author with id: {insertId}"));
         }
 
@@ -113,15 +109,11 @@ namespace card_index_Web_API.Controllers
         /// <returns>Http status code of operation with response object</returns>
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
+        [ServiceFilter(typeof(ValidationFilter))]
         public async Task<ActionResult<Response>> Update(int id, [FromBody] AuthorDto model)
         {
             model.Id = id;
-            if (!ModelState.IsValid)
-                return BadRequest(new Response()
-                { Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList() });
-
             await _authorService.UpdateAsync(model);
-            
             return Ok(new Response(true, $"Successfully updated author with id: {id}"));
         }
 
