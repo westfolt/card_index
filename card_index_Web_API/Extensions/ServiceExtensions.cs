@@ -12,6 +12,9 @@ using System.Text;
 
 namespace card_index_Web_API.Extensions
 {
+    /// <summary>
+    /// Configures services for DI
+    /// </summary>
     public static class ServiceExtensions
     {
         /// <summary>

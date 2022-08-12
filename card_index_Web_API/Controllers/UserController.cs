@@ -74,7 +74,7 @@ namespace card_index_Web_API.Controllers
         /// <returns>Http status code of operation with response object</returns>
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
-        [ServiceFilter(typeof(UserValidationFilter))]
+        [ServiceFilter(typeof(ValidationFilter))]
         public async Task<ActionResult<Response>> Update(int id, [FromBody] UserInfoModel model)
         {
             model.Id = id;
@@ -137,7 +137,7 @@ namespace card_index_Web_API.Controllers
         /// <returns>Http status code of operation with response object</returns>
         [HttpPost("roles")]
         [Authorize(Roles = "Admin")]
-        [ServiceFilter(typeof(UserValidationFilter))]
+        [ServiceFilter(typeof(ValidationFilter))]
         public async Task<ActionResult<Response>> AddRole([FromBody] UserRoleInfoModel model)
         {
             var insertId = await _userService.AddRoleAsync(model);
@@ -180,7 +180,7 @@ namespace card_index_Web_API.Controllers
         /// <param name="model">User model for update</param>
         /// <returns>Http status code of operation with response object</returns>
         [HttpPut("cabinet/modify")]
-        [ServiceFilter(typeof(UserValidationFilter))]
+        [ServiceFilter(typeof(ValidationFilter))]
         public async Task<ActionResult<Response>> ModifyUserCabinet([FromBody] UserInfoModel model)
         {
             var loggedInUser = this.User.FindFirstValue(ClaimTypes.Name);
@@ -197,7 +197,7 @@ namespace card_index_Web_API.Controllers
         /// <param name="changePassword">change pass model, contains current and new passwords</param>
         /// <returns>Http status code of operation with response object</returns>
         [HttpPost("cabinet/changepass")]
-        [ServiceFilter(typeof(UserValidationFilter))]
+        [ServiceFilter(typeof(ValidationFilter))]
         public async Task<ActionResult<Response>> ChangeUserPassword([FromBody] ChangePasswordModel changePassword)
         {
             var loggedInUser = this.User.FindFirstValue(ClaimTypes.Name);

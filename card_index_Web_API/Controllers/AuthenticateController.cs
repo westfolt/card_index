@@ -35,7 +35,7 @@ namespace card_index_Web_API.Controllers
         /// <returns>Http status code of operation with response object</returns>
         [HttpPost]
         [Route("login")]
-        [ServiceFilter(typeof(AuthValidationFilter))]
+        [ServiceFilter(typeof(ValidationFilter))]
         public async Task<ActionResult<Response>> Login([FromBody] UserLoginModel model)
         {
             var result = await _authenticationService.LoginUserAsync(model);
@@ -54,7 +54,7 @@ namespace card_index_Web_API.Controllers
         /// <returns>Http status code of operation with response object</returns>
         [HttpPost]
         [Route("register")]
-        [ServiceFilter(typeof(AuthValidationFilter))]
+        [ServiceFilter(typeof(ValidationFilter))]
         public async Task<ActionResult<Response>> Register([FromBody] UserRegistrationModel model)
         {
             var result = await _authenticationService.RegisterUserAsync(model);
@@ -63,7 +63,7 @@ namespace card_index_Web_API.Controllers
                 return Ok(result);
             }
 
-            return Conflict(result);
+            return BadRequest(result);
         }
 
         /// <summary>

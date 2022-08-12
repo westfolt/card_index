@@ -29,8 +29,6 @@ namespace card_index_Web_API
             var connectionString = Configuration.GetConnectionString("CardIndexConnectionString");
             BllDependencyConfigurator.ConfigureServices(services, connectionString);
             services.AddScoped<ValidationFilter>();
-            services.AddScoped<AuthValidationFilter>();
-            services.AddScoped<UserValidationFilter>();
             services.AddControllers(options =>
             {
                 options.Filters.Add<CardIndexExceptionFilter>();
