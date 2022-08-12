@@ -3,6 +3,7 @@ using card_index_BLL.Models.Data;
 using card_index_DAL.Data;
 using card_index_Web_API.Extensions;
 using card_index_Web_API.Filters;
+using card_index_Web_API.Middleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -56,7 +57,7 @@ namespace card_index_Web_API
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "CardIndex API");
                 c.RoutePrefix = string.Empty;
             });
-
+            app.UseMiddleware<GlobalExceptionMiddleware>();
             app.UseHttpsRedirection();
             app.UseCors("CardCorsPolicy");
             app.UseRouting();

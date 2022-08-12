@@ -150,7 +150,7 @@ namespace CardIndexTests.WebApiTests
             var content = new StringContent(JsonConvert.SerializeObject(newUser), Encoding.UTF8, "application/json");
             var httpResponse = await _client.PostAsync($"{RequestUri}/register", content);
 
-            Assert.That(httpResponse.StatusCode, Is.EqualTo(HttpStatusCode.Conflict));
+            Assert.That(httpResponse.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
         }
 
         [Test]
