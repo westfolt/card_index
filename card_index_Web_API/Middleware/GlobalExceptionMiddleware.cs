@@ -1,12 +1,11 @@
-﻿using System;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using card_index_BLL.Exceptions;
+﻿using card_index_BLL.Exceptions;
 using card_index_BLL.Models.Identity.Infrastructure;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using System;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace card_index_Web_API.Middleware
 {

@@ -1,14 +1,13 @@
-﻿using card_index_BLL.Exceptions;
-using card_index_BLL.Interfaces;
+﻿using card_index_BLL.Interfaces;
 using card_index_BLL.Models.Identity.Infrastructure;
 using card_index_BLL.Models.Identity.Models;
+using card_index_Web_API.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using card_index_Web_API.Filters;
 
 namespace card_index_Web_API.Controllers
 {
@@ -213,7 +212,7 @@ namespace card_index_Web_API.Controllers
             if (!result.Succeeded)
             {
                 return BadRequest(new Response()
-                    { Errors = result.Errors, Message = "Error while trying to change password" });
+                { Errors = result.Errors, Message = "Error while trying to change password" });
             }
 
             return Ok(new Response(true,

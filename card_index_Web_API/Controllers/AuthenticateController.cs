@@ -1,12 +1,9 @@
-﻿using card_index_BLL.Exceptions;
-using card_index_BLL.Interfaces;
+﻿using card_index_BLL.Interfaces;
 using card_index_BLL.Models.Identity.Infrastructure;
 using card_index_BLL.Models.Identity.Models;
-using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using card_index_Web_API.Filters;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace card_index_Web_API.Controllers
 {

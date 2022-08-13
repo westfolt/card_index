@@ -4,7 +4,6 @@ using card_index_BLL.Models.Identity.Models;
 using card_index_Web_API.Controllers;
 using CardIndexTests.WebApiTests.Helpers;
 using Microsoft.AspNetCore.Authorization.Policy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;

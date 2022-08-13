@@ -1,11 +1,9 @@
-﻿using System.Collections.Generic;
-
-namespace card_index_BLL.Models.Identity.Infrastructure
+﻿namespace card_index_BLL.Models.Identity.Infrastructure
 {
     /// <summary>
     /// Object to send when user logs in
     /// </summary>
-    public class LoginResponse:Response
+    public class LoginResponse : Response
     {
         /// <summary>
         /// Constructor without parameters, when unsuccessful login

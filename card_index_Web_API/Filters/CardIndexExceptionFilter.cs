@@ -1,6 +1,4 @@
-﻿using System.Net;
-using System.Net.Http;
-using card_index_BLL.Exceptions;
+﻿using card_index_BLL.Exceptions;
 using card_index_BLL.Models.Identity.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -8,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace card_index_Web_API.Filters
 {
-    public class CardIndexExceptionFilter:IExceptionFilter
+    public class CardIndexExceptionFilter : IExceptionFilter
     {
         private readonly ILogger<CardIndexExceptionFilter> _logger;
         public CardIndexExceptionFilter(ILogger<CardIndexExceptionFilter> logger)

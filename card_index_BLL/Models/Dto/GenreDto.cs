@@ -6,7 +6,7 @@ namespace card_index_BLL.Models.Dto
     /// <summary>
     /// Describes genre of text card
     /// </summary>
-    public class GenreDto:BaseDto
+    public class GenreDto : BaseDto
     {
         /// <summary>
         /// Genre name, required, should have 3+ characters, cannot contain numbers

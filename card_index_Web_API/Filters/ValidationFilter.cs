@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using card_index_BLL.Exceptions;
-using card_index_BLL.Models.Dto;
+﻿using card_index_BLL.Models.Dto;
 using card_index_BLL.Models.Identity.Infrastructure;
 using card_index_BLL.Models.Identity.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace card_index_Web_API.Filters
 {

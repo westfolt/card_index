@@ -1,6 +1,5 @@
 ﻿using card_index_DAL.Context.Configuration;
 using card_index_DAL.Entities;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 

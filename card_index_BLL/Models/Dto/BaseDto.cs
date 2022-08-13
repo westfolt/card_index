@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace card_index_BLL.Models.Dto
+﻿namespace card_index_BLL.Models.Dto
 {
     /// <summary>
     /// Base class for all data transfer objects,

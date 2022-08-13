@@ -1,14 +1,11 @@
 ﻿using card_index_BLL.Interfaces;
 using card_index_BLL.Models.Identity.Infrastructure;
 using card_index_BLL.Models.Identity.Models;
-using card_index_Web_API.Controllers;
 using CardIndexTests.Helpers;
 using CardIndexTests.WebApiTests.Helpers;
 using Microsoft.AspNetCore.Authorization.Policy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
-using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using System;

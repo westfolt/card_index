@@ -1,16 +1,12 @@
 ﻿using card_index_BLL.Interfaces;
 using card_index_BLL.Models.DataShaping;
 using card_index_BLL.Models.Dto;
-using card_index_BLL.Models.Identity.Infrastructure;
-using card_index_Web_API.Controllers;
 using CardIndexTests.Helpers;
 using CardIndexTests.WebApiTests.Helpers;
 using FluentAssertions;
 using Microsoft.AspNetCore.Authorization.Policy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
-using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using System.Collections.Generic;
@@ -19,8 +15,6 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Castle.Core.Logging;
-using Microsoft.Extensions.Logging;
 
 namespace CardIndexTests.WebApiTests
 {

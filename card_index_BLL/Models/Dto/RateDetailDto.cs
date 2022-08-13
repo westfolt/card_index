@@ -6,7 +6,7 @@ namespace card_index_BLL.Models.Dto
     /// <summary>
     /// Describes rating details, connects user and text card
     /// </summary>
-    public class RateDetailDto:BaseDto
+    public class RateDetailDto : BaseDto
     {
         /// <summary>
         /// User identifier

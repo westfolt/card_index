@@ -1,16 +1,14 @@
-﻿using System;
-using card_index_BLL.Exceptions;
-using card_index_BLL.Interfaces;
+﻿using card_index_BLL.Interfaces;
 using card_index_BLL.Models.DataShaping;
 using card_index_BLL.Models.Dto;
 using card_index_BLL.Models.Identity.Infrastructure;
+using card_index_Web_API.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using card_index_Web_API.Filters;
-using Microsoft.Extensions.Logging;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
