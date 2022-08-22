@@ -9,6 +9,10 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using card_index_BLL.Models.Dto;
+using card_index_BLL.Models.Identity.Models;
+using card_index_BLL.Validation;
+using FluentValidation;
 
 namespace card_index_Web_API.Extensions
 {
@@ -109,6 +113,22 @@ namespace card_index_Web_API.Extensions
                         .GetBytes(jwtSettings.GetSection("securityKey").Value))
                 };
             });
+        }
+        /// <summary>
+        /// Configures validation of dto objects
+        /// </summary>
+        /// <param name="services">App services collection</param>
+        public static void ConfigureValidation(this IServiceCollection services)
+        {
+            services.AddScoped<IValidator<GenreDto>, GenreDtoValidator>();
+            services.AddScoped<IValidator<AuthorDto>, AuthorDtoValidator>();
+            services.AddScoped<IValidator<RateDetailDto>, RateDetailDtoValidator>();
+            services.AddScoped<IValidator<TextCardDto>, TextCardDtoValidator>();
+            services.AddScoped<IValidator<UserInfoModel>, UserInfoModelValidator>();
+            services.AddScoped<IValidator<UserRoleInfoModel>, UserRoleInfoModelValidator>();
+            services.AddScoped<IValidator<UserLoginModel>, UserLoginModelValidator>();
+            services.AddScoped<IValidator<UserRegistrationModel>, UserRegistrationModelValidator>();
+            services.AddScoped<IValidator<ChangePasswordModel>, ChangePasswordModelValidator>();
         }
     }
 }

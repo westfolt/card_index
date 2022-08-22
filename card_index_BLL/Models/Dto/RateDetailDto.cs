@@ -29,9 +29,8 @@ namespace card_index_BLL.Models.Dto
         /// </summary>
         public string CardName { get; set; }
         /// <summary>
-        /// Text card rating, integer values from 0 to 5 allowed
+        /// Text card rating
         /// </summary>
-        [Range(0, 5, ErrorMessage = "Rating should be from 0 to 5")]
         public ushort RateValue { get; set; }
     }
 }

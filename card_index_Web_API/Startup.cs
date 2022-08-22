@@ -41,6 +41,7 @@ namespace card_index_Web_API
             services.ConfigureSwagger();
             services.ConfigureCors();
             services.ConfigureAuthentication(Configuration, 2);
+            services.ConfigureValidation();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
